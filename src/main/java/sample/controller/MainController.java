@@ -61,7 +61,7 @@ public class MainController extends BaseController{
     @FXML
     public void onAboutClick() throws IOException {
 //        ViewUtil.getInstance().openAboutDialog();
-        ViewUtil.getInstance().showView("view/about.fxml","帮助",-1,-1,"abc");
+        ViewUtil.getInstance().showView("view/about.fxml","帮助",-1,-1,null);
     }
 
     @FXML
