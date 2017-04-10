@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<?import javafx.scene.shape.Line?>
+<VBox fx:controller="sample.controller.AboutController" alignment="TOP_CENTER" prefHeight="191.0" prefWidth="600.0" stylesheets="@css/about.css" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1">
+    <HBox alignment="CENTER">
+        <ImageView>
+            <Image url="@../resource/img/shengfei.png" />
+         <cursor>
+            <Cursor fx:constant="NONE" />
+         </cursor>
+        </ImageView>
+        <Label id="appName" text="SonicField v1.0" />
+    </HBox>
+    <Label text="免费的语言田野调查记录工具" />
+
+    <Separator id="divider">
+        <VBox.margin>
+            <Insets bottom="16" left="16" right="16" top="16" />
+        </VBox.margin>
+    </Separator>
+    <HBox alignment="CENTER">
+        <Label text="© SonicField 受版权保护  暨南大学" />
+    </HBox>
+</VBox>

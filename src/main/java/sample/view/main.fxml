@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.RadioMenuItem?>
+<?import javafx.scene.control.SeparatorMenuItem?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.StackPane?>
+
+<BorderPane prefHeight="238.0" prefWidth="469.0" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.controller.MainController">
+    <top>
+        <StackPane alignment="CENTER_RIGHT">
+      <MenuBar BorderPane.alignment="CENTER">
+        <menus>
+          <Menu mnemonicParsing="false" text="%menu_file">
+            <items>
+              <MenuItem accelerator="CTRL+N" mnemonicParsing="false" text="%menu_file_newWord" />
+              <MenuItem mnemonicParsing="false" text="%menu_file_newWords" />
+              <MenuItem mnemonicParsing="false" text="%menu_file_newSentence" />
+              <MenuItem mnemonicParsing="false" text="%menu_file_newDiscource" />
+                <SeparatorMenuItem />
+                <MenuItem accelerator="CTRL+O" mnemonicParsing="false" text="%menu_file_open" />
+                <MenuItem accelerator="CTRL+D" mnemonicParsing="false" text="%menu_file_delete" />
+                <SeparatorMenuItem />
+                <MenuItem mnemonicParsing="false" text="%menu_file_importExcel" />
+                <MenuItem mnemonicParsing="false" text="%menu_file_importYBExcel" />
+                <MenuItem mnemonicParsing="false" text="%menu_file_export" />
+            </items>
+          </Menu>
+
+          <Menu mnemonicParsing="false" text="%menu_data">
+            <items>
+              <MenuItem mnemonicParsing="false" text="%menu_data_ybzf" />
+              <MenuItem mnemonicParsing="false" text="%menu_data_ybcc" />
+              <MenuItem mnemonicParsing="false" text="%menu_data_ybhy" />
+                <SeparatorMenuItem />
+              <MenuItem mnemonicParsing="false" text="%menu_data_ybzf" />
+              <MenuItem mnemonicParsing="false" text="%menu_data_tyzhch" />
+                <SeparatorMenuItem />
+              <MenuItem mnemonicParsing="false" text="%menu_data_dbdz" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="%menu_option">
+            <items>
+                <RadioMenuItem selected="true" text="%menu_option_zbms">
+                     <toggleGroup>
+                        <ToggleGroup fx:id="mode" />
+                     </toggleGroup></RadioMenuItem>
+                <RadioMenuItem text="%menu_option_lyms" toggleGroup="$mode" />
+                <RadioMenuItem text="%menu_option_zxms" toggleGroup="$mode" />
+                <SeparatorMenuItem />
+                <MenuItem mnemonicParsing="false" text="%menu_option_zbtybh" />
+                <MenuItem mnemonicParsing="false" text="%menu_option_cbtybh" />
+                <MenuItem mnemonicParsing="false" text="%menu_option_jbtybh" />
+                <MenuItem mnemonicParsing="false" text="%menu_option_httybh" />
+
+            </items>
+          </Menu>
+            <Menu mnemonicParsing="false" text="%menu_yudang">
+                <items>
+                    <MenuItem mnemonicParsing="false" text="%menu_archives_shrxxb" />
+                    <MenuItem mnemonicParsing="false" text="%menu_archives_dcys" />
+                    <MenuItem mnemonicParsing="false" text="%menu_archives_cjydwy" />
+                </items>
+            </Menu>
+            <Menu mnemonicParsing="false" text="%menu_system">
+                <items>
+                    <MenuItem mnemonicParsing="false" text="%menu_system_fydczb" />
+                    <MenuItem mnemonicParsing="false" text="%menu_system_chdczb" />
+                    <MenuItem mnemonicParsing="false" text="%menu_system_jzdczb" />
+                    <MenuItem mnemonicParsing="false" text="%menu_system_hydczb" />
+                    <SeparatorMenuItem />
+                    <MenuItem mnemonicParsing="false" text="%menu_system_zgyydm" />
+                    <MenuItem mnemonicParsing="false" text="%menu_system_yyybzf" />
+                    <SeparatorMenuItem />
+                    <MenuItem mnemonicParsing="false" text="%menu_system_cdmlyhdz" />
+                    <MenuItem mnemonicParsing="false" text="%menu_system_mmyz" />
+                    <SeparatorMenuItem />
+                    <MenuItem accelerator="CTRL+W" mnemonicParsing="false" text="%menu_system_gb" />
+                    <MenuItem accelerator="CTRL+Q" mnemonicParsing="false" text="%menu_system_tc" />
+
+
+                </items>
+            </Menu>
+            <Menu accelerator="ALT+H" mnemonicParsing="false" text="%menu_help">
+                <items>
+                    <MenuItem fx:id="tutorial" mnemonicParsing="false" onAction="#onTutorialClick" text="%menu_help_sfjc" />
+                    <MenuItem fx:id="net" mnemonicParsing="false" onAction="#onNetClick" text="%menu_help_yyzylmw" />
+                    <MenuItem id="about" mnemonicParsing="false" onAction="#onAboutClick" text="%menu_help_gysf" />
+                </items>
+            </Menu>
+
+        </menus>
+      </MenuBar>
+            <Label fx:id="changeLanguage" onMouseClicked="#onChangeLanguageClick" text="English">
+                <StackPane.margin>
+                    <Insets right="16">
+                    </Insets>
+                </StackPane.margin>
+            </Label>
+        </StackPane>
+   </top>
+   <center>
+      <TabPane fx:id="contentPane" prefHeight="209.0" prefWidth="526.0" BorderPane.alignment="CENTER" />
+   </center>
+</BorderPane>
