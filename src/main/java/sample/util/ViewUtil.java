@@ -127,10 +127,7 @@ public class ViewUtil {
         primaryStage.show();
 
 
-
-
-
-        return loader.getController();
+        return controller;
 
     }
 }
