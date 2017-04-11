@@ -1,9 +1,15 @@
 package sample.controller;
 
+import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.dao.DaoManager;
+import com.j256.ormlite.jdbc.JdbcConnectionSource;
+import com.j256.ormlite.support.ConnectionSource;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.web.WebView;
+import sample.entity.County;
+import sample.util.Constant;
 import sample.util.ViewUtil;
 import sample.util.WidgetUtil;
 
@@ -11,6 +17,7 @@ import javax.swing.text.View;
 import java.io.*;
 import java.lang.reflect.Array;
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Locale;
@@ -83,6 +90,21 @@ public class MainController extends BaseController{
         ViewUtil.getInstance().openMainView();
     }
 
+    public void onFYDCZBClick() {
+        BaseController controller = null;
+        try {
+            controller = ViewUtil.getInstance().openDbTableView();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        controller.close();
+
+        Tab tab = WidgetUtil.createNewTab("方言调查字表", controller.getmParent());
+
+        WidgetUtil.addTabToTabPane(contentPane, tab);
+        WidgetUtil.selectTab(tab);
+    }
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         super.initialize(location,resources);
@@ -90,5 +112,21 @@ public class MainController extends BaseController{
         System.out.println(Arrays.toString(resources.keySet().toArray()));
 
         changeLanguage.setText(ViewUtil.currentLanguage);
+
+
+        String path = Constant.ROOT_FILE_DIR + "/test.db";
+        try {
+            ConnectionSource connectionSource = new JdbcConnectionSource("jdbc:sqlite:" + path);
+            Dao<County, String> accountDao =
+                    DaoManager.createDao(connectionSource, County.class);
+
+            County account2 = accountDao.queryForEq("code", "110000").get(0);
+            System.out.println("Account: " + account2.name);
+            connectionSource.close();
+
+            changeLanguage.setText(account2.name);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -32,6 +32,16 @@ public class BaseController implements Initializable {
         System.out.println("onStop");
     }
 
+    public void show() {
+        if (mStage != null)
+            mStage.show();
+    }
+
+    public void close() {
+        if (mStage != null)
+            mStage.close();
+    }
+
     public Stage getmStage() {
         return mStage;
     }
@@ -55,6 +65,7 @@ public class BaseController implements Initializable {
     /**
      * 在传递完数据preData后回调用这个函数
      */
-    public void prepareInit(){};
+    public void prepareInit() {
+    }
 
 }

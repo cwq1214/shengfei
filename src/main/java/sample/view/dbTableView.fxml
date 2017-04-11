@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane stylesheets="@css/dbTableView.css" xmlns="http://javafx.com/javafx/8.0.112"
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.controller.DbTableController">
+
+    <top>
+        <FlowPane minWidth="50.0" BorderPane.alignment="CENTER">
+            <BorderPane.margin>
+                <Insets>
+                    <bottom>32</bottom>
+                </Insets>
+            </BorderPane.margin>
+            <HBox alignment="CENTER" style="-fx-background-color: white">
+                <FlowPane.margin>
+                    <Insets>
+                        <right>16</right>
+                    </Insets>
+                </FlowPane.margin>
+
+                <ImageView fitHeight="16.0" fitWidth="16.0" rotate="180">
+                    <image>
+                        <Image url="@../resource/img/media-next.png"/>
+                    </image>
+                </ImageView>
+                <ImageView fitHeight="16.0" fitWidth="16.0" rotate="180">
+                    <image>
+                        <Image url="@../resource/img/media-play.png"/>
+                    </image>
+                </ImageView>
+
+                <TextField prefWidth="50.0"/>
+
+                <Label style="-fx-text-fill: black" text="/3123"/>
+
+
+                <ImageView fitHeight="16.0" fitWidth="16.0">
+                    <image>
+                        <Image url="@../resource/img/media-play.png"/>
+                    </image>
+                </ImageView>
+
+                <ImageView fitHeight="16.0" fitWidth="16.0">
+                    <image>
+                        <Image url="@../resource/img/media-next.png"/>
+                    </image>
+                </ImageView>
+
+            </HBox>
+
+            <Button text="新添">
+                <graphic>
+                    <ImageView>
+                        <image>
+                            <Image url="@../resource/img/新添.png">
+                            </Image>
+                        </image>
+                    </ImageView>
+                </graphic>
+            </Button>
+
+            <Button text="修改">
+                <graphic>
+                    <ImageView>
+                        <image>
+                            <Image url="@../resource/img/编辑.png">
+                            </Image>
+                        </image>
+                    </ImageView>
+                </graphic>
+            </Button>
+
+            <Button text="删除">
+                <graphic>
+                    <ImageView>
+                        <image>
+                            <Image url="@../resource/img/删除.png">
+                            </Image>
+                        </image>
+                    </ImageView>
+                </graphic>
+            </Button>
+
+
+            <Button text="查找">
+                <graphic>
+                    <ImageView>
+                        <image>
+                            <Image url="@../resource/img/查找.png">
+                            </Image>
+                        </image>
+                    </ImageView>
+                </graphic>
+            </Button>
+
+            <Button text="替换">
+                <graphic>
+                    <ImageView>
+                        <image>
+                            <Image url="@../resource/img/替换.png">
+                            </Image>
+                        </image>
+                    </ImageView>
+                </graphic>
+            </Button>
+
+
+            <Button text="图像">
+                <graphic>
+                    <ImageView>
+                        <image>
+                            <Image url="@../resource/img/导入图像.gif">
+                            </Image>
+                        </image>
+                    </ImageView>
+                </graphic>
+            </Button>
+
+            <Button text="视频">
+                <graphic>
+                    <ImageView>
+                        <image>
+                            <Image url="@../resource/img/视频.png">
+                            </Image>
+                        </image>
+                    </ImageView>
+                </graphic>
+            </Button>
+
+            <Button text="保存">
+                <graphic>
+                    <ImageView>
+                        <image>
+                            <Image url="@../resource/img/确定.png">
+                            </Image>
+                        </image>
+                    </ImageView>
+                </graphic>
+            </Button>
+
+
+            <Button text="导入">
+                <graphic>
+                    <ImageView>
+                        <image>
+                            <Image url="@../resource/img/倒入.gif">
+                            </Image>
+                        </image>
+                    </ImageView>
+                </graphic>
+            </Button>
+
+            <Button text="导出">
+                <graphic>
+                    <ImageView>
+                        <image>
+                            <Image url="@../resource/img/倒出.gif">
+                            </Image>
+                        </image>
+                    </ImageView>
+                </graphic>
+            </Button>
+
+            <Button text="刷新">
+                <graphic>
+                    <ImageView>
+                        <image>
+                            <Image url="@../resource/img/刷新.png">
+                            </Image>
+                        </image>
+                    </ImageView>
+                </graphic>
+            </Button>
+
+        </FlowPane>
+    </top>
+
+    <center>
+        <AnchorPane styleClass="rectBorder">
+            <Label alignment="CENTER" style="-fx-text-fill: red;-fx-padding: 8px;-fx-font-size: 18px" text="汉语方言调查字表"
+                   AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0"/>
+            <TableView AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0"
+                       AnchorPane.topAnchor="40">
+            </TableView>
+        </AnchorPane>
+
+    </center>
+
+    <right>
+        <SplitPane dividerPositions="0.6" orientation="VERTICAL" styleClass="rectBorder,rightBox">
+            <VBox spacing="10">
+
+                <HBox>
+                    <Label text="编码 "/>
+                    <TextField disable="true" editable="false" text="A01G0C1A1"/>
+                </HBox>
+
+                <HBox>
+                    <Label text="单字 "/>
+                    <TextField disable="true" editable="false" text="多"/>
+                </HBox>
+
+                <HBox>
+                    <Label text="分级 "/>
+                    <TextField disable="true" editable="false" text="G2"/>
+                </HBox>
+
+                <HBox>
+                    <Label text="拼音 "/>
+                    <TextField disable="true" editable="false" text="A01G0C1A1"/>
+                </HBox>
+
+                <HBox>
+                    <Label text="英语 "/>
+                    <TextArea disable="true" prefWidth="NaN" styleClass="input" text="A01G0C1A1" wrapText="true"/>
+                </HBox>
+
+                <HBox>
+                    <Label text="音域 "/>
+                    <TextField disable="true" editable="false" text="A01G0C1A1"/>
+                </HBox>
+
+                <HBox>
+                    <Label text="注释 "/>
+                    <TextArea disable="true" prefWidth="NaN" styleClass="input" text="A01G0C1A1" wrapText="true"/>
+                </HBox>
+
+                <HBox alignment="CENTER" spacing="8">
+                    <Button text="确定"/>
+                    <Button text="取消"/>
+                </HBox>
+
+            </VBox>
+            <TabPane prefHeight="100.0" prefWidth="193.0">
+                <VBox.margin>
+                    <Insets>
+                        <bottom>0</bottom>
+                    </Insets>
+                </VBox.margin>
+                <Tab text="图像">
+                    <Pane/>
+                </Tab>
+                <Tab text="视频">
+                    <Pane/>
+
+                </Tab>
+            </TabPane>
+        </SplitPane>
+    </right>
+</BorderPane>

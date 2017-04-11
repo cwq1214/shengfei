@@ -1,0 +1,23 @@
+HBox > Label {
+    -fx-text-fill: blue;
+}
+
+.rectBorder {
+    -fx-start-margin: 6px;
+    -fx-end-margin: 6px;
+    -fx-border-color: #EAEAEA;
+    -fx-border-radius: 4px;
+}
+
+VBox > HBox {
+    -fx-alignment: center;
+}
+
+.rightBox {
+    -fx-padding: 16px;
+}
+
+.input {
+    -fx-pref-width: 167px;
+    -fx-pref-height: 27px;
+}

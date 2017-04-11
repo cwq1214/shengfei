@@ -19,8 +19,5 @@
         <module name="shengfei" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel target="1.8">
-      <module name="shengfei" target="1.5" />
-    </bytecodeTargetLevel>
   </component>
 </project>

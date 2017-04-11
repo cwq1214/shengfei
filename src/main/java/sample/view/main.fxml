@@ -70,19 +70,22 @@
             </Menu>
             <Menu mnemonicParsing="false" text="%menu_system">
                 <items>
-                    <MenuItem mnemonicParsing="false" text="%menu_system_fydczb" />
-                    <MenuItem mnemonicParsing="false" text="%menu_system_chdczb" />
-                    <MenuItem mnemonicParsing="false" text="%menu_system_jzdczb" />
-                    <MenuItem mnemonicParsing="false" text="%menu_system_hydczb" />
+                    <MenuItem mnemonicParsing="false" text="%menu_system_fydczb" fx:id="menu_system_fydczb"
+                              onAction="#onFYDCZBClick"/>
+                    <MenuItem mnemonicParsing="false" text="%menu_system_chdczb" fx:id="menu_system_chdczb"/>
+                    <MenuItem mnemonicParsing="false" text="%menu_system_jzdczb" fx:id="menu_system_jzdczb"/>
+                    <MenuItem mnemonicParsing="false" text="%menu_system_hydczb" fx:id="menu_system_hydczb"/>
                     <SeparatorMenuItem />
-                    <MenuItem mnemonicParsing="false" text="%menu_system_zgyydm" />
-                    <MenuItem mnemonicParsing="false" text="%menu_system_yyybzf" />
+                    <MenuItem mnemonicParsing="false" text="%menu_system_zgyydm" fx:id="menu_system_zgyydm"/>
+                    <MenuItem mnemonicParsing="false" text="%menu_system_yyybzf" fx:id="menu_system_yyybzf"/>
                     <SeparatorMenuItem />
-                    <MenuItem mnemonicParsing="false" text="%menu_system_cdmlyhdz" />
-                    <MenuItem mnemonicParsing="false" text="%menu_system_mmyz" />
+                    <MenuItem mnemonicParsing="false" text="%menu_system_cdmlyhdz" fx:id="menu_system_cdmlyhdz"/>
+                    <MenuItem mnemonicParsing="false" text="%menu_system_mmyz" fx:id="menu_system_mmyz"/>
                     <SeparatorMenuItem />
-                    <MenuItem accelerator="CTRL+W" mnemonicParsing="false" text="%menu_system_gb" />
-                    <MenuItem accelerator="CTRL+Q" mnemonicParsing="false" text="%menu_system_tc" />
+                    <MenuItem accelerator="CTRL+W" mnemonicParsing="false" text="%menu_system_gb"
+                              fx:id="menu_system_gb"/>
+                    <MenuItem accelerator="CTRL+Q" mnemonicParsing="false" text="%menu_system_tc"
+                              fx:id="menu_system_tc"/>
 
 
                 </items>

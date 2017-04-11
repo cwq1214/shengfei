@@ -1,5 +1,6 @@
 package sample.util;
 
+import com.sun.xml.internal.rngom.parse.host.Base;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -77,10 +78,16 @@ public class ViewUtil {
 
     }
 
-    public void openAboutDialog() throws IOException {
-         showView("view/about.fxml","关于",-1,-1);
+    public BaseController openAboutDialog() throws IOException {
+        return (BaseController) showView("view/about.fxml", "关于", -1, -1);
 
     }
+
+    public BaseController openDbTableView() throws IOException {
+        return (BaseController) showView("view/dbTableView.fxml", "表", 800, 600);
+
+    }
+
 
     private Object showView(String resourcePath) throws IOException {
         return showView(resourcePath,"");
@@ -93,7 +100,7 @@ public class ViewUtil {
         if (mLocale!=null){
             locale = mLocale;
         }else {
-            locale = Locale.getDefault();
+            locale = Locale.SIMPLIFIED_CHINESE;
         }
         ResourceBundle bundle = ResourceBundle.getBundle("i18n",locale);
         FXMLLoader loader = new FXMLLoader(Main.class.getResource(resourcePath),bundle);
@@ -104,22 +111,25 @@ public class ViewUtil {
 
         Stage primaryStage = new Stage();
 
-        primaryStage.setOnShowing(new EventHandler<WindowEvent>() {
-            public void handle(WindowEvent event) {
-                controller.onCreatedView();
-            }
-        });
-
-        primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-            public void handle(WindowEvent event) {
-                controller.onStop();
-            }
-        });
-
-        primaryStage.setTitle(title);
         Scene scene = new Scene(root, width, height);
-        controller.setmParent(root);
-        controller.setmStage(primaryStage);
+
+        if (controller != null) {
+            primaryStage.setOnShowing(new EventHandler<WindowEvent>() {
+                public void handle(WindowEvent event) {
+                    controller.onCreatedView();
+                }
+            });
+
+            primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+                public void handle(WindowEvent event) {
+                    controller.onStop();
+                }
+            });
+
+            primaryStage.setTitle(title);
+            controller.setmParent(root);
+            controller.setmStage(primaryStage);
+        }
         primaryStage.getIcons().add(new Image(
                 Main.class.getResourceAsStream("/sample/resource/img/shengfei.png")));
 
@@ -128,6 +138,5 @@ public class ViewUtil {
 
 
         return controller;
-
     }
 }
