@@ -1,6 +1,5 @@
 package sample.util;
 
-import com.sun.xml.internal.rngom.parse.host.Base;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
