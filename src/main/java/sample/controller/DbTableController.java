@@ -1,15 +1,26 @@
 package sample.controller;
 
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.util.Callback;
+import javafx.util.converter.IntegerStringConverter;
 import org.w3c.dom.NodeList;
+import sample.entity.CodeBase;
+import sample.util.DbHelper;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Observable;
 
 
@@ -132,6 +143,8 @@ public class DbTableController extends BaseController {
     Tab tab_video;
 
 
+    private ObservableList<CodeBaseItem> tableData;
+
     public void setType(int type) {
         this.type = type;
         if (type == 0) {
@@ -168,6 +181,16 @@ public class DbTableController extends BaseController {
         }
     }
 
+    private ObservableList<CodeBaseItem> list2Obserlist(List<CodeBase> dataList){
+        List<CodeBaseItem> datas = new ArrayList<CodeBaseItem>();
+
+        for (CodeBase cb: dataList) {
+            datas.add(new CodeBaseItem(cb.code,cb.codeType,cb.content,cb.rank,cb.yun,cb.IPA,cb.english,cb.note,cb.mwfy));
+        }
+
+        return FXCollections.observableList(datas);
+    }
+
     private void initHanYuFangYanZiBiao() {
         btn_add.setVisible(true);
         btn_modify.setVisible(true);
@@ -194,6 +217,62 @@ public class DbTableController extends BaseController {
         tabPane.setVisible(true);
 
         removeUnVisibleChild(rightBox);
+
+        tableData = list2Obserlist(DbHelper.getInstance().searchCodeBaseWithCode(0));
+
+        TableColumn<CodeBaseItem,String> codeCol = new TableColumn<>("编码");
+        TableColumn<CodeBaseItem,Integer> codeTypeCol = new TableColumn<>("类型");
+        TableColumn<CodeBaseItem,String> contentCol = new TableColumn<>("内容");
+        TableColumn<CodeBaseItem,String> rankCol = new TableColumn<>("等级");
+        TableColumn<CodeBaseItem,String> yunCol = new TableColumn<CodeBaseItem, String>("声韵");
+        TableColumn<CodeBaseItem,String> IPACol = new TableColumn<CodeBaseItem, String>("IPA");
+        TableColumn<CodeBaseItem,String> englishCol = new TableColumn<CodeBaseItem, String>("英文");
+        TableColumn<CodeBaseItem,String> noteCol = new TableColumn<CodeBaseItem, String>("备注");
+        TableColumn<CodeBaseItem,String> mwfyCol = new TableColumn<CodeBaseItem, String>("明文方言");
+
+        codeCol.setMinWidth(100);
+        codeCol.setCellFactory(TextFieldTableCell.<CodeBaseItem>forTableColumn());
+        codeCol.setCellValueFactory(new PropertyValueFactory<>("code"));
+
+        codeTypeCol.setMinWidth(100);
+        codeTypeCol.setCellFactory(new Callback<TableColumn<CodeBaseItem, Integer>, TableCell<CodeBaseItem,Integer>>() {
+                                       public TableCell<CodeBaseItem, Integer> call(TableColumn<CodeBaseItem, Integer> param) {
+                                           TextFieldTableCell<CodeBaseItem, Integer> cell = new TextFieldTableCell<>(new IntegerStringConverter());
+                                           return cell;
+                                       }
+                                   });
+        codeTypeCol.setCellValueFactory(new PropertyValueFactory<>("codeType"));
+
+        contentCol.setMinWidth(100);
+        contentCol.setCellFactory(TextFieldTableCell.<CodeBaseItem>forTableColumn());
+        contentCol.setCellValueFactory(new PropertyValueFactory<CodeBaseItem, String>("content"));
+
+        rankCol.setMinWidth(100);
+        rankCol.setCellFactory(TextFieldTableCell.<CodeBaseItem>forTableColumn());
+        rankCol.setCellValueFactory(new PropertyValueFactory<CodeBaseItem, String>("rank"));
+
+        yunCol.setMinWidth(100);
+        yunCol.setCellFactory(TextFieldTableCell.<CodeBaseItem>forTableColumn());
+        yunCol.setCellValueFactory(new PropertyValueFactory<CodeBaseItem, String>("yun"));
+
+        IPACol.setMinWidth(100);
+        IPACol.setCellFactory(TextFieldTableCell.<CodeBaseItem>forTableColumn());
+        IPACol.setCellValueFactory(new PropertyValueFactory<CodeBaseItem, String>("IPA"));
+
+        englishCol.setMinWidth(100);
+        englishCol.setCellFactory(TextFieldTableCell.<CodeBaseItem>forTableColumn());
+        englishCol.setCellValueFactory(new PropertyValueFactory<CodeBaseItem, String>("english"));
+
+        noteCol.setMinWidth(100);
+        noteCol.setCellFactory(TextFieldTableCell.<CodeBaseItem>forTableColumn());
+        noteCol.setCellValueFactory(new PropertyValueFactory<CodeBaseItem, String>("note"));
+
+        mwfyCol.setMinWidth(100);
+        mwfyCol.setCellFactory(TextFieldTableCell.<CodeBaseItem>forTableColumn());
+        mwfyCol.setCellValueFactory(new PropertyValueFactory<CodeBaseItem, String>("mwfy"));
+
+        tableView.setItems(tableData);
+        tableView.getColumns().addAll(codeCol,codeTypeCol,contentCol,rankCol,yunCol,IPACol,englishCol,noteCol,mwfyCol);
     }
 
     private void initCiHui() {
@@ -265,4 +344,104 @@ public class DbTableController extends BaseController {
     }
 
 
+
+
+
+
+    public static class CodeBaseItem{
+        private final SimpleStringProperty code;
+        private final SimpleIntegerProperty codeType;
+        private final SimpleStringProperty content;
+        private final SimpleStringProperty rank;
+        private final SimpleStringProperty yun;
+        private final SimpleStringProperty IPA;
+        private final SimpleStringProperty english;
+        private final SimpleStringProperty note;
+        private final SimpleStringProperty mwfy;
+
+        private CodeBaseItem(String code, Integer codeType, String content, String rank, String yun, String IPA, String english, String note, String mwfy) {
+            this.code = new SimpleStringProperty(code);
+            this.codeType = new SimpleIntegerProperty(codeType);
+            this.content = new SimpleStringProperty(content);
+            this.rank = new SimpleStringProperty(rank);
+            this.yun = new SimpleStringProperty(yun);
+            this.IPA = new SimpleStringProperty(IPA);
+            this.english = new SimpleStringProperty(english);
+            this.note = new SimpleStringProperty(note);
+            this.mwfy = new SimpleStringProperty(mwfy);
+        }
+
+        public String getCode() {
+            return code.get();
+        }
+
+        public void setCode(String code) {
+            this.code.set(code);
+        }
+
+        public int getCodeType() {
+            return codeType.get();
+        }
+
+        public void setCodeType(int codeType) {
+            this.codeType.set(codeType);
+        }
+
+        public String getContent() {
+            return content.get();
+        }
+
+        public void setContent(String content) {
+            this.content.set(content);
+        }
+
+        public String getRank() {
+            return rank.get();
+        }
+
+        public void setRank(String rank) {
+            this.rank.set(rank);
+        }
+
+        public String getYun() {
+            return yun.get();
+        }
+
+        public void setYun(String yun) {
+            this.yun.set(yun);
+        }
+
+        public String getIPA() {
+            return IPA.get();
+        }
+
+        public void setIPA(String IPA) {
+            this.IPA.set(IPA);
+        }
+
+        public String getEnglish() {
+            return english.get();
+        }
+
+        public void setEnglish(String english) {
+            this.english.set(english);
+        }
+
+        public String getNote() {
+            return note.get();
+        }
+
+        public void setNote(String note) {
+            this.note.set(note);
+        }
+
+        public String getMwfy() {
+            return mwfy.get();
+        }
+
+        public void setMwfy(String mwfy) {
+            this.mwfy.set(mwfy);
+        }
+    }
 }
+
