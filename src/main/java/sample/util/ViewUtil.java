@@ -12,6 +12,7 @@ import javafx.stage.WindowEvent;
 import sample.Main;
 import sample.controller.AboutController;
 import sample.controller.BaseController;
+import sample.controller.DbTableController;
 import sample.controller.MainController;
 
 import java.io.IOException;
@@ -49,7 +50,7 @@ public class ViewUtil {
     }
 
     public void openMainView() throws Exception {
-        showView("view/main.fxml","首页",800,600);
+        showView("view/main.fxml", "首页", 800, 600, true);
     }
 
     public void showView (String resourcePath,String title,double width,double height,Object preData){
@@ -78,23 +79,75 @@ public class ViewUtil {
     }
 
     public BaseController openAboutDialog() throws IOException {
-        return (BaseController) showView("view/about.fxml", "关于", -1, -1);
+        return (BaseController) showView("view/about.fxml", "关于", -1, -1, true);
 
     }
 
-    public BaseController openDbTableView() throws IOException {
-        return (BaseController) showView("view/dbTableView.fxml", "表", 800, 600);
+    public BaseController openHYFYDCZBTable() {
+        DbTableController controller = null;
+        try {
+            controller = (DbTableController) showView("view/dbTableView.fxml", "表", 800, 600, false);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return controller;
+    }
+
+    public BaseController openCHDCBTable() {
+        DbTableController controller = null;
+        try {
+            controller = (DbTableController) showView("view/dbTableView.fxml", "表", 800, 600, false);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return controller;
+    }
+
+    public BaseController openYFLJRCYJDCB() {
+        DbTableController controller = null;
+        try {
+            controller = (DbTableController) showView("view/dbTableView.fxml", "表", 800, 600, false);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return controller;
+    }
+
+    public BaseController openHYZTBTable() {
+        DbTableController controller = null;
+        try {
+            controller = (DbTableController) showView("view/dbTableView.fxml", "表", 800, 600, false);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return controller;
+    }
+
+    public BaseController openYYZFDMBTable() {
+        DbTableController controller = null;
+        try {
+            controller = (DbTableController) showView("view/dbTableView.fxml", "表", 800, 600, false);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return controller;
+    }
+
+    private BaseController openDbTableView() throws IOException {
+        return (BaseController) showView("view/dbTableView.fxml", "表", 800, 600, true);
 
     }
+
 
 
     private Object showView(String resourcePath) throws IOException {
         return showView(resourcePath,"");
     }
     private Object showView(String resourcePath,String title) throws IOException {
-        return showView(resourcePath,title,-1,-1);
+        return showView(resourcePath, title, -1, -1, true);
     }
-    private Object showView(String resourcePath,String title,double width ,double height) throws IOException {
+
+    private Object showView(String resourcePath, String title, double width, double height, boolean open) throws IOException {
         Locale locale;
         if (mLocale!=null){
             locale = mLocale;
@@ -133,7 +186,8 @@ public class ViewUtil {
                 Main.class.getResourceAsStream("/sample/resource/img/shengfei.png")));
 
         primaryStage.setScene(scene);
-        primaryStage.show();
+        if (open)
+            primaryStage.show();
 
 
         return controller;

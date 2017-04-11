@@ -35,29 +35,29 @@
                     </Insets>
                 </FlowPane.margin>
 
-                <ImageView fitHeight="16.0" fitWidth="16.0" rotate="180">
+                <ImageView fitHeight="16.0" fitWidth="16.0" rotate="180" fx:id="btn_beforePage">
                     <image>
                         <Image url="@../resource/img/media-next.png"/>
                     </image>
                 </ImageView>
-                <ImageView fitHeight="16.0" fitWidth="16.0" rotate="180">
+                <ImageView fitHeight="16.0" fitWidth="16.0" rotate="180" fx:id="btn_beforeLine">
                     <image>
                         <Image url="@../resource/img/media-play.png"/>
                     </image>
                 </ImageView>
 
-                <TextField prefWidth="50.0"/>
+                <TextField prefWidth="50.0" style="-fx-font-size: 13px;" text="13" fx:id="input_number"/>
 
-                <Label style="-fx-text-fill: black" text="/3123"/>
+                <Label style="-fx-text-fill: black" text="/3123" fx:id="label_maxNumber"/>
 
 
-                <ImageView fitHeight="16.0" fitWidth="16.0">
+                <ImageView fitHeight="16.0" fitWidth="16.0" fx:id="btn_nextLine">
                     <image>
                         <Image url="@../resource/img/media-play.png"/>
                     </image>
                 </ImageView>
 
-                <ImageView fitHeight="16.0" fitWidth="16.0">
+                <ImageView fitHeight="16.0" fitWidth="16.0" fx:id="btn_nextPage">
                     <image>
                         <Image url="@../resource/img/media-next.png"/>
                     </image>
@@ -65,7 +65,7 @@
 
             </HBox>
 
-            <Button text="新添">
+            <Button fx:id="btn_add" text="新添" visible="false">
                 <graphic>
                     <ImageView>
                         <image>
@@ -76,7 +76,7 @@
                 </graphic>
             </Button>
 
-            <Button text="修改">
+            <Button fx:id="btn_modify" text="修改" visible="false">
                 <graphic>
                     <ImageView>
                         <image>
@@ -87,7 +87,7 @@
                 </graphic>
             </Button>
 
-            <Button text="删除">
+            <Button fx:id="btn_del" text="删除" visible="false">
                 <graphic>
                     <ImageView>
                         <image>
@@ -99,7 +99,7 @@
             </Button>
 
 
-            <Button text="查找">
+            <Button fx:id="btn_search" text="查找" visible="false">
                 <graphic>
                     <ImageView>
                         <image>
@@ -110,7 +110,7 @@
                 </graphic>
             </Button>
 
-            <Button text="替换">
+            <Button fx:id="btn_replace" text="替换" visible="false">
                 <graphic>
                     <ImageView>
                         <image>
@@ -122,7 +122,7 @@
             </Button>
 
 
-            <Button text="图像">
+            <Button fx:id="btn_image" text="图像" visible="false">
                 <graphic>
                     <ImageView>
                         <image>
@@ -133,7 +133,7 @@
                 </graphic>
             </Button>
 
-            <Button text="视频">
+            <Button fx:id="btn_video" text="视频" visible="false">
                 <graphic>
                     <ImageView>
                         <image>
@@ -144,7 +144,7 @@
                 </graphic>
             </Button>
 
-            <Button text="保存">
+            <Button fx:id="btn_save" text="保存" visible="false">
                 <graphic>
                     <ImageView>
                         <image>
@@ -156,7 +156,7 @@
             </Button>
 
 
-            <Button text="导入">
+            <Button fx:id="btn_import" text="导入" visible="false">
                 <graphic>
                     <ImageView>
                         <image>
@@ -167,7 +167,7 @@
                 </graphic>
             </Button>
 
-            <Button text="导出">
+            <Button fx:id="btn_export" text="导出" visible="false">
                 <graphic>
                     <ImageView>
                         <image>
@@ -178,7 +178,7 @@
                 </graphic>
             </Button>
 
-            <Button text="刷新">
+            <Button fx:id="btn_refresh" text="刷新" visible="false">
                 <graphic>
                     <ImageView>
                         <image>
@@ -194,10 +194,11 @@
 
     <center>
         <AnchorPane styleClass="rectBorder">
-            <Label alignment="CENTER" style="-fx-text-fill: red;-fx-padding: 8px;-fx-font-size: 18px" text="汉语方言调查字表"
+            <Label fx:id="label_tableName" alignment="CENTER"
+                   style="-fx-text-fill: red;-fx-padding: 8px;-fx-font-size: 18px" text="汉语方言调查字表"
                    AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0"/>
-            <TableView AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0"
-                       AnchorPane.topAnchor="40">
+            <TableView fx:id="tableView" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0"
+                       AnchorPane.rightAnchor="0" AnchorPane.topAnchor="40">
             </TableView>
         </AnchorPane>
 
@@ -205,60 +206,85 @@
 
     <right>
         <SplitPane dividerPositions="0.6" orientation="VERTICAL" styleClass="rectBorder,rightBox">
-            <VBox spacing="10">
-
-                <HBox>
-                    <Label text="编码 "/>
-                    <TextField disable="true" editable="false" text="A01G0C1A1"/>
+            <VBox id="rowAttr" spacing="10" style="-fx-padding: 8px 0;-fx-alignment: top-right">
+                <HBox fx:id="box_code" visible="false">
+                    <Label styleClass="inputLabel" text="编码 "/>
+                    <TextField fx:id="input_code" disable="true" editable="false" text="A01G0C1A1"/>
                 </HBox>
 
-                <HBox>
-                    <Label text="单字 "/>
-                    <TextField disable="true" editable="false" text="多"/>
+                <HBox fx:id="box_index" visible="false">
+                    <Label styleClass="inputLabel" text="序号 "/>
+                    <TextField fx:id="input_index" text="A01G0C1A1"/>
                 </HBox>
 
-                <HBox>
-                    <Label text="分级 "/>
-                    <TextField disable="true" editable="false" text="G2"/>
+                <HBox fx:id="box_name" visible="false">
+                    <Label styleClass="inputLabel" text="名称 "/>
+                    <TextField fx:id="input_name" text="A01G0C1A1"/>
                 </HBox>
 
-                <HBox>
-                    <Label text="拼音 "/>
-                    <TextField disable="true" editable="false" text="A01G0C1A1"/>
+                <VBox fx:id="box_distribution" visible="false">
+                    <Label styleClass="inputLabel" text="主要分布地"/>
+                    <TextArea fx:id="input_distribution" styleClass="input,long" text="A01G0C1A1"/>
+                </VBox>
+
+                <HBox fx:id="box_singleWord" visible="false">
+                    <Label styleClass="inputLabel" text="单字 "/>
+                    <TextField fx:id="input_singleWord" styleClass="input,big" text="多" prefHeight="NaN"/>
                 </HBox>
 
-                <HBox>
-                    <Label text="英语 "/>
-                    <TextArea disable="true" prefWidth="NaN" styleClass="input" text="A01G0C1A1" wrapText="true"/>
+                <HBox fx:id="box_entry" visible="false">
+                    <Label styleClass="inputLabel" text="词条 "/>
+                    <TextArea fx:id="input_entry" styleClass="input,big" text="多"/>
                 </HBox>
 
-                <HBox>
-                    <Label text="音域 "/>
-                    <TextField disable="true" editable="false" text="A01G0C1A1"/>
+                <HBox fx:id="box_level" visible="false">
+                    <Label styleClass="inputLabel" text="分级 "/>
+                    <TextField fx:id="input_level" text="G2"/>
                 </HBox>
 
-                <HBox>
-                    <Label text="注释 "/>
-                    <TextArea disable="true" prefWidth="NaN" styleClass="input" text="A01G0C1A1" wrapText="true"/>
+                <HBox fx:id="box_alphabet" visible="false">
+                    <Label styleClass="inputLabel" text="拼音 "/>
+                    <TextField fx:id="input_alphabet" text="A01G0C1A1"/>
+                </HBox>
+
+                <HBox fx:id="box_english" visible="false">
+                    <Label styleClass="inputLabel" text="英语 "/>
+                    <TextArea fx:id="input_english" prefWidth="NaN" styleClass="input" text="A01G0C1A1"
+                              wrapText="true"/>
+                </HBox>
+
+                <HBox fx:id="box_voiceRange" visible="false">
+                    <Label styleClass="inputLabel" text="音域 "/>
+                    <TextField fx:id="input_voiceRange" text="A01G0C1A1"/>
+                </HBox>
+
+                <HBox fx:id="box_notes" visible="false">
+                    <Label styleClass="inputLabel" text="注释 "/>
+                    <TextArea fx:id="input_notes" prefWidth="NaN" styleClass="input" text="A01G0C1A1" wrapText="true"/>
+                </HBox>
+
+                <HBox fx:id="box_chart" visible="false">
+                    <Label text="相应字符"/>
+                    <TextField fx:id="input_chart" styleClass="input"/>
                 </HBox>
 
                 <HBox alignment="CENTER" spacing="8">
-                    <Button text="确定"/>
-                    <Button text="取消"/>
+                    <Button fx:id="done" styleClass="modifyBtn" text="确定" visible="false"/>
+                    <Button fx:id="cancel" styleClass="modifyBtn" text="取消" visible="false"/>
+                    <Button fx:id="close" styleClass="modifyBtn" text="关闭" visible="false"/>
                 </HBox>
 
             </VBox>
-            <TabPane prefHeight="100.0" prefWidth="193.0">
+            <TabPane prefHeight="100.0" prefWidth="193.0" fx:id="tabPane" visible="false">
                 <VBox.margin>
                     <Insets>
                         <bottom>0</bottom>
                     </Insets>
                 </VBox.margin>
-                <Tab text="图像">
-                    <Pane/>
+                <Tab text="图像" fx:id="tab_image">
+
                 </Tab>
-                <Tab text="视频">
-                    <Pane/>
+                <Tab text="视频" fx:id="tab_video">
 
                 </Tab>
             </TabPane>

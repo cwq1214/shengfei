@@ -1,4 +1,4 @@
-HBox > Label {
+.inputLabel {
     -fx-text-fill: blue;
 }
 
@@ -8,16 +8,38 @@ HBox > Label {
     -fx-border-color: #EAEAEA;
     -fx-border-radius: 4px;
 }
-
-VBox > HBox {
-    -fx-alignment: center;
-}
-
 .rightBox {
     -fx-padding: 16px;
 }
 
 .input {
+    -fx-min-width: 167px;
     -fx-pref-width: 167px;
     -fx-pref-height: 27px;
+    -fx-min-height: 27px;
+    -fx-wrap-text: true;
+}
+
+.input.big {
+
+    -fx-font-size: 20px;
+    -fx-font-style: oblique;
+    -fx-pref-height: 334px;
+}
+
+.input.long {
+    -fx-min-height: 200px;
+
+}
+
+.split-pane > .split-pane-divider {
+    -fx-padding: 0 0 0 0;
+}
+
+.modifyBtn {
+    -fx-text-fill: blue;
+}
+
+#rowAttr > HBox {
+    -fx-alignment: center-right;
 }
