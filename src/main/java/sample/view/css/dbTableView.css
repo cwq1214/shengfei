@@ -14,10 +14,12 @@
 
 .input {
     -fx-min-width: 167px;
+    -fx-max-width: 167px;
     -fx-pref-width: 167px;
     -fx-pref-height: 27px;
     -fx-min-height: 27px;
     -fx-wrap-text: true;
+    -fx-alignment: top-left;
 }
 
 .input.big {
@@ -27,6 +29,9 @@
     -fx-pref-height: 334px;
 }
 
+.input.middle {
+    -fx-min-height: 50px;
+}
 .input.long {
     -fx-min-height: 200px;
 
@@ -41,5 +46,5 @@
 }
 
 #rowAttr > HBox {
-    -fx-alignment: center-right;
+    -fx-alignment: top-right;
 }

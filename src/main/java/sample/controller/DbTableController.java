@@ -8,8 +8,9 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import org.w3c.dom.NodeList;
 
-import javax.xml.soap.Text;
+import java.util.Observable;
 
 
 /**
@@ -262,5 +263,6 @@ public class DbTableController extends BaseController {
         btn_export.setVisible(true);
         btn_refresh.setVisible(true);
     }
+
 
 }

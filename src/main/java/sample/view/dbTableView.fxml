@@ -209,17 +209,17 @@
             <VBox id="rowAttr" spacing="10" style="-fx-padding: 8px 0;-fx-alignment: top-right" fx:id="rightBox">
                 <HBox fx:id="box_code" visible="false">
                     <Label styleClass="inputLabel" text="编码 "/>
-                    <TextField fx:id="input_code" disable="true" editable="false" text="A01G0C1A1"/>
+                    <TextField styleClass="input" fx:id="input_code" disable="true" editable="false" text="A01G0C1A1"/>
                 </HBox>
 
                 <HBox fx:id="box_index" visible="false">
                     <Label styleClass="inputLabel" text="序号 "/>
-                    <TextField fx:id="input_index" text="A01G0C1A1"/>
+                    <TextField fx:id="input_index" text="A01G0C1A1" styleClass="input"/>
                 </HBox>
 
                 <HBox fx:id="box_name" visible="false">
                     <Label styleClass="inputLabel" text="名称 "/>
-                    <TextField fx:id="input_name" text="A01G0C1A1"/>
+                    <TextField fx:id="input_name" text="A01G0C1A1" styleClass="input,middle"/>
                 </HBox>
 
                 <VBox fx:id="box_distribution" visible="false">
@@ -229,7 +229,7 @@
 
                 <HBox fx:id="box_singleWord" visible="false">
                     <Label styleClass="inputLabel" text="单字 "/>
-                    <TextField fx:id="input_singleWord" styleClass="input,big" text="多" prefHeight="NaN"/>
+                    <TextField fx:id="input_singleWord" styleClass="input,middle" text="多"/>
                 </HBox>
 
                 <HBox fx:id="box_entry" visible="false">
@@ -239,7 +239,7 @@
 
                 <HBox fx:id="box_level" visible="false">
                     <Label styleClass="inputLabel" text="分级 "/>
-                    <TextField fx:id="input_level" text="G2"/>
+                    <TextField fx:id="input_level" text="G2" styleClass="input"/>
                 </HBox>
 
                 <HBox fx:id="box_alphabet" visible="false">
@@ -249,18 +249,18 @@
 
                 <HBox fx:id="box_english" visible="false">
                     <Label styleClass="inputLabel" text="英语 "/>
-                    <TextArea fx:id="input_english" prefWidth="NaN" styleClass="input" text="A01G0C1A1"
+                    <TextArea fx:id="input_english" styleClass="input" text="A01G0C1A1"
                               wrapText="true"/>
                 </HBox>
 
                 <HBox fx:id="box_voiceRange" visible="false">
                     <Label styleClass="inputLabel" text="音域 "/>
-                    <TextField fx:id="input_voiceRange" text="A01G0C1A1"/>
+                    <TextField styleClass="input" fx:id="input_voiceRange" text="A01G0C1A1"/>
                 </HBox>
 
                 <HBox fx:id="box_notes" visible="false">
                     <Label styleClass="inputLabel" text="注释 "/>
-                    <TextArea fx:id="input_notes" prefWidth="NaN" styleClass="input" text="A01G0C1A1" wrapText="true"/>
+                    <TextArea fx:id="input_notes" styleClass="input,middle" text="A01G0C1A1" wrapText="true"/>
                 </HBox>
 
                 <HBox fx:id="box_chart" visible="false">
