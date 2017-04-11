@@ -7,6 +7,8 @@ import com.j256.ormlite.support.ConnectionSource;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.web.WebView;
+import javafx.stage.Modality;
+import javafx.stage.Window;
 import sample.entity.CodeCounty;
 import sample.util.Constant;
 import sample.util.ViewUtil;
@@ -48,6 +50,20 @@ public class MainController extends BaseController{
     }
 
     @FXML
+    public void onEnglish2ChineseClick(){
+        try {
+            Runtime.getRuntime().exec("cmd /c start "+Constant.ROOT_FILE_DIR+"/English.xls");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    public void onPasswordAnalyClick(){
+//        BaseController ctl = ((BaseController) ViewUtil.getInstance().showView("view/passwordAnaly.fxml", "密码验证", -1, -1, null, false));
+    }
+
+    @FXML
     public void onNetClick(){
         String netDoMain = "http://www.clarc.cn/";
         WebView webView = new WebView();
@@ -63,7 +79,7 @@ public class MainController extends BaseController{
     @FXML
     public void onAboutClick() throws IOException {
 //        ViewUtil.getInstance().openAboutDialog();
-        ViewUtil.getInstance().showView("view/about.fxml","帮助",-1,-1,null);
+//        ViewUtil.getInstance().showView("view/about.fxml","帮助",-1,-1,null,true);
     }
 
     @FXML
@@ -87,12 +103,7 @@ public class MainController extends BaseController{
 
     public void onFYDCZBClick() {
         BaseController controller = null;
-        try {
-            controller = ViewUtil.getInstance().openDbTableView();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        controller.close();
+        controller = ViewUtil.getInstance().openHYFYDCZBTable();
 
         Tab tab = WidgetUtil.createNewTab("方言调查字表", controller.getmParent());
 
@@ -107,21 +118,5 @@ public class MainController extends BaseController{
         System.out.println(Arrays.toString(resources.keySet().toArray()));
 
         changeLanguage.setText(ViewUtil.currentLanguage);
-
-
-//        String path = Constant.ROOT_FILE_DIR + "/test.db";
-//        try {
-//            ConnectionSource connectionSource = new JdbcConnectionSource("jdbc:sqlite:" + path);
-//            Dao<CodeCounty, String> accountDao =
-//                    DaoManager.createDao(connectionSource, CodeCounty.class);
-//
-//            CodeCounty account2 = accountDao.queryForEq("code", "110000").get(0);
-//            System.out.println("Account: " + account2.name);
-//            connectionSource.close();
-//
-//            changeLanguage.setText(account2.name);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
     }
 }

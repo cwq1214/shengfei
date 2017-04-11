@@ -46,9 +46,9 @@
                     </image>
                 </ImageView>
 
-                <TextField prefWidth="50.0" style="-fx-font-size: 13px;" text="13" fx:id="input_number"/>
+                <TextField prefWidth="50.0" style="-fx-font-size: 13px;" text="0" fx:id="input_number"/>
 
-                <Label style="-fx-text-fill: black" text="/3123" fx:id="label_maxNumber"/>
+                <Label style="-fx-text-fill: black" text="/0" fx:id="label_maxNumber"/>
 
 
                 <ImageView fitHeight="16.0" fitWidth="16.0" fx:id="btn_nextLine">
@@ -206,7 +206,7 @@
 
     <right>
         <SplitPane dividerPositions="0.6" orientation="VERTICAL" styleClass="rectBorder,rightBox">
-            <VBox id="rowAttr" spacing="10" style="-fx-padding: 8px 0;-fx-alignment: top-right">
+            <VBox id="rowAttr" spacing="10" style="-fx-padding: 8px 0;-fx-alignment: top-right" fx:id="rightBox">
                 <HBox fx:id="box_code" visible="false">
                     <Label styleClass="inputLabel" text="编码 "/>
                     <TextField fx:id="input_code" disable="true" editable="false" text="A01G0C1A1"/>

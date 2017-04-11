@@ -79,8 +79,8 @@
                     <MenuItem mnemonicParsing="false" text="%menu_system_zgyydm" fx:id="menu_system_zgyydm"/>
                     <MenuItem mnemonicParsing="false" text="%menu_system_yyybzf" fx:id="menu_system_yyybzf"/>
                     <SeparatorMenuItem />
-                    <MenuItem mnemonicParsing="false" text="%menu_system_cdmlyhdz" fx:id="menu_system_cdmlyhdz"/>
-                    <MenuItem mnemonicParsing="false" text="%menu_system_mmyz" fx:id="menu_system_mmyz"/>
+                    <MenuItem mnemonicParsing="false" text="%menu_system_cdmlyhdz" fx:id="menu_system_cdmlyhdz" onAction="#onEnglish2ChineseClick"/>
+                    <MenuItem mnemonicParsing="false" text="%menu_system_mmyz" fx:id="menu_system_mmyz" onAction="#onPasswordAnalyClick"/>
                     <SeparatorMenuItem />
                     <MenuItem accelerator="CTRL+W" mnemonicParsing="false" text="%menu_system_gb"
                               fx:id="menu_system_gb"/>

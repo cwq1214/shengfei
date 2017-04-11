@@ -7,6 +7,7 @@ import javafx.fxml.JavaFXBuilderFactory;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import sample.Main;
@@ -53,7 +54,19 @@ public class ViewUtil {
         showView("view/main.fxml", "首页", 800, 600, true);
     }
 
-    public void showView (String resourcePath,String title,double width,double height,Object preData){
+
+    /**
+     *
+     * @param resourcePath
+     * @param title
+     * @param width
+     * @param height
+     * @param preData controller传值使用
+     * @param stageResize stage是否可以拉伸
+     * @param modality stage是否模态
+     * @return
+     */
+    private Object showView (String resourcePath,String title,double width,double height,Object preData,boolean stageResize,Modality modality){
         try {
             Stage stage = new Stage();
 
@@ -61,6 +74,7 @@ public class ViewUtil {
             Parent root = loader.load();
             Scene scene = new Scene(root,width,height);
             BaseController controller = loader.getController();
+            System.out.println(controller.toString());
             controller.setmParent(root);
             controller.setmStage(stage);
             if (preData != null){
@@ -70,12 +84,14 @@ public class ViewUtil {
 
             stage.setTitle(title);
             stage.setScene(scene);
+            stage.setResizable(stageResize);
+            stage.initModality(Modality.APPLICATION_MODAL);
             stage.show();
-
+            return controller;
         } catch (IOException e) {
             e.printStackTrace();
         }
-
+        return null;
     }
 
     public BaseController openAboutDialog() throws IOException {
@@ -87,6 +103,7 @@ public class ViewUtil {
         DbTableController controller = null;
         try {
             controller = (DbTableController) showView("view/dbTableView.fxml", "表", 800, 600, false);
+            controller.setType(DbTableController.TYPE_HAN_YU_FANG_YAN_ZI_BIAO);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -97,6 +114,7 @@ public class ViewUtil {
         DbTableController controller = null;
         try {
             controller = (DbTableController) showView("view/dbTableView.fxml", "表", 800, 600, false);
+            controller.setType(DbTableController.TYPE_CI_HUI);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -107,6 +125,7 @@ public class ViewUtil {
         DbTableController controller = null;
         try {
             controller = (DbTableController) showView("view/dbTableView.fxml", "表", 800, 600, false);
+            controller.setType(DbTableController.TYPE_RI_CHANG_YONG_JU);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -117,6 +136,7 @@ public class ViewUtil {
         DbTableController controller = null;
         try {
             controller = (DbTableController) showView("view/dbTableView.fxml", "表", 800, 600, false);
+            controller.setType(DbTableController.TYPE_HUA_YU_ZHU_TI);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -127,6 +147,18 @@ public class ViewUtil {
         DbTableController controller = null;
         try {
             controller = (DbTableController) showView("view/dbTableView.fxml", "表", 800, 600, false);
+            controller.setType(DbTableController.TYPE_HAN_YU_FANG_YAN);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return controller;
+    }
+
+    public BaseController openYYYBTable() {
+        DbTableController controller = null;
+        try {
+            controller = (DbTableController) showView("view/dbTableView.fxml", "表", 800, 600, false);
+            controller.setType(DbTableController.TYPE_YUAN_YIN_ZI_FU);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -164,7 +196,6 @@ public class ViewUtil {
         Stage primaryStage = new Stage();
 
         Scene scene = new Scene(root, width, height);
-
         if (controller != null) {
             primaryStage.setOnShowing(new EventHandler<WindowEvent>() {
                 public void handle(WindowEvent event) {

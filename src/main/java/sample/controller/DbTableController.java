@@ -1,9 +1,12 @@
 package sample.controller;
 
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 
 import javax.xml.soap.Text;
@@ -86,6 +89,10 @@ public class DbTableController extends BaseController {
     HBox box_entry;
     @FXML
     TextArea input_entry;
+
+    @FXML
+    VBox rightBox;
+
     @FXML
     HBox box_level;
     @FXML
@@ -124,9 +131,8 @@ public class DbTableController extends BaseController {
     Tab tab_video;
 
 
-    @Override
-    public void onCreatedView() {
-        super.onCreatedView();
+    public void setType(int type) {
+        this.type = type;
         if (type == 0) {
             throw new RuntimeException("type can not be 0");
         }
@@ -152,28 +158,109 @@ public class DbTableController extends BaseController {
         }
     }
 
-    private void initHanYuFangYanZiBiao() {
+    private void removeUnVisibleChild(Pane parent){
+        ObservableList<Node> children = parent.getChildren();
+        for(int i=children.size()-1;i>=0;i--){
+            if (!children.get(i).isVisible()){
+                children.remove(i);
+            }
+        }
+    }
 
+    private void initHanYuFangYanZiBiao() {
+        btn_add.setVisible(true);
+        btn_modify.setVisible(true);
+        btn_del.setVisible(true);
+        btn_search.setVisible(true);
+        btn_replace.setVisible(true);
+        btn_image.setVisible(true);
+        btn_video.setVisible(true);
+        btn_save.setVisible(true);
+        btn_import.setVisible(true);
+        btn_export.setVisible(true);
+        btn_refresh.setVisible(true);
+
+        box_code.setVisible(true);
+        box_singleWord.setVisible(true);
+        box_level.setVisible(true);
+        box_alphabet.setVisible(true);
+        box_english.setVisible(true);
+        box_voiceRange.setVisible(true);
+        box_notes.setVisible(true);
+        done.setVisible(true);
+        cancel.setVisible(true);
+
+        tabPane.setVisible(true);
+
+        removeUnVisibleChild(rightBox);
     }
 
     private void initCiHui() {
-
+        btn_add.setVisible(true);
+        btn_modify.setVisible(true);
+        btn_del.setVisible(true);
+        btn_search.setVisible(true);
+        btn_replace.setVisible(true);
+        btn_image.setVisible(true);
+        btn_video.setVisible(true);
+        btn_save.setVisible(true);
+        btn_import.setVisible(true);
+        btn_export.setVisible(true);
+        btn_refresh.setVisible(true);
     }
 
     private void initRiChangYongJu() {
-
+        btn_add.setVisible(true);
+        btn_modify.setVisible(true);
+        btn_del.setVisible(true);
+        btn_search.setVisible(true);
+        btn_replace.setVisible(true);
+        btn_image.setVisible(true);
+        btn_video.setVisible(true);
+        btn_save.setVisible(true);
+        btn_import.setVisible(true);
+        btn_export.setVisible(true);
+        btn_refresh.setVisible(true);
     }
 
     private void initHuaYuZhuTi() {
-
+        btn_add.setVisible(true);
+        btn_modify.setVisible(true);
+        btn_del.setVisible(true);
+        btn_search.setVisible(true);
+        btn_replace.setVisible(true);
+        btn_image.setVisible(true);
+        btn_video.setVisible(true);
+        btn_save.setVisible(true);
+        btn_import.setVisible(true);
+        btn_export.setVisible(true);
+        btn_refresh.setVisible(true);
     }
 
     private void initHanYuFangYan() {
-
+        btn_add.setVisible(true);
+        btn_modify.setVisible(true);
+        btn_del.setVisible(true);
+        btn_search.setVisible(true);
+        btn_replace.setVisible(true);
+        btn_image.setVisible(true);
+        btn_video.setVisible(true);
+        btn_save.setVisible(true);
+        btn_import.setVisible(true);
+        btn_export.setVisible(true);
+        btn_refresh.setVisible(true);
     }
 
     private void initYuanYinZiFu() {
-
+        btn_add.setVisible(true);
+        btn_modify.setVisible(true);
+        btn_del.setVisible(true);
+        btn_search.setVisible(true);
+        btn_replace.setVisible(true);
+        btn_save.setVisible(true);
+        btn_import.setVisible(true);
+        btn_export.setVisible(true);
+        btn_refresh.setVisible(true);
     }
 
 }
