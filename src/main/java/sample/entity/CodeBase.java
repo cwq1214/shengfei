@@ -19,6 +19,8 @@ public class CodeBase {
     @DatabaseField
     public String yun;
     @DatabaseField
+    public String spell;
+    @DatabaseField
     public String IPA;
     @DatabaseField
     public String english;

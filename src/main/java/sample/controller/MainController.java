@@ -111,6 +111,56 @@ public class MainController extends BaseController{
         WidgetUtil.selectTab(tab);
     }
 
+    public void onCHDCBClick(){
+        BaseController controller = null;
+        controller = ViewUtil.getInstance().openCHDCBTable();
+
+        Tab tab = WidgetUtil.createNewTab("词汇调查表", controller.getmParent());
+
+        WidgetUtil.addTabToTabPane(contentPane, tab);
+        WidgetUtil.selectTab(tab);
+    }
+
+    public void onJZDCBClick(){
+        BaseController controller = null;
+        controller = ViewUtil.getInstance().openYFLJRCYJDCB();
+
+        Tab tab = WidgetUtil.createNewTab("句子调查表", controller.getmParent());
+
+        WidgetUtil.addTabToTabPane(contentPane, tab);
+        WidgetUtil.selectTab(tab);
+    }
+
+    public void onHYDCBClick(){
+        BaseController controller = null;
+        controller = ViewUtil.getInstance().openHYZTBTable();
+
+        Tab tab = WidgetUtil.createNewTab("话语调查表", controller.getmParent());
+
+        WidgetUtil.addTabToTabPane(contentPane, tab);
+        WidgetUtil.selectTab(tab);
+    }
+
+    public void onZGYYDMClick(){
+        BaseController controller = null;
+        controller = ViewUtil.getInstance().openYYZFDMBTable();
+
+        Tab tab = WidgetUtil.createNewTab("中国语言代码", controller.getmParent());
+
+        WidgetUtil.addTabToTabPane(contentPane, tab);
+        WidgetUtil.selectTab(tab);
+    }
+
+    public void onYYYBZFClick(){
+        BaseController controller = null;
+        controller = ViewUtil.getInstance().openYYYBTable();
+
+        Tab tab = WidgetUtil.createNewTab("元音音标字符", controller.getmParent());
+
+        WidgetUtil.addTabToTabPane(contentPane, tab);
+        WidgetUtil.selectTab(tab);
+    }
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         super.initialize(location,resources);

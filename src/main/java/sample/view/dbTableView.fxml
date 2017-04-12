@@ -244,7 +244,7 @@
 
                 <HBox fx:id="box_alphabet" visible="false">
                     <Label styleClass="inputLabel" text="拼音 "/>
-                    <TextField fx:id="input_alphabet" text="A01G0C1A1"/>
+                    <TextField fx:id="input_alphabet" text="A01G0C1A1" styleClass="input"/>
                 </HBox>
 
                 <HBox fx:id="box_english" visible="false">

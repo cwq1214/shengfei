@@ -72,12 +72,12 @@
                 <items>
                     <MenuItem mnemonicParsing="false" text="%menu_system_fydczb" fx:id="menu_system_fydczb"
                               onAction="#onFYDCZBClick"/>
-                    <MenuItem mnemonicParsing="false" text="%menu_system_chdczb" fx:id="menu_system_chdczb"/>
-                    <MenuItem mnemonicParsing="false" text="%menu_system_jzdczb" fx:id="menu_system_jzdczb"/>
-                    <MenuItem mnemonicParsing="false" text="%menu_system_hydczb" fx:id="menu_system_hydczb"/>
+                    <MenuItem mnemonicParsing="false" text="%menu_system_chdczb" fx:id="menu_system_chdczb" onAction="#onCHDCBClick"/>
+                    <MenuItem mnemonicParsing="false" text="%menu_system_jzdczb" fx:id="menu_system_jzdczb" onAction="#onJZDCBClick"/>
+                    <MenuItem mnemonicParsing="false" text="%menu_system_hydczb" fx:id="menu_system_hydczb" onAction="#onHYDCBClick"/>
                     <SeparatorMenuItem />
-                    <MenuItem mnemonicParsing="false" text="%menu_system_zgyydm" fx:id="menu_system_zgyydm"/>
-                    <MenuItem mnemonicParsing="false" text="%menu_system_yyybzf" fx:id="menu_system_yyybzf"/>
+                    <MenuItem mnemonicParsing="false" text="%menu_system_zgyydm" fx:id="menu_system_zgyydm" onAction="#onZGYYDMClick"/>
+                    <MenuItem mnemonicParsing="false" text="%menu_system_yyybzf" fx:id="menu_system_yyybzf" onAction="#onYYYBZFClick"/>
                     <SeparatorMenuItem />
                     <MenuItem mnemonicParsing="false" text="%menu_system_cdmlyhdz" fx:id="menu_system_cdmlyhdz" onAction="#onEnglish2ChineseClick"/>
                     <MenuItem mnemonicParsing="false" text="%menu_system_mmyz" fx:id="menu_system_mmyz" onAction="#onPasswordAnalyClick"/>

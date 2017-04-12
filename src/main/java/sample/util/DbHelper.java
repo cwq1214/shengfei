@@ -8,6 +8,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import sample.entity.CodeBase;
 import sample.entity.CodeCounty;
+import sample.entity.CodeLangHanYu;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -57,13 +58,33 @@ public class DbHelper {
     }
 
 
-
+    /**
+     * 通过codeType查询codeBase表数据
+     * @param codeType 数据表里面的codeType字段的值
+     * @return
+     */
     public List<CodeBase> searchCodeBaseWithCode(int codeType){
         List<CodeBase> resultList = new ArrayList<CodeBase>();
 
         try {
             Dao<CodeBase,String> codeBaseDao = DaoManager.createDao(connectionSource,CodeBase.class);
             resultList = codeBaseDao.queryForEq("codeType",codeType);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return resultList;
+    }
+
+    /**
+     * 查询hanyu表所有数据
+     * @return
+     */
+    public List<CodeLangHanYu> searchAllCodeLangHanYu(){
+        List<CodeLangHanYu> resultList = new ArrayList<CodeLangHanYu>();
+
+        try {
+            Dao<CodeLangHanYu,String> hanyuDao = DaoManager.createDao(connectionSource,CodeLangHanYu.class);
+            resultList = hanyuDao.queryForAll();
         } catch (SQLException e) {
             e.printStackTrace();
         }
