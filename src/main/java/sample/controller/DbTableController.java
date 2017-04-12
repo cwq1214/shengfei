@@ -1,15 +1,24 @@
 package sample.controller;
 
+import javafx.beans.InvalidationListener;
+import javafx.beans.Observable;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.InputMethodEvent;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.input.TouchEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -18,9 +27,11 @@ import sample.entity.CodeBase;
 import sample.entity.CodeIPABase;
 import sample.entity.CodeLangHanYu;
 import sample.util.DbHelper;
+import sample.util.TextUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 
 /**
@@ -149,6 +160,10 @@ public class DbTableController extends BaseController {
     private ObservableList<CodeLangHanYu> chineseLangDatas;
     private ObservableList<CodeIPABase> codeIPADatas;
 
+    Object selItem;
+    boolean autoScroll = false;
+    boolean tableViewScroll = false;
+
     public void setType(int type) {
         this.type = type;
         if (type == 0) {
@@ -175,7 +190,19 @@ public class DbTableController extends BaseController {
                 break;
         }
 
+
+        sameInit();
+    }
+
+    private void sameInit() {
         removeUnVisibleChild(rightBtnBox);
+        setTableEvent();
+        setInputNumberEvent();
+        if (tableView.getItems() != null) {
+            int allSize = tableView.getItems().size();
+            label_maxNumber.setText(allSize + "");
+        }
+
     }
 
     private void removeUnVisibleChild(Pane parent){
@@ -474,5 +501,219 @@ public class DbTableController extends BaseController {
         tableView.setItems(codeIPADatas);
         tableView.getColumns().addAll(codeCol,contentCol);
     }
+
+    private void setInputNumberEvent() {
+
+        input_number.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                if (TextUtil.isEmpty(newValue)) {
+                    return;
+                }
+                Pattern pattern = Pattern.compile("\\d+");
+                String text = input_number.getText();
+                if (!pattern.matcher(text).matches()) {
+                    return;
+                }
+                System.out.println("input_number " + text);
+                tableView.getSelectionModel().select(Integer.valueOf(text));
+//                tableView.getSelectionModel().select(Integer.valueOf(newValue));
+
+            }
+        });
+        input_number.setOnKeyPressed(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent event) {
+                tableViewScroll = false;
+            }
+        });
+    }
+
+    private void setTableEvent() {
+        tableView.setOnTouchPressed(new EventHandler<TouchEvent>() {
+            @Override
+            public void handle(TouchEvent event) {
+                System.out.println("setOnTouchPressed");
+            }
+        });
+
+        tableView.onKeyPressedProperty().addListener(new ChangeListener<EventHandler<? super KeyEvent>>() {
+            @Override
+            public void changed(ObservableValue<? extends EventHandler<? super KeyEvent>> observable, EventHandler<? super KeyEvent> oldValue, EventHandler<? super KeyEvent> newValue) {
+                System.out.println("ChangeListener");
+            }
+        });
+        tableView.onMousePressedProperty().addListener(new ChangeListener<EventHandler<? super MouseEvent>>() {
+            @Override
+            public void changed(ObservableValue<? extends EventHandler<? super MouseEvent>> observable, EventHandler<? super MouseEvent> oldValue, EventHandler<? super MouseEvent> newValue) {
+                System.out.println("ChangeListener");
+            }
+        });
+        tableView.onTouchPressedProperty().addListener(new ChangeListener<EventHandler<? super TouchEvent>>() {
+            @Override
+            public void changed(ObservableValue<? extends EventHandler<? super TouchEvent>> observable, EventHandler<? super TouchEvent> oldValue, EventHandler<? super TouchEvent> newValue) {
+                System.out.println("ChangeListener");
+            }
+        });
+        tableView.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                System.out.println("tableView setOnMouseClicked");
+                selItem = tableView.getSelectionModel().getSelectedItem();
+                autoScroll = false;
+                tableViewScroll = true;
+            }
+
+        });
+
+        tableView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
+            @Override
+            public void changed(ObservableValue observable, Object oldValue, Object newValue) {
+                if (newValue != null && newValue != oldValue) {
+                    selItem = tableView.getSelectionModel().getSelectedItem();
+                    if (selItem != null) {
+                        showSelItemToEditPane();
+                        if (!tableViewScroll) {
+                            System.out.println("!tableViewScroll");
+                            return;
+                        }
+                        System.out.println("tableViewScroll");
+
+                        int selIndex = tableView.getSelectionModel().getFocusedIndex();
+
+                        if (autoScroll)
+                            tableView.scrollToColumnIndex(selIndex);
+
+
+                        int objIndex = tableView.getItems().indexOf(newValue);
+                        System.out.println(objIndex);
+                        input_number.textProperty().set(objIndex + 1 + "");
+                    }
+                }
+            }
+        });
+    }
+
+    private void showSelItemToEditPane() {
+        if (selItem instanceof CodeBase) {
+            input_code.setText(((CodeBase) selItem).getCode());
+            input_singleWord.setText(((CodeBase) selItem).getContent());
+            input_level.setText(((CodeBase) selItem).getRank());
+            input_alphabet.setText(((CodeBase) selItem).getSpell());
+            input_english.setText(((CodeBase) selItem).getEnglish());
+            input_voiceRange.setText(((CodeBase) selItem).getYun());
+            input_notes.setText(((CodeBase) selItem).getNote());
+        } else if (selItem instanceof CodeLangHanYu) {
+            input_index.setText(((CodeLangHanYu) selItem).getCode());
+            input_name.setText(((CodeLangHanYu) selItem).getName());
+            input_distribution.setText(((CodeLangHanYu) selItem).getRegion());
+        } else if (selItem instanceof CodeIPABase) {
+            input_code.setText(((CodeIPABase) selItem).getCode());
+            input_chart.setText(((CodeIPABase) selItem).getContent());
+        }
+    }
+
+    //右侧编辑框 确定按钮
+    public void onEditPaneDoneClick() {
+        //TODO
+    }
+
+    //右侧编辑框 取消按钮
+    public void onEditPaneCancelClick() {
+        showSelItemToEditPane();
+    }
+
+    //右侧编辑框 关闭按钮
+    public void onEditPaneCloseClick() {
+        //TODO
+    }
+
+    //顶部 上一页按钮
+    public void onTopToolsBeforePageClick() {
+        autoScroll = true;
+        tableViewScroll = true;
+        tableView.getSelectionModel().selectFirst();
+    }
+
+    //顶部 上一行按钮
+    public void onTopToolsBeforeLineClick() {
+        autoScroll = true;
+        tableViewScroll = true;
+        tableView.getSelectionModel().selectPrevious();
+    }
+
+    //顶部 下一页按钮
+    public void onTopToolsNextPageClick() {
+        autoScroll = true;
+        tableViewScroll = true;
+        tableView.getSelectionModel().selectLast();
+    }
+
+    //顶部 下一行按钮
+    public void onTopToolsNextLineClick() {
+        autoScroll = true;
+        tableViewScroll = true;
+        tableView.getSelectionModel().selectNext();
+    }
+
+    //顶部 新添按钮
+    public void onTopToolsAddClick() {
+
+    }
+
+    //顶部 修改按钮
+    public void onTopToolsModifyClick() {
+
+    }
+
+    //顶部 删除按钮
+    public void onTopToolsDelClick() {
+
+    }
+
+    //顶部 查找按钮
+    public void onTopToolsSearchClick() {
+
+    }
+
+    //顶部 替换按钮
+    public void onTopToolsReplaceClick() {
+
+    }
+
+    //顶部 图像按钮
+    public void onTopToolsImageClick() {
+
+    }
+
+    //顶部 视频按钮
+    public void onTopToolsVideoClick() {
+
+    }
+
+    //顶部 保存按钮
+    public void onTopToolsSaveClick() {
+
+    }
+
+    //顶部 导入按钮
+    public void onTopToolsImportClick() {
+
+    }
+
+    //顶部 导出按钮
+    public void onTopToolsExportClick() {
+
+    }
+
+    //顶部 刷新按钮
+    public void onTopToolsRefreshClick() {
+        setType(type);
+    }
+
+
+
+
+
 }
 
