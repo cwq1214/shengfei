@@ -8,6 +8,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import sample.entity.CodeBase;
 import sample.entity.CodeCounty;
+import sample.entity.CodeIPABase;
 import sample.entity.CodeLangHanYu;
 
 import java.io.IOException;
@@ -85,6 +86,18 @@ public class DbHelper {
         try {
             Dao<CodeLangHanYu,String> hanyuDao = DaoManager.createDao(connectionSource,CodeLangHanYu.class);
             resultList = hanyuDao.queryForAll();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return resultList;
+    }
+
+    public List<CodeIPABase> searchAllCodeIPABase(){
+        List<CodeIPABase> resultList = new ArrayList<CodeIPABase>();
+
+        try {
+            Dao<CodeIPABase,String> codeIPADao = DaoManager.createDao(connectionSource,CodeIPABase.class);
+            resultList = codeIPADao.queryForAll();
         } catch (SQLException e) {
             e.printStackTrace();
         }

@@ -60,7 +60,10 @@ public class MainController extends BaseController{
 
     @FXML
     public void onPasswordAnalyClick(){
-//        BaseController ctl = ((BaseController) ViewUtil.getInstance().showView("view/passwordAnaly.fxml", "密码验证", -1, -1, null, false));
+        BaseController ctl = ((BaseController) ViewUtil.getInstance().showView("view/passwordAnaly.fxml", "密码验证", -1, -1,null));
+        ctl.mStage.initModality(Modality.APPLICATION_MODAL);
+        ctl.mStage.setResizable(false);
+        ctl.mStage.show();
     }
 
     @FXML

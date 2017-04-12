@@ -22,7 +22,7 @@
             xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.controller.DbTableController">
 
     <top>
-        <FlowPane minWidth="50.0" BorderPane.alignment="CENTER">
+        <FlowPane minWidth="50.0" BorderPane.alignment="CENTER" fx:id="btnPane">
             <BorderPane.margin>
                 <Insets>
                     <bottom>32</bottom>
@@ -254,7 +254,7 @@
                 </HBox>
 
                 <HBox fx:id="box_voiceRange" visible="false">
-                    <Label styleClass="inputLabel" text="音域 "/>
+                    <Label styleClass="inputLabel" text="音韵 "/>
                     <TextField styleClass="input" fx:id="input_voiceRange" text="A01G0C1A1"/>
                 </HBox>
 

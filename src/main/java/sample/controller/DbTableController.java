@@ -10,10 +10,12 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import sample.entity.CodeBase;
+import sample.entity.CodeIPABase;
 import sample.entity.CodeLangHanYu;
 import sample.util.DbHelper;
 
@@ -139,9 +141,12 @@ public class DbTableController extends BaseController {
     @FXML
     Tab tab_video;
 
+    @FXML
+    FlowPane btnPane;
 
     private ObservableList<CodeBaseItem> codeBaseDatas;
     private ObservableList<ChineseLangItem> chineseLangDatas;
+    private ObservableList<CodeIPAItem> codeIPADatas;
 
     public void setType(int type) {
         this.type = type;
@@ -199,7 +204,19 @@ public class DbTableController extends BaseController {
         return FXCollections.observableList(datas);
     }
 
+    private ObservableList<CodeIPAItem> codeIPAList2Obserlist(List<CodeIPABase> dataList){
+        List<CodeIPAItem> datas = new ArrayList<CodeIPAItem>();
+
+        for (CodeIPABase item: dataList) {
+            datas.add(new CodeIPAItem(item.code,item.content,item.type));
+        }
+
+        return FXCollections.observableList(datas);
+    }
+
     private void initHanYuFangYanZiBiao() {
+        label_tableName.setText("汉语方言调查字表");
+
         btn_add.setVisible(true);
         btn_modify.setVisible(true);
         btn_del.setVisible(true);
@@ -212,6 +229,8 @@ public class DbTableController extends BaseController {
         btn_export.setVisible(true);
         btn_refresh.setVisible(true);
 
+        removeUnVisibleChild(btnPane);
+
         box_code.setVisible(true);
         box_singleWord.setVisible(true);
         box_level.setVisible(true);
@@ -221,7 +240,6 @@ public class DbTableController extends BaseController {
         box_notes.setVisible(true);
         done.setVisible(true);
         cancel.setVisible(true);
-
         tabPane.setVisible(true);
 
         removeUnVisibleChild(rightBox);
@@ -239,35 +257,27 @@ public class DbTableController extends BaseController {
         TableColumn<CodeBaseItem,String> noteCol = new TableColumn<CodeBaseItem, String>("注释");
 //        TableColumn<CodeBaseItem,String> mwfyCol = new TableColumn<CodeBaseItem, String>("明文方言");
 
-        codeCol.setMinWidth(100);
         codeCol.setCellFactory(TextFieldTableCell.<CodeBaseItem>forTableColumn());
         codeCol.setCellValueFactory(new PropertyValueFactory<>("code"));;
 
-        contentCol.setMinWidth(100);
         contentCol.setCellFactory(TextFieldTableCell.<CodeBaseItem>forTableColumn());
         contentCol.setCellValueFactory(new PropertyValueFactory<CodeBaseItem, String>("content"));
 
-        rankCol.setMinWidth(100);
         rankCol.setCellFactory(TextFieldTableCell.<CodeBaseItem>forTableColumn());
         rankCol.setCellValueFactory(new PropertyValueFactory<CodeBaseItem, String>("rank"));
 
-        yunCol.setMinWidth(100);
         yunCol.setCellFactory(TextFieldTableCell.<CodeBaseItem>forTableColumn());
         yunCol.setCellValueFactory(new PropertyValueFactory<CodeBaseItem, String>("yun"));
 
-        spellCol.setMinWidth(100);
         spellCol.setCellFactory(TextFieldTableCell.<CodeBaseItem>forTableColumn());
         spellCol.setCellValueFactory(new PropertyValueFactory<CodeBaseItem,String>("spell"));
 
-        IPACol.setMinWidth(100);
         IPACol.setCellFactory(TextFieldTableCell.<CodeBaseItem>forTableColumn());
         IPACol.setCellValueFactory(new PropertyValueFactory<CodeBaseItem, String>("IPA"));
 
-        englishCol.setMinWidth(100);
         englishCol.setCellFactory(TextFieldTableCell.<CodeBaseItem>forTableColumn());
         englishCol.setCellValueFactory(new PropertyValueFactory<CodeBaseItem, String>("english"));
 
-        noteCol.setMinWidth(100);
         noteCol.setCellFactory(TextFieldTableCell.<CodeBaseItem>forTableColumn());
         noteCol.setCellValueFactory(new PropertyValueFactory<CodeBaseItem, String>("note"));
 
@@ -276,6 +286,8 @@ public class DbTableController extends BaseController {
     }
 
     private void initCiHui() {
+        label_tableName.setText("词汇调查表");
+
         btn_add.setVisible(true);
         btn_modify.setVisible(true);
         btn_del.setVisible(true);
@@ -287,6 +299,21 @@ public class DbTableController extends BaseController {
         btn_import.setVisible(true);
         btn_export.setVisible(true);
         btn_refresh.setVisible(true);
+
+        removeUnVisibleChild(btnPane);
+
+        box_code.setVisible(true);
+        box_singleWord.setVisible(true);
+        box_level.setVisible(true);
+        box_alphabet.setVisible(true);
+        box_english.setVisible(true);
+        box_voiceRange.setVisible(true);
+        box_notes.setVisible(true);
+        done.setVisible(true);
+        cancel.setVisible(true);
+        tabPane.setVisible(true);
+
+        removeUnVisibleChild(rightBox);
 
         codeBaseDatas = codeBaselist2Obserlist(DbHelper.getInstance().searchCodeBaseWithCode(1));
 
@@ -302,35 +329,27 @@ public class DbTableController extends BaseController {
         TableColumn<CodeBaseItem,String> noteCol = new TableColumn<CodeBaseItem, String>("注释");
 //        TableColumn<CodeBaseItem,String> mwfyCol = new TableColumn<CodeBaseItem, String>("明文方言");
 
-        codeCol.setMinWidth(100);
         codeCol.setCellFactory(TextFieldTableCell.<CodeBaseItem>forTableColumn());
         codeCol.setCellValueFactory(new PropertyValueFactory<>("code"));;
 
-        contentCol.setMinWidth(100);
         contentCol.setCellFactory(TextFieldTableCell.<CodeBaseItem>forTableColumn());
         contentCol.setCellValueFactory(new PropertyValueFactory<CodeBaseItem, String>("content"));
 
-        rankCol.setMinWidth(100);
         rankCol.setCellFactory(TextFieldTableCell.<CodeBaseItem>forTableColumn());
         rankCol.setCellValueFactory(new PropertyValueFactory<CodeBaseItem, String>("rank"));
 
-        yunCol.setMinWidth(100);
         yunCol.setCellFactory(TextFieldTableCell.<CodeBaseItem>forTableColumn());
         yunCol.setCellValueFactory(new PropertyValueFactory<CodeBaseItem, String>("yun"));
 
-        spellCol.setMinWidth(100);
         spellCol.setCellFactory(TextFieldTableCell.<CodeBaseItem>forTableColumn());
         spellCol.setCellValueFactory(new PropertyValueFactory<CodeBaseItem, String>("spell"));
 
-        IPACol.setMinWidth(100);
         IPACol.setCellFactory(TextFieldTableCell.<CodeBaseItem>forTableColumn());
         IPACol.setCellValueFactory(new PropertyValueFactory<CodeBaseItem, String>("IPA"));
 
-        englishCol.setMinWidth(100);
         englishCol.setCellFactory(TextFieldTableCell.<CodeBaseItem>forTableColumn());
         englishCol.setCellValueFactory(new PropertyValueFactory<CodeBaseItem, String>("english"));
 
-        noteCol.setMinWidth(100);
         noteCol.setCellFactory(TextFieldTableCell.<CodeBaseItem>forTableColumn());
         noteCol.setCellValueFactory(new PropertyValueFactory<CodeBaseItem, String>("note"));
 
@@ -340,6 +359,8 @@ public class DbTableController extends BaseController {
     }
 
     private void initRiChangYongJu() {
+        label_tableName.setText("语法例句日常用句调查表");
+
         btn_add.setVisible(true);
         btn_modify.setVisible(true);
         btn_del.setVisible(true);
@@ -351,6 +372,18 @@ public class DbTableController extends BaseController {
         btn_import.setVisible(true);
         btn_export.setVisible(true);
         btn_refresh.setVisible(true);
+
+        removeUnVisibleChild(btnPane);
+
+        box_code.setVisible(true);
+        box_level.setVisible(true);
+        box_english.setVisible(true);
+        box_notes.setVisible(true);
+        done.setVisible(true);
+        cancel.setVisible(true);
+        tabPane.setVisible(true);
+
+        removeUnVisibleChild(rightBox);
 
         codeBaseDatas = codeBaselist2Obserlist(DbHelper.getInstance().searchCodeBaseWithCode(2));
 
@@ -366,35 +399,27 @@ public class DbTableController extends BaseController {
         TableColumn<CodeBaseItem,String> noteCol = new TableColumn<CodeBaseItem, String>("注释");
 //        TableColumn<CodeBaseItem,String> mwfyCol = new TableColumn<CodeBaseItem, String>("明文方言");
 
-        codeCol.setMinWidth(100);
         codeCol.setCellFactory(TextFieldTableCell.<CodeBaseItem>forTableColumn());
         codeCol.setCellValueFactory(new PropertyValueFactory<>("code"));;
 
-        contentCol.setMinWidth(100);
         contentCol.setCellFactory(TextFieldTableCell.<CodeBaseItem>forTableColumn());
         contentCol.setCellValueFactory(new PropertyValueFactory<CodeBaseItem, String>("content"));
 
-        rankCol.setMinWidth(100);
         rankCol.setCellFactory(TextFieldTableCell.<CodeBaseItem>forTableColumn());
         rankCol.setCellValueFactory(new PropertyValueFactory<CodeBaseItem, String>("rank"));
 
-        yunCol.setMinWidth(100);
         yunCol.setCellFactory(TextFieldTableCell.<CodeBaseItem>forTableColumn());
         yunCol.setCellValueFactory(new PropertyValueFactory<CodeBaseItem, String>("yun"));
 
-        spellCol.setMinWidth(100);
         spellCol.setCellFactory(TextFieldTableCell.<CodeBaseItem>forTableColumn());
         spellCol.setCellValueFactory(new PropertyValueFactory<CodeBaseItem, String>("spell"));
 
-        IPACol.setMinWidth(100);
         IPACol.setCellFactory(TextFieldTableCell.<CodeBaseItem>forTableColumn());
         IPACol.setCellValueFactory(new PropertyValueFactory<CodeBaseItem, String>("IPA"));
 
-        englishCol.setMinWidth(100);
         englishCol.setCellFactory(TextFieldTableCell.<CodeBaseItem>forTableColumn());
         englishCol.setCellValueFactory(new PropertyValueFactory<CodeBaseItem, String>("english"));
 
-        noteCol.setMinWidth(100);
         noteCol.setCellFactory(TextFieldTableCell.<CodeBaseItem>forTableColumn());
         noteCol.setCellValueFactory(new PropertyValueFactory<CodeBaseItem, String>("note"));
 
@@ -403,6 +428,8 @@ public class DbTableController extends BaseController {
     }
 
     private void initHuaYuZhuTi() {
+        label_tableName.setText("话语主题表");
+
         btn_add.setVisible(true);
         btn_modify.setVisible(true);
         btn_del.setVisible(true);
@@ -414,6 +441,19 @@ public class DbTableController extends BaseController {
         btn_import.setVisible(true);
         btn_export.setVisible(true);
         btn_refresh.setVisible(true);
+
+        removeUnVisibleChild(btnPane);
+
+        box_code.setVisible(true);
+        box_level.setVisible(true);
+        box_english.setVisible(true);
+        box_notes.setVisible(true);
+        done.setVisible(true);
+        cancel.setVisible(true);
+        tabPane.setVisible(true);
+
+        removeUnVisibleChild(rightBox);
+
 
         codeBaseDatas = codeBaselist2Obserlist(DbHelper.getInstance().searchCodeBaseWithCode(3));
 
@@ -429,35 +469,27 @@ public class DbTableController extends BaseController {
         TableColumn<CodeBaseItem,String> noteCol = new TableColumn<CodeBaseItem, String>("注释");
 //        TableColumn<CodeBaseItem,String> mwfyCol = new TableColumn<CodeBaseItem, String>("明文方言");
 
-        codeCol.setMinWidth(100);
         codeCol.setCellFactory(TextFieldTableCell.<CodeBaseItem>forTableColumn());
         codeCol.setCellValueFactory(new PropertyValueFactory<>("code"));;
 
-        contentCol.setMinWidth(100);
         contentCol.setCellFactory(TextFieldTableCell.<CodeBaseItem>forTableColumn());
         contentCol.setCellValueFactory(new PropertyValueFactory<CodeBaseItem, String>("content"));
 
-        rankCol.setMinWidth(100);
         rankCol.setCellFactory(TextFieldTableCell.<CodeBaseItem>forTableColumn());
         rankCol.setCellValueFactory(new PropertyValueFactory<CodeBaseItem, String>("rank"));
 
-        yunCol.setMinWidth(100);
         yunCol.setCellFactory(TextFieldTableCell.<CodeBaseItem>forTableColumn());
         yunCol.setCellValueFactory(new PropertyValueFactory<CodeBaseItem, String>("yun"));
 
-        spellCol.setMinWidth(100);
         spellCol.setCellFactory(TextFieldTableCell.<CodeBaseItem>forTableColumn());
         spellCol.setCellValueFactory(new PropertyValueFactory<CodeBaseItem, String>("spell"));
 
-        IPACol.setMinWidth(100);
         IPACol.setCellFactory(TextFieldTableCell.<CodeBaseItem>forTableColumn());
         IPACol.setCellValueFactory(new PropertyValueFactory<CodeBaseItem, String>("IPA"));
 
-        englishCol.setMinWidth(100);
         englishCol.setCellFactory(TextFieldTableCell.<CodeBaseItem>forTableColumn());
         englishCol.setCellValueFactory(new PropertyValueFactory<CodeBaseItem, String>("english"));
 
-        noteCol.setMinWidth(100);
         noteCol.setCellFactory(TextFieldTableCell.<CodeBaseItem>forTableColumn());
         noteCol.setCellValueFactory(new PropertyValueFactory<CodeBaseItem, String>("note"));
 
@@ -466,6 +498,8 @@ public class DbTableController extends BaseController {
     }
 
     private void initHanYuFangYan() {
+        label_tableName.setText("汉语方言代码");
+
         btn_add.setVisible(true);
         btn_modify.setVisible(true);
         btn_del.setVisible(true);
@@ -478,10 +512,38 @@ public class DbTableController extends BaseController {
         btn_export.setVisible(true);
         btn_refresh.setVisible(true);
 
+        removeUnVisibleChild(btnPane);
+
+        box_index.setVisible(true);
+        box_name.setVisible(true);
+        box_distribution.setVisible(true);
+        done.setVisible(true);
+        cancel.setVisible(true);
+
+        removeUnVisibleChild(rightBox);
+
         chineseLangDatas = chineseLanglist2Obserlist(DbHelper.getInstance().searchAllCodeLangHanYu());
+
+        TableColumn<ChineseLangItem,String> codeCol = new TableColumn<>("序号");
+        TableColumn<ChineseLangItem,String> nameCol = new TableColumn<>("名称");
+        TableColumn<ChineseLangItem,String> regionCol = new TableColumn<>("主要分布地");
+
+        codeCol.setCellFactory(TextFieldTableCell.<ChineseLangItem>forTableColumn());
+        codeCol.setCellValueFactory(new PropertyValueFactory<>("code"));
+
+        nameCol.setCellFactory(TextFieldTableCell.<ChineseLangItem>forTableColumn());
+        nameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
+
+        regionCol.setCellFactory(TextFieldTableCell.<ChineseLangItem>forTableColumn());
+        regionCol.setCellValueFactory(new PropertyValueFactory<>("region"));
+
+        tableView.setItems(chineseLangDatas);
+        tableView.getColumns().addAll(codeCol,nameCol,regionCol);
     }
 
     private void initYuanYinZiFu() {
+        label_tableName.setText("元音字符代码表");
+
         btn_add.setVisible(true);
         btn_modify.setVisible(true);
         btn_del.setVisible(true);
@@ -491,6 +553,28 @@ public class DbTableController extends BaseController {
         btn_import.setVisible(true);
         btn_export.setVisible(true);
         btn_refresh.setVisible(true);
+
+        removeUnVisibleChild(btnPane);
+
+        box_code.setVisible(true);
+        box_chart.setVisible(true);
+        close.setVisible(true);
+
+        removeUnVisibleChild(rightBox);
+
+        codeIPADatas = codeIPAList2Obserlist(DbHelper.getInstance().searchAllCodeIPABase());
+
+        TableColumn<ChineseLangItem,String> codeCol = new TableColumn<>("编码");
+        TableColumn<ChineseLangItem,String> contentCol = new TableColumn<>("元音字符");
+
+        codeCol.setCellFactory(TextFieldTableCell.<ChineseLangItem>forTableColumn());
+        codeCol.setCellValueFactory(new PropertyValueFactory<>("code"));
+
+        contentCol.setCellFactory(TextFieldTableCell.<ChineseLangItem>forTableColumn());
+        contentCol.setCellValueFactory(new PropertyValueFactory<>("content"));
+
+        tableView.setItems(codeIPADatas);
+        tableView.getColumns().addAll(codeCol,contentCol);
     }
 
 
@@ -603,6 +687,9 @@ public class DbTableController extends BaseController {
         }
     }
 
+    /**
+     * 中国语言代码Item
+     */
     public static class ChineseLangItem{
         private final SimpleStringProperty code;
         private final SimpleStringProperty name;
@@ -636,6 +723,42 @@ public class DbTableController extends BaseController {
 
         public void setRegion(String region) {
             this.region.set(region);
+        }
+    }
+
+    public static class CodeIPAItem{
+        private final SimpleStringProperty code;
+        private final SimpleStringProperty content;
+        private final SimpleStringProperty type;
+
+        public CodeIPAItem(String code, String content, String type) {
+            this.code = new SimpleStringProperty(code);
+            this.content = new SimpleStringProperty(content);
+            this.type = new SimpleStringProperty(type);
+        }
+
+        public String getCode() {
+            return code.get();
+        }
+
+        public void setCode(String code) {
+            this.code.set(code);
+        }
+
+        public String getContent() {
+            return content.get();
+        }
+
+        public void setContent(String content) {
+            this.content.set(content);
+        }
+
+        public String getType() {
+            return type.get();
+        }
+
+        public void setType(String type) {
+            this.type.set(type);
         }
     }
 }

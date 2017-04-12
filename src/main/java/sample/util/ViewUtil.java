@@ -62,11 +62,9 @@ public class ViewUtil {
      * @param width
      * @param height
      * @param preData controller传值使用
-     * @param stageResize stage是否可以拉伸
-     * @param modality stage是否模态
      * @return
      */
-    private Object showView (String resourcePath,String title,double width,double height,Object preData,boolean stageResize,Modality modality){
+    public Object showView (String resourcePath,String title,double width,double height,Object preData){
         try {
             Stage stage = new Stage();
 
@@ -84,9 +82,6 @@ public class ViewUtil {
 
             stage.setTitle(title);
             stage.setScene(scene);
-            stage.setResizable(stageResize);
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.show();
             return controller;
         } catch (IOException e) {
             e.printStackTrace();
