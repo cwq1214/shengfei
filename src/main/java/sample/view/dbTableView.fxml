@@ -264,7 +264,7 @@
                 </HBox>
 
                 <HBox fx:id="box_chart" visible="false">
-                    <Label text="相应字符"/>
+                    <Label text="相应字符" styleClass="inputLabel"/>
                     <TextField fx:id="input_chart" styleClass="input"/>
                 </HBox>
 
