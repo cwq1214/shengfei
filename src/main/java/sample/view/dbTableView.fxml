@@ -222,8 +222,8 @@
                     <TextField fx:id="input_name" text="A01G0C1A1" styleClass="input,middle"/>
                 </HBox>
 
-                <VBox fx:id="box_distribution" visible="false">
-                    <Label styleClass="inputLabel" text="主要分布地"/>
+                <VBox fx:id="box_distribution" visible="true" style="-fx-alignment: top-right">
+                    <Label styleClass="inputLabel" text="主要分布地" textAlignment="LEFT" prefWidth="193"/>
                     <TextArea fx:id="input_distribution" styleClass="input,long" text="A01G0C1A1"/>
                 </VBox>
 
@@ -268,7 +268,7 @@
                     <TextField fx:id="input_chart" styleClass="input"/>
                 </HBox>
 
-                <HBox alignment="CENTER" spacing="8">
+                <HBox alignment="CENTER" spacing="8" fx:id="rightBtnBox" style="-fx-alignment: center">
                     <Button fx:id="done" styleClass="modifyBtn" text="确定" visible="false"/>
                     <Button fx:id="cancel" styleClass="modifyBtn" text="取消" visible="false"/>
                     <Button fx:id="close" styleClass="modifyBtn" text="关闭" visible="false"/>
@@ -281,10 +281,10 @@
                         <bottom>0</bottom>
                     </Insets>
                 </VBox.margin>
-                <Tab text="图像" fx:id="tab_image">
+                <Tab text="图像" fx:id="tab_image" closable="false">
 
                 </Tab>
-                <Tab text="视频" fx:id="tab_video">
+                <Tab text="视频" fx:id="tab_video" closable="false">
 
                 </Tab>
             </TabPane>

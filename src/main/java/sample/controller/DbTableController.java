@@ -140,7 +140,8 @@ public class DbTableController extends BaseController {
     Tab tab_image;
     @FXML
     Tab tab_video;
-
+    @FXML
+    HBox rightBtnBox;
     @FXML
     FlowPane btnPane;
 
@@ -173,6 +174,8 @@ public class DbTableController extends BaseController {
                 initYuanYinZiFu();
                 break;
         }
+
+        removeUnVisibleChild(rightBtnBox);
     }
 
     private void removeUnVisibleChild(Pane parent){

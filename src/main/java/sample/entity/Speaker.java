@@ -2,6 +2,7 @@ package sample.entity;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
+import javafx.beans.property.SimpleStringProperty;
 
 /**
  * Created by chenweiqi on 2017/4/11.
