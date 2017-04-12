@@ -144,9 +144,9 @@ public class DbTableController extends BaseController {
     @FXML
     FlowPane btnPane;
 
-    private ObservableList<CodeBaseItem> codeBaseDatas;
-    private ObservableList<ChineseLangItem> chineseLangDatas;
-    private ObservableList<CodeIPAItem> codeIPADatas;
+    private ObservableList<CodeBase> codeBaseDatas;
+    private ObservableList<CodeLangHanYu> chineseLangDatas;
+    private ObservableList<CodeIPABase> codeIPADatas;
 
     public void setType(int type) {
         this.type = type;
@@ -184,36 +184,6 @@ public class DbTableController extends BaseController {
         }
     }
 
-    private ObservableList<CodeBaseItem> codeBaselist2Obserlist(List<CodeBase> dataList){
-        List<CodeBaseItem> datas = new ArrayList<CodeBaseItem>();
-
-        for (CodeBase cb: dataList) {
-            datas.add(new CodeBaseItem(cb.code,cb.codeType,cb.content,cb.rank,cb.yun,cb.spell,cb.IPA,cb.english,cb.note,cb.mwfy));
-        }
-
-        return FXCollections.observableList(datas);
-    }
-
-    private ObservableList<ChineseLangItem> chineseLanglist2Obserlist(List<CodeLangHanYu> dataList){
-        List<ChineseLangItem> datas = new ArrayList<ChineseLangItem>();
-
-        for (CodeLangHanYu item: dataList) {
-            datas.add(new ChineseLangItem(item.code,item.name,item.region));
-        }
-
-        return FXCollections.observableList(datas);
-    }
-
-    private ObservableList<CodeIPAItem> codeIPAList2Obserlist(List<CodeIPABase> dataList){
-        List<CodeIPAItem> datas = new ArrayList<CodeIPAItem>();
-
-        for (CodeIPABase item: dataList) {
-            datas.add(new CodeIPAItem(item.code,item.content,item.type));
-        }
-
-        return FXCollections.observableList(datas);
-    }
-
     private void initHanYuFangYanZiBiao() {
         label_tableName.setText("汉语方言调查字表");
 
@@ -244,42 +214,25 @@ public class DbTableController extends BaseController {
 
         removeUnVisibleChild(rightBox);
 
-        codeBaseDatas = codeBaselist2Obserlist(DbHelper.getInstance().searchCodeBaseWithCode(0));
+        codeBaseDatas = DbHelper.getInstance().searchCodeBaseWithCode(0);
 
-        TableColumn<CodeBaseItem,String> codeCol = new TableColumn<>("编码");
-//        TableColumn<CodeBaseItem,Integer> codeTypeCol = new TableColumn<>("类型");
-        TableColumn<CodeBaseItem,String> contentCol = new TableColumn<>("单字");
-        TableColumn<CodeBaseItem,String> rankCol = new TableColumn<>("分级");
-        TableColumn<CodeBaseItem,String> yunCol = new TableColumn<CodeBaseItem, String>("声韵");
-        TableColumn<CodeBaseItem,String> spellCol = new TableColumn<>("拼音");
-        TableColumn<CodeBaseItem,String> IPACol = new TableColumn<CodeBaseItem, String>("IPA");
-        TableColumn<CodeBaseItem,String> englishCol = new TableColumn<CodeBaseItem, String>("英语");
-        TableColumn<CodeBaseItem,String> noteCol = new TableColumn<CodeBaseItem, String>("注释");
-//        TableColumn<CodeBaseItem,String> mwfyCol = new TableColumn<CodeBaseItem, String>("明文方言");
+        TableColumn<CodeBase,String> codeCol = new TableColumn<>("编码");
+        TableColumn<CodeBase,String> contentCol = new TableColumn<>("单字");
+        TableColumn<CodeBase,String> rankCol = new TableColumn<>("分级");
+        TableColumn<CodeBase,String> yunCol = new TableColumn<>("声韵");
+        TableColumn<CodeBase,String> spellCol = new TableColumn<>("拼音");
+        TableColumn<CodeBase,String> IPACol = new TableColumn<>("IPA");
+        TableColumn<CodeBase,String> englishCol = new TableColumn<>("英语");
+        TableColumn<CodeBase,String> noteCol = new TableColumn<>("注释");
 
-        codeCol.setCellFactory(TextFieldTableCell.<CodeBaseItem>forTableColumn());
-        codeCol.setCellValueFactory(new PropertyValueFactory<>("code"));;
-
-        contentCol.setCellFactory(TextFieldTableCell.<CodeBaseItem>forTableColumn());
-        contentCol.setCellValueFactory(new PropertyValueFactory<CodeBaseItem, String>("content"));
-
-        rankCol.setCellFactory(TextFieldTableCell.<CodeBaseItem>forTableColumn());
-        rankCol.setCellValueFactory(new PropertyValueFactory<CodeBaseItem, String>("rank"));
-
-        yunCol.setCellFactory(TextFieldTableCell.<CodeBaseItem>forTableColumn());
-        yunCol.setCellValueFactory(new PropertyValueFactory<CodeBaseItem, String>("yun"));
-
-        spellCol.setCellFactory(TextFieldTableCell.<CodeBaseItem>forTableColumn());
-        spellCol.setCellValueFactory(new PropertyValueFactory<CodeBaseItem,String>("spell"));
-
-        IPACol.setCellFactory(TextFieldTableCell.<CodeBaseItem>forTableColumn());
-        IPACol.setCellValueFactory(new PropertyValueFactory<CodeBaseItem, String>("IPA"));
-
-        englishCol.setCellFactory(TextFieldTableCell.<CodeBaseItem>forTableColumn());
-        englishCol.setCellValueFactory(new PropertyValueFactory<CodeBaseItem, String>("english"));
-
-        noteCol.setCellFactory(TextFieldTableCell.<CodeBaseItem>forTableColumn());
-        noteCol.setCellValueFactory(new PropertyValueFactory<CodeBaseItem, String>("note"));
+        codeCol.setCellValueFactory(new PropertyValueFactory<>("code"));
+        contentCol.setCellValueFactory(new PropertyValueFactory<>("content"));
+        rankCol.setCellValueFactory(new PropertyValueFactory<>("rank"));
+        yunCol.setCellValueFactory(new PropertyValueFactory<>("yun"));
+        spellCol.setCellValueFactory(new PropertyValueFactory<>("spell"));
+        IPACol.setCellValueFactory(new PropertyValueFactory<>("IPA"));
+        englishCol.setCellValueFactory(new PropertyValueFactory<>("english"));
+        noteCol.setCellValueFactory(new PropertyValueFactory<>("note"));
 
         tableView.setItems(codeBaseDatas);
         tableView.getColumns().addAll(codeCol,contentCol,yunCol,rankCol,spellCol,englishCol,noteCol);
@@ -315,43 +268,26 @@ public class DbTableController extends BaseController {
 
         removeUnVisibleChild(rightBox);
 
-        codeBaseDatas = codeBaselist2Obserlist(DbHelper.getInstance().searchCodeBaseWithCode(1));
+        codeBaseDatas = DbHelper.getInstance().searchCodeBaseWithCode(1);
 
 
-        TableColumn<CodeBaseItem,String> codeCol = new TableColumn<>("编码");
-//        TableColumn<CodeBaseItem,Integer> codeTypeCol = new TableColumn<>("类型");
-        TableColumn<CodeBaseItem,String> contentCol = new TableColumn<>("词条");
-        TableColumn<CodeBaseItem,String> rankCol = new TableColumn<>("分级");
-        TableColumn<CodeBaseItem,String> yunCol = new TableColumn<>("声韵");
-        TableColumn<CodeBaseItem,String> spellCol = new TableColumn<>("拼音");
-        TableColumn<CodeBaseItem,String> IPACol = new TableColumn<CodeBaseItem, String>("IPA");
-        TableColumn<CodeBaseItem,String> englishCol = new TableColumn<CodeBaseItem, String>("英语");
-        TableColumn<CodeBaseItem,String> noteCol = new TableColumn<CodeBaseItem, String>("注释");
-//        TableColumn<CodeBaseItem,String> mwfyCol = new TableColumn<CodeBaseItem, String>("明文方言");
+        TableColumn codeCol = new TableColumn<>("编码");
+        TableColumn contentCol = new TableColumn<>("词条");
+        TableColumn rankCol = new TableColumn<>("分级");
+        TableColumn yunCol = new TableColumn<>("声韵");
+        TableColumn spellCol = new TableColumn<>("拼音");
+        TableColumn IPACol = new TableColumn<>("IPA");
+        TableColumn englishCol = new TableColumn<>("英语");
+        TableColumn noteCol = new TableColumn<>("注释");
 
-        codeCol.setCellFactory(TextFieldTableCell.<CodeBaseItem>forTableColumn());
-        codeCol.setCellValueFactory(new PropertyValueFactory<>("code"));;
-
-        contentCol.setCellFactory(TextFieldTableCell.<CodeBaseItem>forTableColumn());
-        contentCol.setCellValueFactory(new PropertyValueFactory<CodeBaseItem, String>("content"));
-
-        rankCol.setCellFactory(TextFieldTableCell.<CodeBaseItem>forTableColumn());
-        rankCol.setCellValueFactory(new PropertyValueFactory<CodeBaseItem, String>("rank"));
-
-        yunCol.setCellFactory(TextFieldTableCell.<CodeBaseItem>forTableColumn());
-        yunCol.setCellValueFactory(new PropertyValueFactory<CodeBaseItem, String>("yun"));
-
-        spellCol.setCellFactory(TextFieldTableCell.<CodeBaseItem>forTableColumn());
-        spellCol.setCellValueFactory(new PropertyValueFactory<CodeBaseItem, String>("spell"));
-
-        IPACol.setCellFactory(TextFieldTableCell.<CodeBaseItem>forTableColumn());
-        IPACol.setCellValueFactory(new PropertyValueFactory<CodeBaseItem, String>("IPA"));
-
-        englishCol.setCellFactory(TextFieldTableCell.<CodeBaseItem>forTableColumn());
-        englishCol.setCellValueFactory(new PropertyValueFactory<CodeBaseItem, String>("english"));
-
-        noteCol.setCellFactory(TextFieldTableCell.<CodeBaseItem>forTableColumn());
-        noteCol.setCellValueFactory(new PropertyValueFactory<CodeBaseItem, String>("note"));
+        codeCol.setCellValueFactory(new PropertyValueFactory<>("code"));
+        contentCol.setCellValueFactory(new PropertyValueFactory<>("content"));
+        rankCol.setCellValueFactory(new PropertyValueFactory<>("rank"));
+        yunCol.setCellValueFactory(new PropertyValueFactory<>("yun"));
+        spellCol.setCellValueFactory(new PropertyValueFactory<>("spell"));
+        IPACol.setCellValueFactory(new PropertyValueFactory<>("IPA"));
+        englishCol.setCellValueFactory(new PropertyValueFactory<>("english"));
+        noteCol.setCellValueFactory(new PropertyValueFactory<>("note"));
 
         tableView.setItems(codeBaseDatas);
         tableView.getColumns().addAll(codeCol,contentCol,rankCol,spellCol,englishCol,noteCol);
@@ -385,43 +321,26 @@ public class DbTableController extends BaseController {
 
         removeUnVisibleChild(rightBox);
 
-        codeBaseDatas = codeBaselist2Obserlist(DbHelper.getInstance().searchCodeBaseWithCode(2));
+        codeBaseDatas = DbHelper.getInstance().searchCodeBaseWithCode(2);
 
 
-        TableColumn<CodeBaseItem,String> codeCol = new TableColumn<>("编码");
-//        TableColumn<CodeBaseItem,Integer> codeTypeCol = new TableColumn<>("类型");
-        TableColumn<CodeBaseItem,String> contentCol = new TableColumn<>("句子");
-        TableColumn<CodeBaseItem,String> rankCol = new TableColumn<>("分级");
-        TableColumn<CodeBaseItem,String> yunCol = new TableColumn<>("声韵");
-        TableColumn<CodeBaseItem,String> spellCol = new TableColumn<>("拼音");
-        TableColumn<CodeBaseItem,String> IPACol = new TableColumn<CodeBaseItem, String>("IPA");
-        TableColumn<CodeBaseItem,String> englishCol = new TableColumn<CodeBaseItem, String>("英语");
-        TableColumn<CodeBaseItem,String> noteCol = new TableColumn<CodeBaseItem, String>("注释");
-//        TableColumn<CodeBaseItem,String> mwfyCol = new TableColumn<CodeBaseItem, String>("明文方言");
+        TableColumn codeCol = new TableColumn<>("编码");
+        TableColumn contentCol = new TableColumn<>("句子");
+        TableColumn rankCol = new TableColumn<>("分级");
+        TableColumn yunCol = new TableColumn<>("声韵");
+        TableColumn spellCol = new TableColumn<>("拼音");
+        TableColumn IPACol = new TableColumn<>("IPA");
+        TableColumn englishCol = new TableColumn<>("英语");
+        TableColumn noteCol = new TableColumn<>("注释");
 
-        codeCol.setCellFactory(TextFieldTableCell.<CodeBaseItem>forTableColumn());
-        codeCol.setCellValueFactory(new PropertyValueFactory<>("code"));;
-
-        contentCol.setCellFactory(TextFieldTableCell.<CodeBaseItem>forTableColumn());
-        contentCol.setCellValueFactory(new PropertyValueFactory<CodeBaseItem, String>("content"));
-
-        rankCol.setCellFactory(TextFieldTableCell.<CodeBaseItem>forTableColumn());
-        rankCol.setCellValueFactory(new PropertyValueFactory<CodeBaseItem, String>("rank"));
-
-        yunCol.setCellFactory(TextFieldTableCell.<CodeBaseItem>forTableColumn());
-        yunCol.setCellValueFactory(new PropertyValueFactory<CodeBaseItem, String>("yun"));
-
-        spellCol.setCellFactory(TextFieldTableCell.<CodeBaseItem>forTableColumn());
-        spellCol.setCellValueFactory(new PropertyValueFactory<CodeBaseItem, String>("spell"));
-
-        IPACol.setCellFactory(TextFieldTableCell.<CodeBaseItem>forTableColumn());
-        IPACol.setCellValueFactory(new PropertyValueFactory<CodeBaseItem, String>("IPA"));
-
-        englishCol.setCellFactory(TextFieldTableCell.<CodeBaseItem>forTableColumn());
-        englishCol.setCellValueFactory(new PropertyValueFactory<CodeBaseItem, String>("english"));
-
-        noteCol.setCellFactory(TextFieldTableCell.<CodeBaseItem>forTableColumn());
-        noteCol.setCellValueFactory(new PropertyValueFactory<CodeBaseItem, String>("note"));
+        codeCol.setCellValueFactory(new PropertyValueFactory<>("code"));
+        contentCol.setCellValueFactory(new PropertyValueFactory<>("content"));
+        rankCol.setCellValueFactory(new PropertyValueFactory<>("rank"));
+        yunCol.setCellValueFactory(new PropertyValueFactory<>("yun"));
+        spellCol.setCellValueFactory(new PropertyValueFactory<>("spell"));
+        IPACol.setCellValueFactory(new PropertyValueFactory<>("IPA"));
+        englishCol.setCellValueFactory(new PropertyValueFactory<>("english"));
+        noteCol.setCellValueFactory(new PropertyValueFactory<>("note"));
 
         tableView.setItems(codeBaseDatas);
         tableView.getColumns().addAll(codeCol,contentCol,rankCol,englishCol,noteCol);
@@ -455,43 +374,26 @@ public class DbTableController extends BaseController {
         removeUnVisibleChild(rightBox);
 
 
-        codeBaseDatas = codeBaselist2Obserlist(DbHelper.getInstance().searchCodeBaseWithCode(3));
+        codeBaseDatas = DbHelper.getInstance().searchCodeBaseWithCode(3);
 
 
-        TableColumn<CodeBaseItem,String> codeCol = new TableColumn<>("编码");
-//        TableColumn<CodeBaseItem,Integer> codeTypeCol = new TableColumn<>("类型");
-        TableColumn<CodeBaseItem,String> contentCol = new TableColumn<>("词条");
-        TableColumn<CodeBaseItem,String> rankCol = new TableColumn<>("分级");
-        TableColumn<CodeBaseItem,String> yunCol = new TableColumn<>("声韵");
-        TableColumn<CodeBaseItem,String> spellCol = new TableColumn<>("拼音");
-        TableColumn<CodeBaseItem,String> IPACol = new TableColumn<CodeBaseItem, String>("IPA");
-        TableColumn<CodeBaseItem,String> englishCol = new TableColumn<CodeBaseItem, String>("英语");
-        TableColumn<CodeBaseItem,String> noteCol = new TableColumn<CodeBaseItem, String>("注释");
-//        TableColumn<CodeBaseItem,String> mwfyCol = new TableColumn<CodeBaseItem, String>("明文方言");
+        TableColumn codeCol = new TableColumn<>("编码");
+        TableColumn contentCol = new TableColumn<>("词条");
+        TableColumn rankCol = new TableColumn<>("分级");
+        TableColumn yunCol = new TableColumn<>("声韵");
+        TableColumn spellCol = new TableColumn<>("拼音");
+        TableColumn IPACol = new TableColumn<>("IPA");
+        TableColumn englishCol = new TableColumn<>("英语");
+        TableColumn noteCol = new TableColumn<>("注释");
 
-        codeCol.setCellFactory(TextFieldTableCell.<CodeBaseItem>forTableColumn());
-        codeCol.setCellValueFactory(new PropertyValueFactory<>("code"));;
-
-        contentCol.setCellFactory(TextFieldTableCell.<CodeBaseItem>forTableColumn());
-        contentCol.setCellValueFactory(new PropertyValueFactory<CodeBaseItem, String>("content"));
-
-        rankCol.setCellFactory(TextFieldTableCell.<CodeBaseItem>forTableColumn());
-        rankCol.setCellValueFactory(new PropertyValueFactory<CodeBaseItem, String>("rank"));
-
-        yunCol.setCellFactory(TextFieldTableCell.<CodeBaseItem>forTableColumn());
-        yunCol.setCellValueFactory(new PropertyValueFactory<CodeBaseItem, String>("yun"));
-
-        spellCol.setCellFactory(TextFieldTableCell.<CodeBaseItem>forTableColumn());
-        spellCol.setCellValueFactory(new PropertyValueFactory<CodeBaseItem, String>("spell"));
-
-        IPACol.setCellFactory(TextFieldTableCell.<CodeBaseItem>forTableColumn());
-        IPACol.setCellValueFactory(new PropertyValueFactory<CodeBaseItem, String>("IPA"));
-
-        englishCol.setCellFactory(TextFieldTableCell.<CodeBaseItem>forTableColumn());
-        englishCol.setCellValueFactory(new PropertyValueFactory<CodeBaseItem, String>("english"));
-
-        noteCol.setCellFactory(TextFieldTableCell.<CodeBaseItem>forTableColumn());
-        noteCol.setCellValueFactory(new PropertyValueFactory<CodeBaseItem, String>("note"));
+        codeCol.setCellValueFactory(new PropertyValueFactory<>("code"));
+        contentCol.setCellValueFactory(new PropertyValueFactory<>("content"));
+        rankCol.setCellValueFactory(new PropertyValueFactory<>("rank"));
+        yunCol.setCellValueFactory(new PropertyValueFactory<>("yun"));
+        spellCol.setCellValueFactory(new PropertyValueFactory<>("spell"));
+        IPACol.setCellValueFactory(new PropertyValueFactory<>("IPA"));
+        englishCol.setCellValueFactory(new PropertyValueFactory<>("english"));
+        noteCol.setCellValueFactory(new PropertyValueFactory<>("note"));
 
         tableView.setItems(codeBaseDatas);
         tableView.getColumns().addAll(codeCol,contentCol,rankCol,englishCol,noteCol);
@@ -522,19 +424,14 @@ public class DbTableController extends BaseController {
 
         removeUnVisibleChild(rightBox);
 
-        chineseLangDatas = chineseLanglist2Obserlist(DbHelper.getInstance().searchAllCodeLangHanYu());
+        chineseLangDatas = DbHelper.getInstance().searchAllCodeLangHanYu();
 
-        TableColumn<ChineseLangItem,String> codeCol = new TableColumn<>("序号");
-        TableColumn<ChineseLangItem,String> nameCol = new TableColumn<>("名称");
-        TableColumn<ChineseLangItem,String> regionCol = new TableColumn<>("主要分布地");
+        TableColumn codeCol = new TableColumn<>("序号");
+        TableColumn nameCol = new TableColumn<>("名称");
+        TableColumn regionCol = new TableColumn<>("主要分布地");
 
-        codeCol.setCellFactory(TextFieldTableCell.<ChineseLangItem>forTableColumn());
         codeCol.setCellValueFactory(new PropertyValueFactory<>("code"));
-
-        nameCol.setCellFactory(TextFieldTableCell.<ChineseLangItem>forTableColumn());
         nameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
-
-        regionCol.setCellFactory(TextFieldTableCell.<ChineseLangItem>forTableColumn());
         regionCol.setCellValueFactory(new PropertyValueFactory<>("region"));
 
         tableView.setItems(chineseLangDatas);
@@ -562,204 +459,17 @@ public class DbTableController extends BaseController {
 
         removeUnVisibleChild(rightBox);
 
-        codeIPADatas = codeIPAList2Obserlist(DbHelper.getInstance().searchAllCodeIPABase());
+        codeIPADatas = DbHelper.getInstance().searchAllCodeIPABase();
 
-        TableColumn<ChineseLangItem,String> codeCol = new TableColumn<>("编码");
-        TableColumn<ChineseLangItem,String> contentCol = new TableColumn<>("元音字符");
+        TableColumn<CodeIPABase,String> codeCol = new TableColumn<>("编码");
+        TableColumn<CodeIPABase,String> contentCol = new TableColumn<>("元音字符");
 
-        codeCol.setCellFactory(TextFieldTableCell.<ChineseLangItem>forTableColumn());
         codeCol.setCellValueFactory(new PropertyValueFactory<>("code"));
 
-        contentCol.setCellFactory(TextFieldTableCell.<ChineseLangItem>forTableColumn());
         contentCol.setCellValueFactory(new PropertyValueFactory<>("content"));
 
         tableView.setItems(codeIPADatas);
         tableView.getColumns().addAll(codeCol,contentCol);
-    }
-
-
-    /**
-     * 方言调查字表、词表、句表、话语表table数据Item
-     */
-    public static class CodeBaseItem{
-        private final SimpleStringProperty code;
-        private final SimpleIntegerProperty codeType;
-        private final SimpleStringProperty content;
-        private final SimpleStringProperty rank;
-        private final SimpleStringProperty yun;
-        private final SimpleStringProperty spell;
-        private final SimpleStringProperty IPA;
-        private final SimpleStringProperty english;
-        private final SimpleStringProperty note;
-        private final SimpleStringProperty mwfy;
-
-        private CodeBaseItem(String code, Integer codeType, String content, String rank, String yun,String spell, String IPA, String english, String note, String mwfy) {
-            this.code = new SimpleStringProperty(code);
-            this.codeType = new SimpleIntegerProperty(codeType);
-            this.content = new SimpleStringProperty(content);
-            this.rank = new SimpleStringProperty(rank);
-            this.yun = new SimpleStringProperty(yun);
-            this.spell = new SimpleStringProperty(spell);
-            this.IPA = new SimpleStringProperty(IPA);
-            this.english = new SimpleStringProperty(english);
-            this.note = new SimpleStringProperty(note);
-            this.mwfy = new SimpleStringProperty(mwfy);
-        }
-
-        public String getCode() {
-            return code.get();
-        }
-
-        public void setCode(String code) {
-            this.code.set(code);
-        }
-
-        public int getCodeType() {
-            return codeType.get();
-        }
-
-        public void setCodeType(int codeType) {
-            this.codeType.set(codeType);
-        }
-
-        public String getContent() {
-            return content.get();
-        }
-
-        public void setContent(String content) {
-            this.content.set(content);
-        }
-
-        public String getRank() {
-            return rank.get();
-        }
-
-        public void setRank(String rank) {
-            this.rank.set(rank);
-        }
-
-        public String getYun() {
-            return yun.get();
-        }
-
-        public void setYun(String yun) {
-            this.yun.set(yun);
-        }
-
-        public String getSpell() {
-            return spell.get();
-        }
-
-        public void setSpell(String spell) {
-            this.spell.set(spell);
-        }
-
-        public String getIPA() {
-            return IPA.get();
-        }
-
-        public void setIPA(String IPA) {
-            this.IPA.set(IPA);
-        }
-
-        public String getEnglish() {
-            return english.get();
-        }
-
-        public void setEnglish(String english) {
-            this.english.set(english);
-        }
-
-        public String getNote() {
-            return note.get();
-        }
-
-        public void setNote(String note) {
-            this.note.set(note);
-        }
-
-        public String getMwfy() {
-            return mwfy.get();
-        }
-
-        public void setMwfy(String mwfy) {
-            this.mwfy.set(mwfy);
-        }
-    }
-
-    /**
-     * 中国语言代码Item
-     */
-    public static class ChineseLangItem{
-        private final SimpleStringProperty code;
-        private final SimpleStringProperty name;
-        private final SimpleStringProperty region;
-
-        public ChineseLangItem(String code, String name, String  region) {
-            this.code = new SimpleStringProperty(code);
-            this.name = new SimpleStringProperty(name);
-            this.region = new SimpleStringProperty(region);
-        }
-
-        public String getCode() {
-            return code.get();
-        }
-
-        public void setCode(String code) {
-            this.code.set(code);
-        }
-
-        public String getName() {
-            return name.get();
-        }
-
-        public void setName(String name) {
-            this.name.set(name);
-        }
-
-        public String getRegion() {
-            return region.get();
-        }
-
-        public void setRegion(String region) {
-            this.region.set(region);
-        }
-    }
-
-    public static class CodeIPAItem{
-        private final SimpleStringProperty code;
-        private final SimpleStringProperty content;
-        private final SimpleStringProperty type;
-
-        public CodeIPAItem(String code, String content, String type) {
-            this.code = new SimpleStringProperty(code);
-            this.content = new SimpleStringProperty(content);
-            this.type = new SimpleStringProperty(type);
-        }
-
-        public String getCode() {
-            return code.get();
-        }
-
-        public void setCode(String code) {
-            this.code.set(code);
-        }
-
-        public String getContent() {
-            return content.get();
-        }
-
-        public void setContent(String content) {
-            this.content.set(content);
-        }
-
-        public String getType() {
-            return type.get();
-        }
-
-        public void setType(String type) {
-            this.type.set(type);
-        }
     }
 }
 

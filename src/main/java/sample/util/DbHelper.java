@@ -64,7 +64,7 @@ public class DbHelper {
      * @param codeType 数据表里面的codeType字段的值
      * @return
      */
-    public List<CodeBase> searchCodeBaseWithCode(int codeType){
+    public ObservableList<CodeBase> searchCodeBaseWithCode(int codeType){
         List<CodeBase> resultList = new ArrayList<CodeBase>();
 
         try {
@@ -73,14 +73,14 @@ public class DbHelper {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return resultList;
+        return FXCollections.observableArrayList(resultList);
     }
 
     /**
      * 查询hanyu表所有数据
      * @return
      */
-    public List<CodeLangHanYu> searchAllCodeLangHanYu(){
+    public ObservableList<CodeLangHanYu> searchAllCodeLangHanYu(){
         List<CodeLangHanYu> resultList = new ArrayList<CodeLangHanYu>();
 
         try {
@@ -89,10 +89,14 @@ public class DbHelper {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return resultList;
+        return FXCollections.observableArrayList(resultList);
     }
 
-    public List<CodeIPABase> searchAllCodeIPABase(){
+    /**
+     * 查询所有IPA数据
+     * @return
+     */
+    public ObservableList<CodeIPABase> searchAllCodeIPABase(){
         List<CodeIPABase> resultList = new ArrayList<CodeIPABase>();
 
         try {
@@ -101,6 +105,6 @@ public class DbHelper {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return resultList;
+        return FXCollections.observableArrayList(resultList);
     }
 }

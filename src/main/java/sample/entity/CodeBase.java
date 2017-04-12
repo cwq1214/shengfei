@@ -28,4 +28,84 @@ public class CodeBase {
     public String note;
     @DatabaseField
     public String mwfy;
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public Integer getCodeType() {
+        return codeType;
+    }
+
+    public void setCodeType(Integer codeType) {
+        this.codeType = codeType;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public String getRank() {
+        return rank;
+    }
+
+    public void setRank(String rank) {
+        this.rank = rank;
+    }
+
+    public String getYun() {
+        return yun;
+    }
+
+    public void setYun(String yun) {
+        this.yun = yun;
+    }
+
+    public String getSpell() {
+        return spell;
+    }
+
+    public void setSpell(String spell) {
+        this.spell = spell;
+    }
+
+    public String getIPA() {
+        return IPA;
+    }
+
+    public void setIPA(String IPA) {
+        this.IPA = IPA;
+    }
+
+    public String getEnglish() {
+        return english;
+    }
+
+    public void setEnglish(String english) {
+        this.english = english;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
+    }
+
+    public String getMwfy() {
+        return mwfy;
+    }
+
+    public void setMwfy(String mwfy) {
+        this.mwfy = mwfy;
+    }
 }
