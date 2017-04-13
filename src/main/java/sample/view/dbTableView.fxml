@@ -35,40 +35,47 @@
                     </Insets>
                 </FlowPane.margin>
 
-                <ImageView fitHeight="16.0" fitWidth="16.0" rotate="180" fx:id="btn_beforePage">
-                    <image>
-                        <Image url="@../resource/img/media-next.png"/>
-                    </image>
-                </ImageView>
-                <Button rotate="180" onMouseClicked="#onTopToolsBeforeLineClick">
+                <Button onMouseClicked="#onTopToolsBeforePageClick">
                     <graphic>
-                        <ImageView fitHeight="16.0" fitWidth="16.0" fx:id="btn_beforeLine">
+                        <ImageView fitHeight="16.0" fitWidth="16.0" rotate="180" fx:id="btn_beforePage">
+                            <image>
+                                <Image url="@../resource/img/media-next.png"/>
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button onMouseClicked="#onTopToolsBeforeLineClick">
+                    <graphic>
+                        <ImageView rotate="180" fitHeight="16.0" fitWidth="16.0" fx:id="btn_beforeLine">
                             <image>
                                 <Image url="@../resource/img/media-play.png"/>
                             </image>
                         </ImageView>
                     </graphic>
-
                 </Button>
 
                 <TextField prefWidth="50.0" style="-fx-font-size: 13px;" text="0" fx:id="input_number"/>
                 <Label style="-fx-text-fill: black" text="/"/>
                 <Label style="-fx-text-fill: black" text="0" fx:id="label_maxNumber"/>
 
-
-                <ImageView fitHeight="16.0" fitWidth="16.0" fx:id="btn_nextLine"
-                           onMouseClicked="#onTopToolsNextLineClick">
-                    <image>
-                        <Image url="@../resource/img/media-play.png"/>
-                    </image>
-                </ImageView>
-
-                <ImageView fitHeight="16.0" fitWidth="16.0" fx:id="btn_nextPage">
-                    <image>
-                        <Image url="@../resource/img/media-next.png"/>
-                    </image>
-                </ImageView>
-
+                <Button onMouseClicked="#onTopToolsNextLineClick">
+                    <graphic>
+                        <ImageView fitHeight="16.0" fitWidth="16.0" fx:id="btn_nextLine">
+                            <image>
+                                <Image url="@../resource/img/media-play.png"/>
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button onMouseClicked="#onTopToolsNextPageClick">
+                    <graphic>
+                        <ImageView fitHeight="16.0" fitWidth="16.0" fx:id="btn_nextPage">
+                            <image>
+                                <Image url="@../resource/img/media-next.png"/>
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
             </HBox>
 
             <Button fx:id="btn_add" text="新添" visible="false">

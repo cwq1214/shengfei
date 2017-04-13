@@ -8,6 +8,8 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -15,10 +17,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.InputMethodEvent;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.input.TouchEvent;
+import javafx.scene.input.*;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -162,7 +161,6 @@ public class DbTableController extends BaseController {
 
     Object selItem;
     boolean autoScroll = false;
-    boolean tableViewScroll = false;
 
     public void setType(int type) {
         this.type = type;
@@ -201,6 +199,7 @@ public class DbTableController extends BaseController {
         if (tableView.getItems() != null) {
             int allSize = tableView.getItems().size();
             label_maxNumber.setText(allSize + "");
+            tableView.getSelectionModel().select(0);
         }
 
     }
@@ -503,65 +502,33 @@ public class DbTableController extends BaseController {
     }
 
     private void setInputNumberEvent() {
-
-        input_number.textProperty().addListener(new ChangeListener<String>() {
+        input_number.setOnKeyReleased(new EventHandler<KeyEvent>() {
             @Override
-            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                if (TextUtil.isEmpty(newValue)) {
-                    return;
-                }
+            public void handle(KeyEvent event) {
+                System.out.println("setOnKeyReleased");
+
                 Pattern pattern = Pattern.compile("\\d+");
                 String text = input_number.getText();
-                if (!pattern.matcher(text).matches()) {
+                if (TextUtil.isEmpty(text) || !pattern.matcher(text).matches()) {
                     return;
                 }
                 System.out.println("input_number " + text);
-                tableView.getSelectionModel().select(Integer.valueOf(text));
-//                tableView.getSelectionModel().select(Integer.valueOf(newValue));
-
-            }
-        });
-        input_number.setOnKeyPressed(new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent event) {
-                tableViewScroll = false;
+                int row = Integer.valueOf(text);
+                if (row == 0) {
+                    return;
+                }
+                autoScroll = true;
+                tableView.getSelectionModel().select(row - 1);
             }
         });
     }
 
     private void setTableEvent() {
-        tableView.setOnTouchPressed(new EventHandler<TouchEvent>() {
-            @Override
-            public void handle(TouchEvent event) {
-                System.out.println("setOnTouchPressed");
-            }
-        });
-
-        tableView.onKeyPressedProperty().addListener(new ChangeListener<EventHandler<? super KeyEvent>>() {
-            @Override
-            public void changed(ObservableValue<? extends EventHandler<? super KeyEvent>> observable, EventHandler<? super KeyEvent> oldValue, EventHandler<? super KeyEvent> newValue) {
-                System.out.println("ChangeListener");
-            }
-        });
-        tableView.onMousePressedProperty().addListener(new ChangeListener<EventHandler<? super MouseEvent>>() {
-            @Override
-            public void changed(ObservableValue<? extends EventHandler<? super MouseEvent>> observable, EventHandler<? super MouseEvent> oldValue, EventHandler<? super MouseEvent> newValue) {
-                System.out.println("ChangeListener");
-            }
-        });
-        tableView.onTouchPressedProperty().addListener(new ChangeListener<EventHandler<? super TouchEvent>>() {
-            @Override
-            public void changed(ObservableValue<? extends EventHandler<? super TouchEvent>> observable, EventHandler<? super TouchEvent> oldValue, EventHandler<? super TouchEvent> newValue) {
-                System.out.println("ChangeListener");
-            }
-        });
         tableView.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
                 System.out.println("tableView setOnMouseClicked");
-                selItem = tableView.getSelectionModel().getSelectedItem();
                 autoScroll = false;
-                tableViewScroll = true;
             }
 
         });
@@ -573,21 +540,20 @@ public class DbTableController extends BaseController {
                     selItem = tableView.getSelectionModel().getSelectedItem();
                     if (selItem != null) {
                         showSelItemToEditPane();
-                        if (!tableViewScroll) {
-                            System.out.println("!tableViewScroll");
-                            return;
+                        int objIndex = tableView.getItems().indexOf(newValue) + 1;
+                        System.out.println("tableView " + objIndex);
+                        if (objIndex == Integer.valueOf(input_number.getText())) {
+
+                        } else {
+                            System.out.println("set text");
+                            input_number.setText(objIndex + "");
                         }
-                        System.out.println("tableViewScroll");
+                        int selIndex = tableView.getSelectionModel().getSelectedIndex();
 
-                        int selIndex = tableView.getSelectionModel().getFocusedIndex();
-
-                        if (autoScroll)
-                            tableView.scrollToColumnIndex(selIndex);
-
-
-                        int objIndex = tableView.getItems().indexOf(newValue);
-                        System.out.println(objIndex);
-                        input_number.textProperty().set(objIndex + 1 + "");
+                        if (autoScroll) {
+                            tableView.scrollTo(selIndex);
+                            autoScroll = false;
+                        }
                     }
                 }
             }
@@ -631,28 +597,24 @@ public class DbTableController extends BaseController {
     //顶部 上一页按钮
     public void onTopToolsBeforePageClick() {
         autoScroll = true;
-        tableViewScroll = true;
         tableView.getSelectionModel().selectFirst();
     }
 
     //顶部 上一行按钮
     public void onTopToolsBeforeLineClick() {
         autoScroll = true;
-        tableViewScroll = true;
         tableView.getSelectionModel().selectPrevious();
     }
 
     //顶部 下一页按钮
     public void onTopToolsNextPageClick() {
         autoScroll = true;
-        tableViewScroll = true;
         tableView.getSelectionModel().selectLast();
     }
 
     //顶部 下一行按钮
     public void onTopToolsNextLineClick() {
         autoScroll = true;
-        tableViewScroll = true;
         tableView.getSelectionModel().selectNext();
     }
 
