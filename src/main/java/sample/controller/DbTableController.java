@@ -3,6 +3,7 @@ package sample.controller;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -22,13 +23,16 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.util.Callback;
 import sample.entity.CodeBase;
 import sample.entity.CodeIPABase;
 import sample.entity.CodeLangHanYu;
-import sample.util.DbHelper;
-import sample.util.TextUtil;
+import sample.util.*;
 
+import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -155,9 +159,10 @@ public class DbTableController extends BaseController {
     @FXML
     FlowPane btnPane;
 
-    private ObservableList<CodeBase> codeBaseDatas;
-    private ObservableList<CodeLangHanYu> chineseLangDatas;
-    private ObservableList<CodeIPABase> codeIPADatas;
+    private ObservableList tableDatas;
+//    private ObservableList<CodeBase> tableDatas;
+//    private ObservableList<CodeLangHanYu> chineseLangDatas;
+//    private ObservableList<CodeIPABase> codeIPADatas;
 
     Object selItem;
     boolean autoScroll = false;
@@ -167,6 +172,7 @@ public class DbTableController extends BaseController {
         if (type == 0) {
             throw new RuntimeException("type can not be 0");
         }
+        tableView.getColumns().clear();
         switch (type) {
             case TYPE_HAN_YU_FANG_YAN_ZI_BIAO:
                 initHanYuFangYanZiBiao();
@@ -243,7 +249,7 @@ public class DbTableController extends BaseController {
 
         removeUnVisibleChild(rightBox);
 
-        codeBaseDatas = DbHelper.getInstance().searchCodeBaseWithCode(0);
+        tableDatas = DbHelper.getInstance().searchCodeBaseWithCode(0);
 
         TableColumn<CodeBase,String> codeCol = new TableColumn<>("编码");
         TableColumn<CodeBase,String> contentCol = new TableColumn<>("单字");
@@ -263,7 +269,7 @@ public class DbTableController extends BaseController {
         englishCol.setCellValueFactory(new PropertyValueFactory<>("english"));
         noteCol.setCellValueFactory(new PropertyValueFactory<>("note"));
 
-        tableView.setItems(codeBaseDatas);
+        tableView.setItems(tableDatas);
         tableView.getColumns().addAll(codeCol,contentCol,yunCol,rankCol,spellCol,englishCol,noteCol);
     }
 
@@ -297,7 +303,7 @@ public class DbTableController extends BaseController {
 
         removeUnVisibleChild(rightBox);
 
-        codeBaseDatas = DbHelper.getInstance().searchCodeBaseWithCode(1);
+        tableDatas = DbHelper.getInstance().searchCodeBaseWithCode(1);
 
 
         TableColumn codeCol = new TableColumn<>("编码");
@@ -318,7 +324,7 @@ public class DbTableController extends BaseController {
         englishCol.setCellValueFactory(new PropertyValueFactory<>("english"));
         noteCol.setCellValueFactory(new PropertyValueFactory<>("note"));
 
-        tableView.setItems(codeBaseDatas);
+        tableView.setItems(tableDatas);
         tableView.getColumns().addAll(codeCol,contentCol,rankCol,spellCol,englishCol,noteCol);
 
     }
@@ -350,7 +356,7 @@ public class DbTableController extends BaseController {
 
         removeUnVisibleChild(rightBox);
 
-        codeBaseDatas = DbHelper.getInstance().searchCodeBaseWithCode(2);
+        tableDatas = DbHelper.getInstance().searchCodeBaseWithCode(2);
 
 
         TableColumn codeCol = new TableColumn<>("编码");
@@ -371,7 +377,7 @@ public class DbTableController extends BaseController {
         englishCol.setCellValueFactory(new PropertyValueFactory<>("english"));
         noteCol.setCellValueFactory(new PropertyValueFactory<>("note"));
 
-        tableView.setItems(codeBaseDatas);
+        tableView.setItems(tableDatas);
         tableView.getColumns().addAll(codeCol,contentCol,rankCol,englishCol,noteCol);
     }
 
@@ -403,7 +409,7 @@ public class DbTableController extends BaseController {
         removeUnVisibleChild(rightBox);
 
 
-        codeBaseDatas = DbHelper.getInstance().searchCodeBaseWithCode(3);
+        tableDatas = DbHelper.getInstance().searchCodeBaseWithCode(3);
 
 
         TableColumn codeCol = new TableColumn<>("编码");
@@ -424,7 +430,7 @@ public class DbTableController extends BaseController {
         englishCol.setCellValueFactory(new PropertyValueFactory<>("english"));
         noteCol.setCellValueFactory(new PropertyValueFactory<>("note"));
 
-        tableView.setItems(codeBaseDatas);
+        tableView.setItems(tableDatas);
         tableView.getColumns().addAll(codeCol,contentCol,rankCol,englishCol,noteCol);
     }
 
@@ -453,7 +459,7 @@ public class DbTableController extends BaseController {
 
         removeUnVisibleChild(rightBox);
 
-        chineseLangDatas = DbHelper.getInstance().searchAllCodeLangHanYu();
+        tableDatas = DbHelper.getInstance().searchAllCodeLangHanYu();
 
         TableColumn codeCol = new TableColumn<>("序号");
         TableColumn nameCol = new TableColumn<>("名称");
@@ -463,7 +469,7 @@ public class DbTableController extends BaseController {
         nameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
         regionCol.setCellValueFactory(new PropertyValueFactory<>("region"));
 
-        tableView.setItems(chineseLangDatas);
+        tableView.setItems(tableDatas);
         tableView.getColumns().addAll(codeCol,nameCol,regionCol);
     }
 
@@ -488,7 +494,7 @@ public class DbTableController extends BaseController {
 
         removeUnVisibleChild(rightBox);
 
-        codeIPADatas = DbHelper.getInstance().searchAllCodeIPABase();
+        tableDatas = DbHelper.getInstance().searchAllCodeIPABase();
 
         TableColumn<CodeIPABase,String> codeCol = new TableColumn<>("编码");
         TableColumn<CodeIPABase,String> contentCol = new TableColumn<>("元音字符");
@@ -497,7 +503,7 @@ public class DbTableController extends BaseController {
 
         contentCol.setCellValueFactory(new PropertyValueFactory<>("content"));
 
-        tableView.setItems(codeIPADatas);
+        tableView.setItems(tableDatas);
         tableView.getColumns().addAll(codeCol,contentCol);
     }
 
@@ -581,12 +587,39 @@ public class DbTableController extends BaseController {
 
     //右侧编辑框 确定按钮
     public void onEditPaneDoneClick() {
-        //TODO
+        if (selItem instanceof CodeBase) {
+//            ((CodeBase) selItem).setCode(input_code.getText());
+            ((CodeBase) selItem).setContent(input_singleWord.getText());
+            ((CodeBase) selItem).setRank(input_level.getText());
+            ((CodeBase) selItem).setSpell(input_alphabet.getText());
+            ((CodeBase) selItem).setEnglish(input_english.getText());
+            ((CodeBase) selItem).setYun(input_voiceRange.getText());
+            ((CodeBase) selItem).setNote(input_notes.getText());
+        } else if (selItem instanceof CodeLangHanYu) {
+//            ((CodeLangHanYu) selItem).setCode(input_index.getText());
+            ((CodeLangHanYu) selItem).setName(input_name.getText());
+            ((CodeLangHanYu) selItem).setRegion(input_distribution.getText());
+        } else if (selItem instanceof CodeIPABase) {
+//            ((CodeIPABase) selItem).setCode(input_code.getText());
+            ((CodeIPABase) selItem).setContent(input_chart.getText());
+        }
+        tableView.refresh();
+//        DbHelper.getInstance().upDate(selItem);
+
     }
 
     //右侧编辑框 取消按钮
     public void onEditPaneCancelClick() {
-        showSelItemToEditPane();
+        try {
+            String code = (String) selItem.getClass().getDeclaredField("code").get(selItem);
+
+            tableView.refresh();
+
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        }
     }
 
     //右侧编辑框 关闭按钮
@@ -618,6 +651,37 @@ public class DbTableController extends BaseController {
         tableView.getSelectionModel().selectNext();
     }
 
+    public void onTopToolsClick(Event event) throws IOException {
+        if (!AppCache.getInstance().isCertificate()) {
+            ToastUtil.show("请先认证密码");
+            return;
+        }
+        Object sourceBtn = event.getSource();
+        if (sourceBtn == btn_add) {
+            onTopToolsAddClick();
+        } else if (sourceBtn == btn_modify) {
+            onTopToolsModifyClick();
+        } else if (sourceBtn == btn_del) {
+            onTopToolsDelClick();
+        } else if (sourceBtn == btn_search) {
+            onTopToolsSearchClick();
+        } else if (sourceBtn == btn_replace) {
+            onTopToolsReplaceClick();
+        } else if (sourceBtn == btn_image) {
+            onTopToolsImageClick();
+        } else if (sourceBtn == btn_video) {
+            onTopToolsVideoClick();
+        } else if (sourceBtn == btn_save) {
+            onTopToolsSaveClick();
+        } else if (sourceBtn == btn_import) {
+            onTopToolsImportClick();
+        } else if (sourceBtn == btn_export) {
+            onTopToolsExportClick();
+        }
+
+
+    }
+
     //顶部 新添按钮
     public void onTopToolsAddClick() {
 
@@ -630,12 +694,67 @@ public class DbTableController extends BaseController {
 
     //顶部 删除按钮
     public void onTopToolsDelClick() {
-
+        if (selItem == null) {
+            ToastUtil.show("请先选择行");
+            return;
+        }
+        DbHelper.getInstance().delete(selItem);
+        refresh();
     }
 
     //顶部 查找按钮
-    public void onTopToolsSearchClick() {
+    public void onTopToolsSearchClick() throws IOException {
 
+        SearchViewController searchViewController = (SearchViewController) ViewUtil.getInstance().openSearchDialog();
+        ObservableList<TableColumn> tableColumns = tableView.getColumns();
+        List<String> columnsName = new ArrayList<>();
+        for (TableColumn tableColumn :
+                tableColumns) {
+            columnsName.add(tableColumn.getText());
+        }
+        searchViewController.setSearchTableTitleName(columnsName);
+        searchViewController.setOnDoneClickCallback(new SearchViewController.OnDoneClickCallback() {
+            @Override
+            public void onClick(SearchViewController controller) {
+                String inputText = controller.getInputText();
+                boolean isAccurate = controller.isChecked();
+                int index = controller.getSelTableTitleIndex();
+                System.out.println(inputText);
+                System.out.println(isAccurate);
+                System.out.println(index);
+                //是否重新从数据库获取
+                refresh();
+                TableColumn tableColumn = ((TableColumn) tableView.getColumns().get(index));
+                for (int i = tableDatas.size() - 1; i >= 0; i--) {
+                    PropertyValueFactory value = ((PropertyValueFactory) tableColumn.cellValueFactoryProperty().get());
+                    String tableTitle = value.getProperty();
+                    Object data = tableDatas.get(i);
+                    try {
+                        Field field = data.getClass().getDeclaredField(tableTitle);
+                        String content = (String) field.get(data);
+                        if (isAccurate) {
+                            if (!content.equals(inputText)) {
+                                tableDatas.remove(i);
+                            }
+                        } else {
+                            Pattern pattern = Pattern.compile(inputText);
+                            if (pattern.split(content).length == 1) {
+                                tableDatas.remove(i);
+                            }
+                        }
+                    } catch (NoSuchFieldException e) {
+                        e.printStackTrace();
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    }
+                }
+                tableView.refresh();
+                searchViewController.close();
+
+
+            }
+        });
+        searchViewController.show();
     }
 
     //顶部 替换按钮
@@ -655,7 +774,8 @@ public class DbTableController extends BaseController {
 
     //顶部 保存按钮
     public void onTopToolsSaveClick() {
-
+        DbHelper.getInstance().upDateAll(tableDatas);
+        ToastUtil.show("修改成功");
     }
 
     //顶部 导入按钮
@@ -670,11 +790,12 @@ public class DbTableController extends BaseController {
 
     //顶部 刷新按钮
     public void onTopToolsRefreshClick() {
-        setType(type);
+        refresh();
     }
 
-
-
+    private void refresh() {
+        setType(type);
+    }
 
 
 }

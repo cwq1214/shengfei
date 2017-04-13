@@ -3,6 +3,9 @@ package sample.util;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
+import com.j256.ormlite.stmt.DeleteBuilder;
+import com.j256.ormlite.stmt.UpdateBuilder;
+import com.j256.ormlite.stmt.Where;
 import com.j256.ormlite.support.ConnectionSource;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -20,12 +23,16 @@ import java.util.List;
  * Created by Bee on 2017/4/11.
  */
 public class DbHelper {
-    static DbHelper dbHelper = new DbHelper();;
+    static DbHelper dbHelper = new DbHelper();
     private ConnectionSource connectionSource;
 
     public static DbHelper getInstance(){
         return dbHelper;
     }
+
+    Dao<CodeBase, String> codeBaseDao;
+    Dao<CodeLangHanYu, String> hanyuDao;
+    Dao<CodeIPABase, String> codeIPADao;
 
     /**
      * 打开数据库链接
@@ -35,12 +42,10 @@ public class DbHelper {
         try {
             connectionSource = new JdbcConnectionSource("jdbc:sqlite:" + path);
 
-//            Dao<CodeCounty, String> accountDao =
-//                    DaoManager.createDao(connectionSource, CodeCounty.class);
-//
-//            CodeCounty account2 = accountDao.queryForEq("code", "110000").get(0);
-//            System.out.println("Account: " + account2.name);
-//            connectionSource.close();
+            codeBaseDao = DaoManager.createDao(connectionSource, CodeBase.class);
+            hanyuDao = DaoManager.createDao(connectionSource, CodeLangHanYu.class);
+            codeIPADao = DaoManager.createDao(connectionSource, CodeIPABase.class);
+
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -68,7 +73,6 @@ public class DbHelper {
         List<CodeBase> resultList = new ArrayList<CodeBase>();
 
         try {
-            Dao<CodeBase,String> codeBaseDao = DaoManager.createDao(connectionSource,CodeBase.class);
             resultList = codeBaseDao.queryForEq("codeType",codeType);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -84,7 +88,6 @@ public class DbHelper {
         List<CodeLangHanYu> resultList = new ArrayList<CodeLangHanYu>();
 
         try {
-            Dao<CodeLangHanYu,String> hanyuDao = DaoManager.createDao(connectionSource,CodeLangHanYu.class);
             resultList = hanyuDao.queryForAll();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -100,11 +103,93 @@ public class DbHelper {
         List<CodeIPABase> resultList = new ArrayList<CodeIPABase>();
 
         try {
-            Dao<CodeIPABase,String> codeIPADao = DaoManager.createDao(connectionSource,CodeIPABase.class);
+            codeIPADao = DaoManager.createDao(connectionSource, CodeIPABase.class);
             resultList = codeIPADao.queryForAll();
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return FXCollections.observableArrayList(resultList);
     }
+
+    public void delete(Object object) {
+        if (object instanceof CodeIPABase) {
+            delete(((CodeIPABase) object));
+        } else if (object instanceof CodeBase) {
+            delete(((CodeBase) object));
+        } else if (object instanceof CodeLangHanYu) {
+            delete(((CodeLangHanYu) object));
+        } else {
+            throw new RuntimeException("un support class");
+        }
+    }
+
+    public void delete(CodeBase codeBase) {
+        try {
+            codeBaseDao.delete(codeBase);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void delete(CodeLangHanYu codeLangHanYu) {
+        try {
+            hanyuDao.delete(codeLangHanYu);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void delete(CodeIPABase codeIPABase) {
+        try {
+            codeIPADao.delete(codeIPABase);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void upDate(Object object) {
+        if (object instanceof CodeIPABase) {
+            upDate(((CodeIPABase) object));
+        } else if (object instanceof CodeBase) {
+            upDate(((CodeBase) object));
+        } else if (object instanceof CodeLangHanYu) {
+            upDate(((CodeLangHanYu) object));
+        } else {
+            throw new RuntimeException("un support class");
+        }
+    }
+
+    public void upDateAll(List objects) {
+        if (objects == null) {
+            return;
+        }
+        for (int i = 0, max = objects.size(); i < max; i++) {
+            upDate(objects.get(i));
+        }
+    }
+
+    public void upDate(CodeIPABase codeIPABase) {
+        try {
+            codeIPADao.update(codeIPABase);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void upDate(CodeBase codeBase) {
+        try {
+            codeBaseDao.update(codeBase);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void upDate(CodeLangHanYu codeLangHanYu) {
+        try {
+            hanyuDao.update(codeLangHanYu);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
 }

@@ -28,7 +28,7 @@
                     <bottom>32</bottom>
                 </Insets>
             </BorderPane.margin>
-            <HBox alignment="CENTER" style="-fx-background-color: white">
+            <HBox alignment="CENTER">
                 <FlowPane.margin>
                     <Insets>
                         <right>16</right>
@@ -78,7 +78,7 @@
                 </Button>
             </HBox>
 
-            <Button fx:id="btn_add" text="新添" visible="false">
+            <Button fx:id="btn_add" text="新添" visible="false" onMouseClicked="#onTopToolsClick">
                 <graphic>
                     <ImageView>
                         <image>
@@ -89,7 +89,7 @@
                 </graphic>
             </Button>
 
-            <Button fx:id="btn_modify" text="修改" visible="false">
+            <Button fx:id="btn_modify" text="修改" visible="false" onMouseClicked="#onTopToolsClick">
                 <graphic>
                     <ImageView>
                         <image>
@@ -100,7 +100,7 @@
                 </graphic>
             </Button>
 
-            <Button fx:id="btn_del" text="删除" visible="false">
+            <Button fx:id="btn_del" text="删除" visible="false" onMouseClicked="#onTopToolsClick">
                 <graphic>
                     <ImageView>
                         <image>
@@ -112,7 +112,7 @@
             </Button>
 
 
-            <Button fx:id="btn_search" text="查找" visible="false">
+            <Button fx:id="btn_search" text="查找" visible="false" onMouseClicked="#onTopToolsClick">
                 <graphic>
                     <ImageView>
                         <image>
@@ -123,7 +123,7 @@
                 </graphic>
             </Button>
 
-            <Button fx:id="btn_replace" text="替换" visible="false">
+            <Button fx:id="btn_replace" text="替换" visible="false" onMouseClicked="#onTopToolsClick">
                 <graphic>
                     <ImageView>
                         <image>
@@ -135,7 +135,7 @@
             </Button>
 
 
-            <Button fx:id="btn_image" text="图像" visible="false">
+            <Button fx:id="btn_image" text="图像" visible="false" onMouseClicked="#onTopToolsClick">
                 <graphic>
                     <ImageView>
                         <image>
@@ -146,7 +146,7 @@
                 </graphic>
             </Button>
 
-            <Button fx:id="btn_video" text="视频" visible="false">
+            <Button fx:id="btn_video" text="视频" visible="false" onMouseClicked="#onTopToolsClick">
                 <graphic>
                     <ImageView>
                         <image>
@@ -157,7 +157,7 @@
                 </graphic>
             </Button>
 
-            <Button fx:id="btn_save" text="保存" visible="false">
+            <Button fx:id="btn_save" text="保存" visible="false" onMouseClicked="#onTopToolsClick">
                 <graphic>
                     <ImageView>
                         <image>
@@ -169,7 +169,7 @@
             </Button>
 
 
-            <Button fx:id="btn_import" text="导入" visible="false">
+            <Button fx:id="btn_import" text="导入" visible="false" disable="true" onMouseClicked="#onTopToolsClick">
                 <graphic>
                     <ImageView>
                         <image>
@@ -180,7 +180,7 @@
                 </graphic>
             </Button>
 
-            <Button fx:id="btn_export" text="导出" visible="false">
+            <Button fx:id="btn_export" text="导出" visible="false" onMouseClicked="#onTopToolsClick">
                 <graphic>
                     <ImageView>
                         <image>
@@ -191,7 +191,7 @@
                 </graphic>
             </Button>
 
-            <Button fx:id="btn_refresh" text="刷新" visible="false">
+            <Button fx:id="btn_refresh" text="刷新" visible="false" onMouseClicked="#onTopToolsRefreshClick">
                 <graphic>
                     <ImageView>
                         <image>
