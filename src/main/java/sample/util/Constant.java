@@ -5,4 +5,5 @@ package sample.util;
  */
 public class Constant {
     public static String ROOT_FILE_DIR = "shengfeiTemp";
+    public static String PASSWORD = "ok";
 }

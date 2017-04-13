@@ -166,6 +166,10 @@ public class ViewUtil {
     }
 
 
+    public BaseController openSearchDialog() throws IOException {
+        return (BaseController) showView("view/searchView.fxml", "查找", -1, -1, false);
+    }
+
 
     private Object showView(String resourcePath) throws IOException {
         return showView(resourcePath,"");

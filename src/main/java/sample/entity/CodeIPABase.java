@@ -8,7 +8,7 @@ import com.j256.ormlite.table.DatabaseTable;
  */
 @DatabaseTable(tableName = "tbl_code_ipa_base")
 public class CodeIPABase {
-    @DatabaseField
+    @DatabaseField(id = true, canBeNull = false)
     public String code;
     @DatabaseField
     public String content;
