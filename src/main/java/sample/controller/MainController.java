@@ -158,7 +158,7 @@ public class MainController extends BaseController{
 
         Tab tab = WidgetUtil.createNewTab("方言调查字表", controller.getmParent());
 
-        WidgetUtil.addTabToTabPane(contentPane, tab);
+        WidgetUtil.addTabToTabPane(contentPane, tab, true);
         WidgetUtil.selectTab(tab);
     }
 
@@ -168,7 +168,7 @@ public class MainController extends BaseController{
 
         Tab tab = WidgetUtil.createNewTab("词汇调查表", controller.getmParent());
 
-        WidgetUtil.addTabToTabPane(contentPane, tab);
+        WidgetUtil.addTabToTabPane(contentPane, tab, true);
         WidgetUtil.selectTab(tab);
     }
 
@@ -178,7 +178,7 @@ public class MainController extends BaseController{
 
         Tab tab = WidgetUtil.createNewTab("句子调查表", controller.getmParent());
 
-        WidgetUtil.addTabToTabPane(contentPane, tab);
+        WidgetUtil.addTabToTabPane(contentPane, tab, true);
         WidgetUtil.selectTab(tab);
     }
 
@@ -188,7 +188,7 @@ public class MainController extends BaseController{
 
         Tab tab = WidgetUtil.createNewTab("话语调查表", controller.getmParent());
 
-        WidgetUtil.addTabToTabPane(contentPane, tab);
+        WidgetUtil.addTabToTabPane(contentPane, tab, true);
         WidgetUtil.selectTab(tab);
     }
 
@@ -198,7 +198,7 @@ public class MainController extends BaseController{
 
         Tab tab = WidgetUtil.createNewTab("中国语言代码", controller.getmParent());
 
-        WidgetUtil.addTabToTabPane(contentPane, tab);
+        WidgetUtil.addTabToTabPane(contentPane, tab, true);
         WidgetUtil.selectTab(tab);
     }
 
@@ -208,7 +208,7 @@ public class MainController extends BaseController{
 
         Tab tab = WidgetUtil.createNewTab("元音音标字符", controller.getmParent());
 
-        WidgetUtil.addTabToTabPane(contentPane, tab);
+        WidgetUtil.addTabToTabPane(contentPane, tab, true);
         WidgetUtil.selectTab(tab);
     }
 
