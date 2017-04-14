@@ -170,6 +170,9 @@ public class ViewUtil {
         return (BaseController) showView("view/searchView.fxml", "查找", -1, -1, false);
     }
 
+    public BaseController openReplaceDialog() throws IOException {
+        return (BaseController) showView("view/replaceView.fxml", "替换", -1, -1, false);
+    }
 
     private Object showView(String resourcePath) throws IOException {
         return showView(resourcePath,"");

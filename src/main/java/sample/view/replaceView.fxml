@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.geometry.Insets?>
+<GridPane xmlns="http://javafx.com/javafx"
+          xmlns:fx="http://javafx.com/fxml"
+          fx:controller="sample.controller.ReplaceViewController"
+          vgap="8" hgap="8" stylesheets="@css/sf.css">
+    <padding>
+        <Insets>
+            <top>8</top>
+            <bottom>8</bottom>
+            <right>8</right>
+            <left>8</left>
+        </Insets>
+    </padding>
+    <children>
+        <Label styleClass="colorText" text="字段" GridPane.rowIndex="0" GridPane.columnIndex="0"></Label>
+
+        <Label styleClass="colorText" text="查询内容" GridPane.rowIndex="0" GridPane.columnIndex="1"></Label>
+
+        <TextField GridPane.rowIndex="0" GridPane.columnIndex="2" fx:id="input_searchContent"></TextField>
+
+        <ChoiceBox GridPane.rowIndex="1" GridPane.columnIndex="0" fx:id="choiceBox"></ChoiceBox>
+
+        <Label styleClass="colorText" text="替换为" GridPane.rowIndex="1" GridPane.columnIndex="1"></Label>
+
+        <TextField GridPane.rowIndex="1" GridPane.columnIndex="2" fx:id="input_replaceContent"></TextField>
+
+        <CheckBox styleClass="colorText" text="全字匹配" GridPane.rowIndex="1" GridPane.columnIndex="3"
+                  fx:id="checkBox"></CheckBox>
+
+        <HBox GridPane.rowIndex="2" GridPane.columnIndex="0" GridPane.columnSpan="4" alignment="CENTER" spacing="8">
+            <Button styleClass="colorText" text="替换" fx:id="btn_replace" onMouseClicked="#onReplaceBtnClick"></Button>
+            <Button styleClass="colorText" text="关闭" fx:id="btn_close" onMouseClicked="#onCloseBtnClick"></Button>
+        </HBox>
+    </children>
+
+</GridPane>

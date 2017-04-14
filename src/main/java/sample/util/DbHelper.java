@@ -192,4 +192,31 @@ public class DbHelper {
         }
     }
 
+    public CodeBase getCodeBaseByCode(String code) {
+        try {
+            return codeBaseDao.queryForId(code);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public CodeIPABase getCodeIPABaseByCode(String code) {
+        try {
+            return codeIPADao.queryForId(code);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public CodeLangHanYu getLangHanYuByCode(String code) {
+        try {
+            return hanyuDao.queryForId(code);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 }

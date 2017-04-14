@@ -5,6 +5,7 @@ import javafx.stage.Stage;
 import sample.util.DbHelper;
 import sample.util.ViewUtil;
 
+import java.io.File;
 import java.io.IOException;
 
 public class Main extends Application {
@@ -13,6 +14,7 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception{
 //        ViewUtil.getInstance().openDbTableView();
         ViewUtil.getInstance().openMainView();
+
         DbHelper.getInstance();
     }
 

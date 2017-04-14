@@ -1,38 +1,30 @@
 package sample.controller;
 
-import javafx.beans.InvalidationListener;
-import javafx.beans.Observable;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-import javafx.util.Callback;
+import javafx.stage.FileChooser;
 import sample.entity.CodeBase;
 import sample.entity.CodeIPABase;
 import sample.entity.CodeLangHanYu;
 import sample.util.*;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -612,8 +604,24 @@ public class DbTableController extends BaseController {
     public void onEditPaneCancelClick() {
         try {
             String code = (String) selItem.getClass().getDeclaredField("code").get(selItem);
+            Object object = null;
+            if (selItem != null) {
+                if (selItem instanceof CodeBase) {
+                    object = DbHelper.getInstance().getCodeBaseByCode(code);
+                } else if (selItem instanceof CodeIPABase) {
+                    object = DbHelper.getInstance().getCodeIPABaseByCode(code);
+                } else if (selItem instanceof CodeLangHanYu) {
+                    object = DbHelper.getInstance().getLangHanYuByCode(code);
+                } else {
+                    throw new RuntimeException("un support class type");
+                }
+                int indexOfSelItem = tableDatas.indexOf(selItem);
+                tableDatas.remove(indexOfSelItem);
+                tableDatas.add(indexOfSelItem, object);
+                tableView.refresh();
+                tableView.getSelectionModel().select(indexOfSelItem);
+            }
 
-            tableView.refresh();
 
         } catch (IllegalAccessException e) {
             e.printStackTrace();
@@ -706,12 +714,7 @@ public class DbTableController extends BaseController {
     public void onTopToolsSearchClick() throws IOException {
 
         SearchViewController searchViewController = (SearchViewController) ViewUtil.getInstance().openSearchDialog();
-        ObservableList<TableColumn> tableColumns = tableView.getColumns();
-        List<String> columnsName = new ArrayList<>();
-        for (TableColumn tableColumn :
-                tableColumns) {
-            columnsName.add(tableColumn.getText());
-        }
+        List columnsName = getTableColumnNameList();
         searchViewController.setSearchTableTitleName(columnsName);
         searchViewController.setOnDoneClickCallback(new SearchViewController.OnDoneClickCallback() {
             @Override
@@ -758,17 +761,65 @@ public class DbTableController extends BaseController {
     }
 
     //顶部 替换按钮
-    public void onTopToolsReplaceClick() {
+    public void onTopToolsReplaceClick() throws IOException {
+        ReplaceViewController controller = (ReplaceViewController) ViewUtil.getInstance().openReplaceDialog();
+        controller.setChoiceBoxItems(getTableColumnNameList());
+        controller.setOnDoneClickCallback(new ReplaceViewController.OnDoneClickCallback() {
+            @Override
+            public void click(ReplaceViewController controller) {
+                String replaceContent = controller.getInputReplaceContent();
+                String searchContent = controller.getInputSearchContent();
+                boolean isChecked = controller.getIsSelCheckBox();
+                int index = controller.getChoiceBoxSelItemIndex();
+                int modifyCount = 0;
+                for (Object object :
+                        tableDatas) {
+                    TableColumn tableColumn = ((TableColumn) tableView.getColumns().get(index));
+                    PropertyValueFactory value = ((PropertyValueFactory) tableColumn.cellValueFactoryProperty().get());
+                    String tableTitle = value.getProperty();
+                    Field field = null;
+                    try {
+                        field = object.getClass().getDeclaredField(tableTitle);
+                        String content = (String) field.get(object);
+                        if (isChecked) {//全字匹配
+                            if (content.equals(searchContent)) {
+                                System.out.println(content);
+                                field.set(object, replaceContent);
+                                modifyCount++;
+                            }
+                        } else {
+                            if (content.contains(searchContent)) {
+                                String newStr = content.replace(searchContent, replaceContent);
+                                field.set(object, newStr);
+                                modifyCount++;
+                            }
+                        }
+                    } catch (NoSuchFieldException e) {
+                        e.printStackTrace();
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+                ToastUtil.show("修改了" + modifyCount + "条记录");
+                tableView.refresh();
+
+            }
+        });
+        controller.show();
 
     }
 
     //顶部 图像按钮
     public void onTopToolsImageClick() {
-
+        File file = DialogUtil.fileChoiceDialog("选择图像", DialogUtil.FILE_CHOOSE_TYPE_IMAGE);
+        //TODO 保存操作
     }
 
     //顶部 视频按钮
     public void onTopToolsVideoClick() {
+        File file = DialogUtil.fileChoiceDialog("选择图像", DialogUtil.FILE_CHOOSE_TYPE_VIDEO);
+        //TODO 保存操作
 
     }
 
@@ -780,11 +831,23 @@ public class DbTableController extends BaseController {
 
     //顶部 导入按钮
     public void onTopToolsImportClick() {
-
     }
 
     //顶部 导出按钮
     public void onTopToolsExportClick() {
+        File file = DialogUtil.saveFileDialog("导出");
+        try {
+            FileUtil.TableViewDataToExcel(tableView, file);
+            ToastUtil.show("已导出");
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+//        System.out.println(file.getAbsolutePath());
 
     }
 
@@ -798,5 +861,14 @@ public class DbTableController extends BaseController {
     }
 
 
+    private List getTableColumnNameList() {
+        ObservableList<TableColumn> tableColumns = tableView.getColumns();
+        List<String> columnsName = new ArrayList<>();
+        for (TableColumn tableColumn :
+                tableColumns) {
+            columnsName.add(tableColumn.getText());
+        }
+        return columnsName;
+    }
 }
 
