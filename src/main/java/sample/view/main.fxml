@@ -19,9 +19,9 @@
         <menus>
           <Menu mnemonicParsing="false" text="%menu_file">
             <items>
-              <MenuItem accelerator="CTRL+N" mnemonicParsing="false" text="%menu_file_newWord" />
-              <MenuItem mnemonicParsing="false" text="%menu_file_newWords" />
-              <MenuItem mnemonicParsing="false" text="%menu_file_newSentence" />
+              <MenuItem accelerator="CTRL+N" mnemonicParsing="false" text="%menu_file_newWord"  onAction="#newWordTableClick"/>
+              <MenuItem mnemonicParsing="false" text="%menu_file_newWords"  onAction="#newCiTableClick"/>
+              <MenuItem mnemonicParsing="false" text="%menu_file_newSentence"  onAction="#newSentenceTableClick"/>
               <MenuItem mnemonicParsing="false" text="%menu_file_newDiscource" />
                 <SeparatorMenuItem />
                 <MenuItem accelerator="CTRL+O" mnemonicParsing="false" text="%menu_file_open" />

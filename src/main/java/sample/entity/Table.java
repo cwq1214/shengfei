@@ -8,8 +8,8 @@ import com.j256.ormlite.table.DatabaseTable;
  */
 @DatabaseTable(tableName = "tbl_table")
 public class Table {
-    @DatabaseField(canBeNull = false, id = true)
-    public int ID;
+    @DatabaseField(generatedId = true)
+    public int id;
     @DatabaseField
     public String title;
     @DatabaseField
@@ -45,12 +45,35 @@ public class Table {
     @DatabaseField
     public String custom;
 
-    public int getID() {
-        return ID;
+    public Table() {
     }
 
-    public void setID(int ID) {
-        this.ID = ID;
+    public Table(String title, String datatype, String projectname, String creator, String speaker, String contributor, String recordingdate, String recordingplace, String language, String languagecode, String languageplace, String datades, String equipment, String software, String rightl, String snote, String custom) {
+        this.title = title;
+        this.datatype = datatype;
+        this.projectname = projectname;
+        this.creator = creator;
+        this.speaker = speaker;
+        this.contributor = contributor;
+        this.recordingdate = recordingdate;
+        this.recordingplace = recordingplace;
+        this.language = language;
+        this.languagecode = languagecode;
+        this.languageplace = languageplace;
+        this.datades = datades;
+        this.equipment = equipment;
+        this.software = software;
+        this.rightl = rightl;
+        this.snote = snote;
+        this.custom = custom;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getTitle() {
