@@ -10,7 +10,9 @@ import javafx.scene.web.WebView;
 import javafx.stage.Modality;
 import javafx.stage.Window;
 import sample.entity.CodeCounty;
+import sample.entity.Table;
 import sample.util.Constant;
+import sample.util.DbHelper;
 import sample.util.ViewUtil;
 import sample.util.WidgetUtil;
 
@@ -27,6 +29,45 @@ public class MainController extends BaseController{
     public TabPane contentPane;
     @FXML
     public Label changeLanguage;
+
+    @FXML
+    public void newWordTableClick(){
+        Table t = new Table("","0","","","","","","","","","","","","","","","");
+        DbHelper.getInstance().insertNewTable(t);
+
+        NewTableView vc = ((NewTableView) ViewUtil.getInstance().showView("view/newTableView.fxml", "", -1, -1, t));
+        vc.setNewType(NewTableView.NewWordType);
+
+        Tab tab = WidgetUtil.createNewTab(t.getTitle(), vc.getmParent());
+        WidgetUtil.addTabToTabPane(contentPane, tab);
+        WidgetUtil.selectTab(tab);
+    }
+
+    @FXML
+    public void newCiTableClick(){
+        Table t = new Table("","1","","","","","","","","","","","","","","","");
+        DbHelper.getInstance().insertNewTable(t);
+
+        NewTableView vc = ((NewTableView) ViewUtil.getInstance().showView("view/newTableView.fxml", "", -1, -1, t));
+        vc.setNewType(NewTableView.NewCiType);
+
+        Tab tab = WidgetUtil.createNewTab(t.getTitle(), vc.getmParent());
+        WidgetUtil.addTabToTabPane(contentPane, tab);
+        WidgetUtil.selectTab(tab);
+    }
+
+    @FXML
+    public void newSentenceTableClick(){
+        Table t = new Table("","2","","","","","","","","","","","","","","","");
+        DbHelper.getInstance().insertNewTable(t);
+
+        NewTableView vc = ((NewTableView) ViewUtil.getInstance().showView("view/newTableView.fxml", "", -1, -1, t));
+        vc.setNewType(NewTableView.NewSentenceType);
+
+        Tab tab = WidgetUtil.createNewTab(t.getTitle(), vc.getmParent());
+        WidgetUtil.addTabToTabPane(contentPane, tab);
+        WidgetUtil.selectTab(tab);
+    }
 
     @FXML
     public void onTutorialClick() throws IOException {

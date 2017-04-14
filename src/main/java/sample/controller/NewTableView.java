@@ -30,6 +30,8 @@ public class NewTableView extends BaseController{
     public void prepareInit() {
         super.prepareInit();
 
+        System.out.println(((Table) preData).getTitle());
+
         tableTopCtl.setBtnClickListener(new TableTopCtlListener() {
             @Override
             public void onBtnClick(ClickType ct) {

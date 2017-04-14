@@ -9,10 +9,8 @@ import com.j256.ormlite.stmt.Where;
 import com.j256.ormlite.support.ConnectionSource;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import sample.entity.CodeBase;
-import sample.entity.CodeCounty;
-import sample.entity.CodeIPABase;
-import sample.entity.CodeLangHanYu;
+import javafx.scene.control.Tab;
+import sample.entity.*;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -33,6 +31,44 @@ public class DbHelper {
     Dao<CodeBase, String> codeBaseDao;
     Dao<CodeLangHanYu, String> hanyuDao;
     Dao<CodeIPABase, String> codeIPADao;
+
+    /**
+     * 创建新字表、词表、句表，并插入数据库
+     * @param t
+     */
+    public void insertNewTable(Table t){
+        try {
+            Dao<Table,String> tableDao = DaoManager.createDao(connectionSource,Table.class);
+
+            int lastIndex = 0;
+            String titlePre = "";
+
+            List tempTable = tableDao.queryForEq("datatype",t.datatype);
+            System.out.println("size:"+tempTable.size());
+            if (tempTable.size() == 0){
+                lastIndex = 1;
+            }else{
+                Table lastT = ((Table) tempTable.get(tempTable.size() - 1));
+                lastIndex = Integer.parseInt(lastT.getTitle().substring(2,lastT.getTitle().length()))+1;
+            }
+
+            if (t.datatype.equalsIgnoreCase("0")){
+                titlePre = "字表";
+            }else if(t.datatype.equalsIgnoreCase("1")){
+                titlePre = "词表";
+            }else if(t.datatype.equalsIgnoreCase("2")){
+                titlePre = "句表";
+            }
+
+            tableDao.create(t);
+            t.setTitle(titlePre+lastIndex);
+            t.setProjectname(titlePre+lastIndex);
+            tableDao.update(t);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
     /**
      * 打开数据库链接
