@@ -33,6 +33,26 @@ public class DbHelper {
     Dao<CodeIPABase, String> codeIPADao;
 
     /**
+     * 根据codeBase获取相应分类的数据，并转换成相应的Record类，组装成ObservableList
+     * @param dataType 数据分类：字表，词表，句表
+     * @return
+     */
+    public ObservableList<Record> searchTempRecord(String dataType){
+        List<Record> resultList = new ArrayList<>();
+        try {
+            Dao<CodeBase,String> codeBaseDao = DaoManager.createDao(connectionSource,CodeBase.class);
+            List<CodeBase> codeBaseList = codeBaseDao.queryForEq("codeType",dataType);
+            for (CodeBase cb : codeBaseList) {
+                Record tempRecord = new Record(-1,cb.code,cb.code,"0","0",cb.IPA,cb.note,cb.spell,cb.english,cb.mwfy,cb.content,cb.rank,cb.yun,"");
+                resultList.add(tempRecord);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return FXCollections.observableArrayList(resultList);
+    }
+
+    /**
      * 创建新字表、词表、句表，并插入数据库
      * @param t
      */

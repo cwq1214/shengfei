@@ -36,12 +36,12 @@
             <Insets />
          </FlowPane.margin>
       </Separator>
-      <TextField id="nowIndexTF" prefWidth="50.0" text="0">
+      <TextField id="nowIndexTF" prefWidth="50.0" text="0" fx:id="nowIndexTF">
          <FlowPane.margin>
             <Insets />
          </FlowPane.margin>
       </TextField>
-      <Label id="allCountL" text="/ 0">
+      <Label id="allCountL" text="/ 0" fx:id="allCountL">
          <FlowPane.margin>
             <Insets />
          </FlowPane.margin>

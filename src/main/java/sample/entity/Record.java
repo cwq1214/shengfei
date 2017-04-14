@@ -3,6 +3,8 @@ package sample.entity;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import java.util.UUID;
+
 /**
  * Created by chenweiqi on 2017/4/11.
  */
@@ -38,6 +40,24 @@ public class Record {
     public String yun;
     @DatabaseField
     public String createDate;
+
+    public Record(int baseId, String investCode, String baseCode, String hide, String done, String IPA, String note, String spell, String english, String MWFY, String content, String rank, String yun, String createDate) {
+        this.uuid = UUID.randomUUID().toString();
+        this.baseId = baseId;
+        this.investCode = investCode;
+        this.baseCode = baseCode;
+        this.hide = hide;
+        this.done = done;
+        this.IPA = IPA;
+        this.note = note;
+        this.spell = spell;
+        this.english = english;
+        this.MWFY = MWFY;
+        this.content = content;
+        this.rank = rank;
+        this.yun = yun;
+        this.createDate = createDate;
+    }
 
     public String getUuid() {
         return uuid;

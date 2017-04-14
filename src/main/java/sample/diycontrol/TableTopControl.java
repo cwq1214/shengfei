@@ -74,8 +74,8 @@ public class TableTopControl extends FlowPane{
      * 设置当前下标
      * @param index
      */
-    public void setNowIndex(String index){
-        nowIndexTF.setText(index);
+    public void setNowIndex(int index){
+        nowIndexTF.setText(index+1+"");
     }
 
     /**
@@ -91,86 +91,73 @@ public class TableTopControl extends FlowPane{
      * @param allCount
      */
     public void setAllCount(int allCount){
-        allCountL.setText(Integer.toString(allCount));
+        allCountL.setText("/ "+Integer.toString(allCount));
     }
 
 
     //按钮事件
     @FXML
     public void firstBtnClick(){
-        System.out.println("firstBtnClick");
         btnClickListener.onBtnClick(ClickType.FirstBtnClick);
     }
 
     @FXML
     public void preBtnClick(){
-        System.out.println("preBtnClick");
         btnClickListener.onBtnClick(ClickType.PreBtnClick);
     }
 
     @FXML
     public void nextBtnClick(){
-        System.out.println("nextBtnClick");
         btnClickListener.onBtnClick(ClickType.NextBtnClick);
     }
 
     @FXML
     public void lastBtnClick(){
-        System.out.println("lastBtnClick");
         btnClickListener.onBtnClick(ClickType.LastBtnClick);
     }
 
     @FXML
     public void refreshBtnClick(){
-        System.out.println("refreshBtnClick");
         btnClickListener.onBtnClick(ClickType.RefreshBtnClick);
     }
 
     @FXML
     public void selectAllBtnClick(){
-        System.out.println("selectAllBtnClick");
         btnClickListener.onBtnClick(ClickType.SelectAllBtnClick);
     }
 
     @FXML
     public void selectAnotherBtnClick(){
-        System.out.println("SelectAnotherBtnClick");
         btnClickListener.onBtnClick(ClickType.SelectAnotherBtnClick);
     }
 
     @FXML
     public void keepBtnClick(){
-        System.out.println("keepBtnClick");
         btnClickListener.onBtnClick(ClickType.KeepBtnClick);
     }
 
     @FXML
     public void disappearBtnClick(){
-        System.out.println("disappearBtnClick");
         btnClickListener.onBtnClick(ClickType.DisappearBtnClick);
     }
 
     @FXML
     public void delBtnClick(){
-        System.out.println("delBtnClick");
         btnClickListener.onBtnClick(ClickType.DelBtnClick);
     }
 
     @FXML
     public void showAllBtnClick(){
-        System.out.println("showAllBtnClick");
         btnClickListener.onBtnClick(ClickType.ShowAllBtnClick);
     }
 
     @FXML
     public void showOnlyKeepBtnClick(){
-        System.out.println("showOnlyKeepBtnClick");
         btnClickListener.onBtnClick(ClickType.ShowOnlyKeepBtnClick);
     }
 
     @FXML
     public void showOnlyDisappearBtnClick(){
-        System.out.println("showOnlyDisappearBtnClick");
         btnClickListener.onBtnClick(ClickType.ShowOnlyDisappearBtnClick);
     }
 }
