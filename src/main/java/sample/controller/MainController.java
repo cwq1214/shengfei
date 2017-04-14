@@ -9,6 +9,7 @@ import javafx.scene.control.*;
 import javafx.scene.web.WebView;
 import javafx.stage.Modality;
 import javafx.stage.Window;
+import sample.Main;
 import sample.entity.CodeCounty;
 import sample.entity.Table;
 import sample.util.Constant;
@@ -93,7 +94,13 @@ public class MainController extends BaseController{
     @FXML
     public void onEnglish2ChineseClick(){
         try {
-            Runtime.getRuntime().exec("cmd /c start "+Constant.ROOT_FILE_DIR+"/English.xls");
+            String osName = System.getProperty("os.name");
+            File file = new File(Constant.ROOT_FILE_DIR + "/English.xls");
+            if (osName.toLowerCase().contains("mac")) {
+                Runtime.getRuntime().exec("open " + file.getAbsolutePath());
+            } else {
+                Runtime.getRuntime().exec("cmd /c start " + Constant.ROOT_FILE_DIR + "/English.xls");
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
