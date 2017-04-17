@@ -41,6 +41,9 @@ public class Record {
     @DatabaseField
     public String createDate;
 
+    public Record() {
+    }
+
     public Record(int baseId, String investCode, String baseCode, String hide, String done, String IPA, String note, String spell, String english, String MWFY, String content, String rank, String yun, String createDate) {
         this.uuid = UUID.randomUUID().toString();
         this.baseId = baseId;

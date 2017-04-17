@@ -1,16 +1,13 @@
 package sample.controller;
 
-import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.dao.DaoManager;
-import com.j256.ormlite.jdbc.JdbcConnectionSource;
-import com.j256.ormlite.support.ConnectionSource;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.web.WebView;
 import javafx.stage.Modality;
-import javafx.stage.Window;
-import sample.Main;
-import sample.entity.CodeCounty;
+import sample.controller.openTable.OpenTableController;
+import sample.controller.openTable.OpenTableListener;
 import sample.entity.Table;
 import sample.util.Constant;
 import sample.util.DbHelper;
@@ -32,6 +29,71 @@ public class MainController extends BaseController{
     public Label changeLanguage;
 
     @FXML
+    public void delTableClick(){
+        OpenTableController vc = ((OpenTableController) ViewUtil.getInstance().showView("view/openTable.fxml", "打开表", -1, -1, ""));
+        vc.setOpen(false);
+
+        vc.mStage.setResizable(false);
+        vc.mStage.initModality(Modality.APPLICATION_MODAL);
+        vc.mStage.show();
+    }
+
+    @FXML
+    public void openTableClick(){
+        OpenTableController vc = ((OpenTableController) ViewUtil.getInstance().showView("view/openTable.fxml", "打开表", -1, -1, ""));
+        vc.setListener(new OpenTableListener() {
+            @Override
+            public void onOpenTable(Table t) {
+                if (t.datatype.equals("0")){
+                    NewTableView vc = ((NewTableView) ViewUtil.getInstance().showView("view/newTableView.fxml", "", -1, -1, t));
+                    vc.setNewType(NewTableView.NewWordType);
+
+                    Tab tab = WidgetUtil.createNewTab(t.getTitle(), vc.getmParent());
+                    tab.setOnClosed(new EventHandler<Event>() {
+                        @Override
+                        public void handle(Event event) {
+                            vc.onTabClosed();
+                        }
+                    });
+                    WidgetUtil.addTabToTabPane(contentPane, tab);
+                    WidgetUtil.selectTab(tab);
+                }else if (t.datatype.equals("1")){
+                    NewTableView vc = ((NewTableView) ViewUtil.getInstance().showView("view/newTableView.fxml", "", -1, -1, t));
+                    vc.setNewType(NewTableView.NewCiType);
+
+                    Tab tab = WidgetUtil.createNewTab(t.getTitle(), vc.getmParent());
+                    tab.setOnClosed(new EventHandler<Event>() {
+                        @Override
+                        public void handle(Event event) {
+                            vc.onTabClosed();
+                        }
+                    });
+                    WidgetUtil.addTabToTabPane(contentPane, tab);
+                    WidgetUtil.selectTab(tab);
+                }else if (t.datatype.equals("2")){
+                    NewTableView vc = ((NewTableView) ViewUtil.getInstance().showView("view/newTableView.fxml", "", -1, -1, t));
+                    vc.setNewType(NewTableView.NewSentenceType);
+
+                    Tab tab = WidgetUtil.createNewTab(t.getTitle(), vc.getmParent());
+                    tab.setOnClosed(new EventHandler<Event>() {
+                        @Override
+                        public void handle(Event event) {
+                            vc.onTabClosed();
+                        }
+                    });
+                    WidgetUtil.addTabToTabPane(contentPane, tab);
+                    WidgetUtil.selectTab(tab);
+                }
+            }
+        });
+        vc.setOpen(true);
+
+        vc.mStage.setResizable(false);
+        vc.mStage.initModality(Modality.APPLICATION_MODAL);
+        vc.mStage.show();
+    }
+
+    @FXML
     public void newWordTableClick(){
         Table t = new Table("","0","","","","","","","","","","","","","","","");
         DbHelper.getInstance().insertNewTable(t);
@@ -40,6 +102,12 @@ public class MainController extends BaseController{
         vc.setNewType(NewTableView.NewWordType);
 
         Tab tab = WidgetUtil.createNewTab(t.getTitle(), vc.getmParent());
+        tab.setOnClosed(new EventHandler<Event>() {
+            @Override
+            public void handle(Event event) {
+                vc.onTabClosed();
+            }
+        });
         WidgetUtil.addTabToTabPane(contentPane, tab);
         WidgetUtil.selectTab(tab);
     }
@@ -53,6 +121,12 @@ public class MainController extends BaseController{
         vc.setNewType(NewTableView.NewCiType);
 
         Tab tab = WidgetUtil.createNewTab(t.getTitle(), vc.getmParent());
+        tab.setOnClosed(new EventHandler<Event>() {
+            @Override
+            public void handle(Event event) {
+                vc.onTabClosed();
+            }
+        });
         WidgetUtil.addTabToTabPane(contentPane, tab);
         WidgetUtil.selectTab(tab);
     }
@@ -66,6 +140,12 @@ public class MainController extends BaseController{
         vc.setNewType(NewTableView.NewSentenceType);
 
         Tab tab = WidgetUtil.createNewTab(t.getTitle(), vc.getmParent());
+        tab.setOnClosed(new EventHandler<Event>() {
+            @Override
+            public void handle(Event event) {
+                vc.onTabClosed();
+            }
+        });
         WidgetUtil.addTabToTabPane(contentPane, tab);
         WidgetUtil.selectTab(tab);
     }

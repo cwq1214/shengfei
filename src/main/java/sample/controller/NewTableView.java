@@ -2,12 +2,12 @@ package sample.controller;
 
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.SelectionMode;
-import javafx.scene.control.TableCell;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.input.MouseEvent;
@@ -39,9 +39,20 @@ public class NewTableView extends BaseController{
     @FXML
     private TableView tableView;
 
+
     @Override
     public void prepareInit() {
         super.prepareInit();
+
+        tableView.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                int nowIndex = tableView.getSelectionModel().getSelectedIndex();
+                if (nowIndex != -1){
+                    tableTopCtl.setNowIndex(nowIndex);
+                }
+            }
+        });
 
         tableView.setEditable(true);
         tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
@@ -51,12 +62,14 @@ public class NewTableView extends BaseController{
             public void onBtnClick(ClickType ct) {
                 switch (ct){
                     case FirstBtnClick:
+                        tableView.getSelectionModel().clearSelection();
                         tableView.getSelectionModel().select(0);
                         tableView.scrollTo(tableView.getSelectionModel().getSelectedIndex());
                         tableTopCtl.setNowIndex(tableView.getSelectionModel().getSelectedIndex());
                         break;
                     case PreBtnClick: {
                         int nowIndex = tableView.getSelectionModel().getSelectedIndex();
+                        tableView.getSelectionModel().clearSelection();
                         if (nowIndex <= 0) {
                             tableView.getSelectionModel().select(0);
                         } else {
@@ -68,6 +81,7 @@ public class NewTableView extends BaseController{
                     }
                     case NextBtnClick: {
                         int nowIndex = tableView.getSelectionModel().getSelectedIndex();
+                        tableView.getSelectionModel().clearSelection();
                         if (nowIndex >= tableDatas.size() - 1) {
                             tableView.getSelectionModel().select(tableDatas.size() - 1);
                         } else {
@@ -78,54 +92,79 @@ public class NewTableView extends BaseController{
                         break;
                     }
                     case LastBtnClick:
+                        tableView.getSelectionModel().clearSelection();
                         tableView.getSelectionModel().select(tableDatas.size()-1);
                         tableView.scrollTo(tableView.getSelectionModel().getSelectedIndex());
                         tableTopCtl.setNowIndex(tableView.getSelectionModel().getSelectedIndex());
                         break;
                     case RefreshBtnClick:
-                        tableDatas = originDatas;
+                        tableDatas = FXCollections.observableArrayList(originDatas);
                         tableView.setItems(tableDatas);
                         tableView.refresh();
                         break;
                     case SelectAllBtnClick:
                         tableView.getSelectionModel().selectAll();
                         break;
-                    case SelectAnotherBtnClick:
-                        break;
-                    case KeepBtnClick: {
-                        int nowIndex = tableView.getSelectionModel().getSelectedIndex();
-                        if (nowIndex != -1){
-                            ((Record) tableView.getItems().get(nowIndex)).setHide("0");
-                            ((Record) originDatas.get(nowIndex)).setHide("0");
-                            tableView.refresh();
+                    case SelectAnotherBtnClick:{
+                        ObservableList postions = tableView.getSelectionModel().getSelectedIndices();
+                        for (int i = 0;i<tableDatas.size();i++){
+                            if (postions.indexOf(i) != -1){
+                                tableView.getSelectionModel().clearSelection(i);
+                            }else{
+                                tableView.getSelectionModel().select(i);
+                            }
                         }
+                        break;
+                    }
+                    case KeepBtnClick: {
+                        ObservableList postions = tableView.getSelectionModel().getSelectedIndices();
+                        for (int i = 0 ;i<postions.size();i++){
+                            int nowIndex = ((Integer) postions.get(i));
+                            if (nowIndex != -1){
+                                int oIndex = originDatas.indexOf(tableDatas.get(nowIndex));
+                                ((Record) tableView.getItems().get(nowIndex)).setHide("0");
+                                ((Record) originDatas.get(oIndex)).setHide("0");
+                            }
+                        }
+                        tableView.refresh();
                         break;
                     }
                     case DisappearBtnClick: {
-                        int nowIndex = tableView.getSelectionModel().getSelectedIndex();
-                        if (nowIndex != -1) {
-                            ((Record) tableView.getItems().get(nowIndex)).setHide("1");
-                            ((Record) originDatas.get(nowIndex)).setHide("1");
-                            tableView.refresh();
+                        ObservableList postions = tableView.getSelectionModel().getSelectedIndices();
+                        for (int i = 0 ;i<postions.size();i++){
+                            int nowIndex = ((Integer) postions.get(i));
+                            if (nowIndex != -1){
+                                int oIndex = originDatas.indexOf(tableDatas.get(nowIndex));
+                                ((Record) tableView.getItems().get(nowIndex)).setHide("1");
+                                ((Record) originDatas.get(oIndex)).setHide("1");
+                            }
                         }
+                        tableView.refresh();
                         break;
                     }
                     case DelBtnClick: {
-                        int nowIndex = tableView.getSelectionModel().getSelectedIndex();
-                        if (nowIndex != -1) {
-//                            originDatas.remove(tableView.getItems().get(nowIndex));
-                            tableView.getItems().remove(nowIndex);
-                            tableView.refresh();
+                        ObservableList postions = tableView.getSelectionModel().getSelectedIndices();
+                        for (int i = 0 ;i<postions.size();i++) {
+                            int nowIndex = ((Integer) postions.get(i));
+                            if (nowIndex != -1) {
+                                int oIndex = originDatas.indexOf(tableDatas.get(nowIndex));
+                                tableDatas.remove(nowIndex);
+                                originDatas.remove(oIndex);
+                            }
                         }
+                        tableView.refresh();
                         break;
                     }
                     case ShowAllBtnClick:
-                        tableDatas = originDatas;
+                        tableDatas = FXCollections.observableArrayList(originDatas);
                         tableView.setItems(tableDatas);
+                        tableView.getSelectionModel().clearSelection();
+                        tableView.getSelectionModel().select(0);
+                        tableTopCtl.setNowIndex(0);
                         tableView.refresh();
                         break;
                     case ShowOnlyKeepBtnClick:
-                        tableDatas = originDatas.filtered(new Predicate<Record>(){
+                        tableDatas = FXCollections.observableArrayList(originDatas.filtered(new Predicate<Record>(){
                             @Override
                             public boolean test(Record record) {
                                 if (Integer.parseInt(record.hide) == 0){
@@ -133,12 +172,15 @@ public class NewTableView extends BaseController{
                                 }
                                 return false;
                             }
-                        });
+                        }));
                         tableView.setItems(tableDatas);
+                        tableView.getSelectionModel().clearSelection();
+                        tableView.getSelectionModel().select(0);
+                        tableTopCtl.setNowIndex(0);
                         tableView.refresh();
                         break;
                     case ShowOnlyDisappearBtnClick:
-                        tableDatas = originDatas.filtered(new Predicate<Record>(){
+                        tableDatas = FXCollections.observableArrayList(originDatas.filtered(new Predicate<Record>(){
                             @Override
                             public boolean test(Record record) {
                                 if (Integer.parseInt(record.hide) == 1){
@@ -146,9 +188,11 @@ public class NewTableView extends BaseController{
                                 }
                                 return false;
                             }
-                        });
-                        System.out.println(tableDatas.size());
+                        }));
                         tableView.setItems(tableDatas);
+                        tableView.getSelectionModel().clearSelection();
+                        tableView.getSelectionModel().select(0);
+                        tableTopCtl.setNowIndex(0);
                         tableView.refresh();
                         break;
                 }
@@ -170,9 +214,14 @@ public class NewTableView extends BaseController{
             TableColumn<Record,String> noteCol = new TableColumn<>("注释");
             TableColumn<Record,String> recordDateCol = new TableColumn<>("录音日期");
 
+            //设置单元格编辑权限
             hideCol.setEditable(false);
             doneCol.setEditable(false);
+            codeCol.setEditable(false);
+            wordCol.setEditable(false);
+            recordDateCol.setEditable(false);
 
+            //设置单元格类型
             hideCol.setCellFactory(new Callback<TableColumn<Record, String>, TableCell<Record, String>>() {
                 @Override
                 public TableCell<Record, String> call(TableColumn<Record, String> param) {
@@ -198,6 +247,63 @@ public class NewTableView extends BaseController{
             noteCol.setCellFactory(TextFieldTableCell.forTableColumn());
             recordDateCol.setCellFactory(TextFieldTableCell.forTableColumn());
 
+            //设置单元格编辑事件
+            rankCol.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Record, String>>() {
+                @Override
+                public void handle(TableColumn.CellEditEvent<Record, String> event) {
+                    int nowIndex = event.getTablePosition().getRow();
+                    int oIndex = originDatas.indexOf(tableDatas.get(nowIndex));
+                    ((Record) tableDatas.get(nowIndex)).setRank(event.getNewValue());
+                    ((Record) originDatas.get(oIndex)).setRank(event.getNewValue());
+                }
+            });
+            yunCol.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Record, String>>() {
+                @Override
+                public void handle(TableColumn.CellEditEvent<Record, String> event) {
+                    int nowIndex = event.getTablePosition().getRow();
+                    int oIndex = originDatas.indexOf(tableDatas.get(nowIndex));
+                    ((Record) tableDatas.get(nowIndex)).setYun(event.getNewValue());
+                    ((Record) originDatas.get(oIndex)).setYun(event.getNewValue());
+                }
+            });
+            IPACol.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Record, String>>() {
+                @Override
+                public void handle(TableColumn.CellEditEvent<Record, String> event) {
+                    int nowIndex = event.getTablePosition().getRow();
+                    int oIndex = originDatas.indexOf(tableDatas.get(nowIndex));
+                    ((Record) tableDatas.get(nowIndex)).setIPA(event.getNewValue());
+                    ((Record) originDatas.get(oIndex)).setIPA(event.getNewValue());
+                }
+            });
+            spellCol.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Record, String>>() {
+                @Override
+                public void handle(TableColumn.CellEditEvent<Record, String> event) {
+                    int nowIndex = event.getTablePosition().getRow();
+                    int oIndex = originDatas.indexOf(tableDatas.get(nowIndex));
+                    ((Record) tableDatas.get(nowIndex)).setSpell(event.getNewValue());
+                    ((Record) originDatas.get(oIndex)).setSpell(event.getNewValue());
+                }
+            });
+            englishCol.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Record, String>>() {
+                @Override
+                public void handle(TableColumn.CellEditEvent<Record, String> event) {
+                    int nowIndex = event.getTablePosition().getRow();
+                    int oIndex = originDatas.indexOf(tableDatas.get(nowIndex));
+                    ((Record) tableDatas.get(nowIndex)).setEnglish(event.getNewValue());
+                    ((Record) originDatas.get(oIndex)).setEnglish(event.getNewValue());
+                }
+            });
+            noteCol.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Record, String>>() {
+                @Override
+                public void handle(TableColumn.CellEditEvent<Record, String> event) {
+                    int nowIndex = event.getTablePosition().getRow();
+                    int oIndex = originDatas.indexOf(tableDatas.get(nowIndex));
+                    ((Record) tableDatas.get(nowIndex)).setNote(event.getNewValue());
+                    ((Record) originDatas.get(oIndex)).setNote(event.getNewValue());
+                }
+            });
+
+            //设置单元格数据
             hideCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Record, String>, ObservableValue<String>>() {
                 @Override
                 public ObservableValue<String> call(TableColumn.CellDataFeatures<Record, String> param) {
@@ -228,8 +334,8 @@ public class NewTableView extends BaseController{
             noteCol.setCellValueFactory(new PropertyValueFactory<>("note"));
             recordDateCol.setCellValueFactory(new PropertyValueFactory<>("createDate"));
 
-            originDatas = DbHelper.getInstance().searchTempRecord("0");
-            tableDatas = originDatas;
+            originDatas = DbHelper.getInstance().searchTempRecord("0", ((Table) preData).getId());
+            tableDatas = FXCollections.observableArrayList(originDatas);
             tableTopCtl.setAllCount(tableDatas.size());
             tableTopCtl.setNowIndex(0);
 
@@ -248,9 +354,14 @@ public class NewTableView extends BaseController{
             TableColumn<Record,String> noteCol = new TableColumn<>("注释");
             TableColumn<Record,String> recordDateCol = new TableColumn<>("录音日期");
 
+            //设置单元格编辑权限
             hideCol.setEditable(false);
             doneCol.setEditable(false);
+            codeCol.setEditable(false);
+            ciCol.setEditable(false);
+            recordDateCol.setEditable(false);
 
+            //设置单元格类型
             hideCol.setCellFactory(new Callback<TableColumn<Record, String>, TableCell<Record, String>>() {
                 @Override
                 public TableCell<Record, String> call(TableColumn<Record, String> param) {
@@ -276,6 +387,63 @@ public class NewTableView extends BaseController{
             noteCol.setCellFactory(TextFieldTableCell.forTableColumn());
             recordDateCol.setCellFactory(TextFieldTableCell.forTableColumn());
 
+            //设置单元格提交事件
+            rankCol.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Record, String>>() {
+                @Override
+                public void handle(TableColumn.CellEditEvent<Record, String> event) {
+                    int nowIndex = event.getTablePosition().getRow();
+                    int oIndex = originDatas.indexOf(tableDatas.get(nowIndex));
+                    ((Record) tableDatas.get(nowIndex)).setRank(event.getNewValue());
+                    ((Record) originDatas.get(oIndex)).setRank(event.getNewValue());
+                }
+            });
+            mwfyCol.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Record, String>>() {
+                @Override
+                public void handle(TableColumn.CellEditEvent<Record, String> event) {
+                    int nowIndex = event.getTablePosition().getRow();
+                    int oIndex = originDatas.indexOf(tableDatas.get(nowIndex));
+                    ((Record) tableDatas.get(nowIndex)).setMWFY(event.getNewValue());
+                    ((Record) originDatas.get(oIndex)).setMWFY(event.getNewValue());
+                }
+            });
+            IPACol.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Record, String>>() {
+                @Override
+                public void handle(TableColumn.CellEditEvent<Record, String> event) {
+                    int nowIndex = event.getTablePosition().getRow();
+                    int oIndex = originDatas.indexOf(tableDatas.get(nowIndex));
+                    ((Record) tableDatas.get(nowIndex)).setIPA(event.getNewValue());
+                    ((Record) originDatas.get(oIndex)).setIPA(event.getNewValue());
+                }
+            });
+            spellCol.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Record, String>>() {
+                @Override
+                public void handle(TableColumn.CellEditEvent<Record, String> event) {
+                    int nowIndex = event.getTablePosition().getRow();
+                    int oIndex = originDatas.indexOf(tableDatas.get(nowIndex));
+                    ((Record) tableDatas.get(nowIndex)).setSpell(event.getNewValue());
+                    ((Record) originDatas.get(oIndex)).setSpell(event.getNewValue());
+                }
+            });
+            englishCol.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Record, String>>() {
+                @Override
+                public void handle(TableColumn.CellEditEvent<Record, String> event) {
+                    int nowIndex = event.getTablePosition().getRow();
+                    int oIndex = originDatas.indexOf(tableDatas.get(nowIndex));
+                    ((Record) tableDatas.get(nowIndex)).setEnglish(event.getNewValue());
+                    ((Record) originDatas.get(oIndex)).setEnglish(event.getNewValue());
+                }
+            });
+            noteCol.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Record, String>>() {
+                @Override
+                public void handle(TableColumn.CellEditEvent<Record, String> event) {
+                    int nowIndex = event.getTablePosition().getRow();
+                    int oIndex = originDatas.indexOf(tableDatas.get(nowIndex));
+                    ((Record) tableDatas.get(nowIndex)).setNote(event.getNewValue());
+                    ((Record) originDatas.get(oIndex)).setNote(event.getNewValue());
+                }
+            });
+
+            //设置单元格数据
             hideCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Record, String>, ObservableValue<String>>() {
                 @Override
                 public ObservableValue<String> call(TableColumn.CellDataFeatures<Record, String> param) {
@@ -306,8 +474,8 @@ public class NewTableView extends BaseController{
             noteCol.setCellValueFactory(new PropertyValueFactory<>("note"));
             recordDateCol.setCellValueFactory(new PropertyValueFactory<>("createDate"));
 
-            originDatas = DbHelper.getInstance().searchTempRecord("0");
-            tableDatas = originDatas;
+            originDatas = DbHelper.getInstance().searchTempRecord("1",((Table) preData).getId());
+            tableDatas = FXCollections.observableArrayList(originDatas);
             tableTopCtl.setAllCount(tableDatas.size());
             tableTopCtl.setNowIndex(0);
 
@@ -326,9 +494,14 @@ public class NewTableView extends BaseController{
             TableColumn<Record,String> noteCol = new TableColumn<>("注释");
             TableColumn<Record,String> recordDateCol = new TableColumn<>("录音日期");
 
+            //设置单元格编辑权限
             hideCol.setEditable(false);
             doneCol.setEditable(false);
+            codeCol.setEditable(false);
+            sentenceCol.setEditable(false);
+            recordDateCol.setEditable(false);
 
+            //编辑单元格类型
             hideCol.setCellFactory(new Callback<TableColumn<Record, String>, TableCell<Record, String>>() {
                 @Override
                 public TableCell<Record, String> call(TableColumn<Record, String> param) {
@@ -354,6 +527,63 @@ public class NewTableView extends BaseController{
             noteCol.setCellFactory(TextFieldTableCell.forTableColumn());
             recordDateCol.setCellFactory(TextFieldTableCell.forTableColumn());
 
+            //设置单元格编辑事件
+            rankCol.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Record, String>>() {
+                @Override
+                public void handle(TableColumn.CellEditEvent<Record, String> event) {
+                    int nowIndex = event.getTablePosition().getRow();
+                    int oIndex = originDatas.indexOf(tableDatas.get(nowIndex));
+                    ((Record) tableDatas.get(nowIndex)).setRank(event.getNewValue());
+                    ((Record) originDatas.get(oIndex)).setRank(event.getNewValue());
+                }
+            });
+            mwfyCol.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Record, String>>() {
+                @Override
+                public void handle(TableColumn.CellEditEvent<Record, String> event) {
+                    int nowIndex = event.getTablePosition().getRow();
+                    int oIndex = originDatas.indexOf(tableDatas.get(nowIndex));
+                    ((Record) tableDatas.get(nowIndex)).setMWFY(event.getNewValue());
+                    ((Record) originDatas.get(oIndex)).setMWFY(event.getNewValue());
+                }
+            });
+            IPACol.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Record, String>>() {
+                @Override
+                public void handle(TableColumn.CellEditEvent<Record, String> event) {
+                    int nowIndex = event.getTablePosition().getRow();
+                    int oIndex = originDatas.indexOf(tableDatas.get(nowIndex));
+                    ((Record) tableDatas.get(nowIndex)).setIPA(event.getNewValue());
+                    ((Record) originDatas.get(oIndex)).setIPA(event.getNewValue());
+                }
+            });
+//            spellCol.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Record, String>>() {
+//                @Override
+//                public void handle(TableColumn.CellEditEvent<Record, String> event) {
+//                    int nowIndex = event.getTablePosition().getRow();
+//                    int oIndex = originDatas.indexOf(tableDatas.get(nowIndex));
+//                    ((Record) tableDatas.get(nowIndex)).setSpell(event.getNewValue());
+//                    ((Record) originDatas.get(oIndex)).setSpell(event.getNewValue());
+//                }
+//            });
+            englishCol.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Record, String>>() {
+                @Override
+                public void handle(TableColumn.CellEditEvent<Record, String> event) {
+                    int nowIndex = event.getTablePosition().getRow();
+                    int oIndex = originDatas.indexOf(tableDatas.get(nowIndex));
+                    ((Record) tableDatas.get(nowIndex)).setEnglish(event.getNewValue());
+                    ((Record) originDatas.get(oIndex)).setEnglish(event.getNewValue());
+                }
+            });
+            noteCol.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Record, String>>() {
+                @Override
+                public void handle(TableColumn.CellEditEvent<Record, String> event) {
+                    int nowIndex = event.getTablePosition().getRow();
+                    int oIndex = originDatas.indexOf(tableDatas.get(nowIndex));
+                    ((Record) tableDatas.get(nowIndex)).setNote(event.getNewValue());
+                    ((Record) originDatas.get(oIndex)).setNote(event.getNewValue());
+                }
+            });
+
+            //设置单元格数据
             hideCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Record, String>, ObservableValue<String>>() {
                 @Override
                 public ObservableValue<String> call(TableColumn.CellDataFeatures<Record, String> param) {
@@ -384,8 +614,8 @@ public class NewTableView extends BaseController{
             noteCol.setCellValueFactory(new PropertyValueFactory<>("note"));
             recordDateCol.setCellValueFactory(new PropertyValueFactory<>("createDate"));
 
-            originDatas = DbHelper.getInstance().searchTempRecord("0");
-            tableDatas = originDatas;
+            originDatas = DbHelper.getInstance().searchTempRecord("2",((Table) preData).getId());
+            tableDatas = FXCollections.observableArrayList(originDatas);
             tableTopCtl.setAllCount(tableDatas.size());
             tableTopCtl.setNowIndex(0);
 
@@ -394,5 +624,10 @@ public class NewTableView extends BaseController{
         }else if (newType == NewHuaYuType){
 
         }
+    }
+
+    @Override
+    public void onTabClosed() {
+        DbHelper.getInstance().insertRecord(originDatas);
     }
 }

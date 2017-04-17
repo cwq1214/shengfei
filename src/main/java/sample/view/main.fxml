@@ -24,8 +24,8 @@
               <MenuItem mnemonicParsing="false" text="%menu_file_newSentence"  onAction="#newSentenceTableClick"/>
               <MenuItem mnemonicParsing="false" text="%menu_file_newDiscource" />
                 <SeparatorMenuItem />
-                <MenuItem accelerator="CTRL+O" mnemonicParsing="false" text="%menu_file_open" />
-                <MenuItem accelerator="CTRL+D" mnemonicParsing="false" text="%menu_file_delete" />
+                <MenuItem accelerator="CTRL+O" mnemonicParsing="false" text="%menu_file_open" onAction="#openTableClick"/>
+                <MenuItem accelerator="CTRL+D" mnemonicParsing="false" text="%menu_file_delete" onAction="#delTableClick" />
                 <SeparatorMenuItem />
                 <MenuItem mnemonicParsing="false" text="%menu_file_importExcel" />
                 <MenuItem mnemonicParsing="false" text="%menu_file_importYBExcel" />

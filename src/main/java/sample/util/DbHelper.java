@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 /**
  * Created by Bee on 2017/4/11.
@@ -32,19 +33,83 @@ public class DbHelper {
     Dao<CodeLangHanYu, String> hanyuDao;
     Dao<CodeIPABase, String> codeIPADao;
 
+
+    /**
+     * 删除table表以及record表相应的数据
+     * @param t
+     */
+    public void delTableAndRecord(Table t){
+        try {
+            Dao<Table,String> tableDao = DaoManager.createDao(connectionSource,Table.class);
+            Dao<Record,String> recordDao = DaoManager.createDao(connectionSource,Record.class);
+
+            recordDao.delete(recordDao.queryForEq("baseId",t.getId()));
+            tableDao.delete(t);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 查询所有字表、词表、句表信息
+     * @return
+     */
+    public ObservableList<Table> searchAllTable(){
+        List<Table> resultList = new ArrayList<>();
+        try {
+            Dao<Table,String > tableDao = DaoManager.createDao(connectionSource,Table.class);
+            resultList = tableDao.queryForAll();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return FXCollections.observableList(resultList);
+    }
+
+
+    /**
+     * 把Record数据插入到数据库中
+     * @param list
+     */
+    public void insertRecord(ObservableList<Record> list){
+        try {
+            System.out.println("insert record in");
+            Dao<Record,String> recordDao = DaoManager.createDao(connectionSource,Record.class);
+            recordDao.callBatchTasks(new Callable<Void>() {
+                @Override
+                public Void call() throws Exception {
+                    for (int i = 0; i < list.size(); i++) {
+                        recordDao.createOrUpdate(list.get(i));
+                    }
+                    return null;
+                }
+            });
+
+//            recordDao.create(list);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     /**
      * 根据codeBase获取相应分类的数据，并转换成相应的Record类，组装成ObservableList
      * @param dataType 数据分类：字表，词表，句表
      * @return
      */
-    public ObservableList<Record> searchTempRecord(String dataType){
+    public ObservableList<Record> searchTempRecord(String dataType,int baseId){
         List<Record> resultList = new ArrayList<>();
         try {
-            Dao<CodeBase,String> codeBaseDao = DaoManager.createDao(connectionSource,CodeBase.class);
-            List<CodeBase> codeBaseList = codeBaseDao.queryForEq("codeType",dataType);
-            for (CodeBase cb : codeBaseList) {
-                Record tempRecord = new Record(-1,cb.code,cb.code,"0","0",cb.IPA,cb.note,cb.spell,cb.english,cb.mwfy,cb.content,cb.rank,cb.yun,"");
-                resultList.add(tempRecord);
+            Dao<Record,String> recordDao = DaoManager.createDao(connectionSource,Record.class);
+            resultList = recordDao.queryForEq("baseId",baseId);
+            if (resultList.size() == 0){
+                Dao<CodeBase,String> codeBaseDao = DaoManager.createDao(connectionSource,CodeBase.class);
+                List<CodeBase> codeBaseList = codeBaseDao.queryForEq("codeType",dataType);
+                for (CodeBase cb : codeBaseList) {
+                    Record tempRecord = new Record(baseId,cb.code,cb.code,"0","0",cb.IPA,cb.note,cb.spell,cb.english,cb.mwfy,cb.content,cb.rank,cb.yun,"");
+                    resultList.add(tempRecord);
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();

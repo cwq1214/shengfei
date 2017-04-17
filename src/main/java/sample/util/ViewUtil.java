@@ -72,13 +72,24 @@ public class ViewUtil {
             Parent root = loader.load();
             Scene scene = new Scene(root,width,height);
             BaseController controller = loader.getController();
-            System.out.println(controller.toString());
             controller.setmParent(root);
             controller.setmStage(stage);
             if (preData != null){
                 controller.setPreData(preData);
                 controller.prepareInit();
             }
+
+            stage.setOnShowing(new EventHandler<WindowEvent>() {
+                public void handle(WindowEvent event) {
+                    controller.onCreatedView();
+                }
+            });
+
+            stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+                public void handle(WindowEvent event) {
+                    controller.onStop();
+                }
+            });
 
             stage.setTitle(title);
             stage.setScene(scene);

@@ -23,6 +23,11 @@ public class BaseController implements Initializable {
 
     }
 
+    //tab closed
+    public void onTabClosed(){
+
+    }
+
     //Stage OnShowing
     public void onCreatedView(){
         System.out.println("onCreatedView");
