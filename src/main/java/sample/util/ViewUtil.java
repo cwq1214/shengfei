@@ -105,6 +105,12 @@ public class ViewUtil {
 
     }
 
+    public BaseController openRecordTab()throws IOException{
+        return (BaseController) showView("view/recordTabView.fxml", "录制", -1, -1, true);
+
+    }
+
+
     public BaseController openHYFYDCZBTable() {
         DbTableController controller = null;
         try {
