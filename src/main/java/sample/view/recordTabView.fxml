@@ -21,7 +21,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane stylesheets="@css/sf.css" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.controller.RecordTabController">
+<AnchorPane stylesheets="@css/sf.css" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.controller.RecordTabController" prefWidth="800" prefHeight="600">
     <VBox AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0">
         <!---->
         <HBox spacing="8">
@@ -207,39 +207,42 @@
                     </graphic>
                 </Button>
 
-                <GridPane alignment="CENTER" hgap="8" styleClass="showBorder">
-                    <HBox GridPane.columnIndex="0" GridPane.rowIndex="0">
-                        <Label text="摄像头" />
-                        <ChoiceBox />
-                    </HBox>
-                    <HBox GridPane.columnIndex="0" GridPane.rowIndex="1">
-                        <Label text="分辨率" />
-                        <ChoiceBox />
-                    </HBox>
-
-                    <Label text="0:00:00" GridPane.columnIndex="1" GridPane.rowIndex="0" GridPane.rowSpan="2" />
-
-                    <CheckBox text="覆盖已有录音" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-               <columnConstraints>
-                  <ColumnConstraints />
-                  <ColumnConstraints />
-                  <ColumnConstraints />
-               </columnConstraints>
-               <rowConstraints>
-                  <RowConstraints />
-                  <RowConstraints />
-               </rowConstraints>
-                </GridPane>
             </HBox>
 
+            <GridPane alignment="CENTER" hgap="8" styleClass="showBorder">
+                <HBox GridPane.columnIndex="0" GridPane.rowIndex="0">
+                    <Label text="摄像头" />
+                    <ChoiceBox />
+                </HBox>
+                <HBox GridPane.columnIndex="0" GridPane.rowIndex="1">
+                    <Label text="分辨率"/>
+                    <ChoiceBox fx:id="cb_resolution" value="800*600">
+                        <String fx:value="800*600"></String>
+                        <String fx:value="1280*720"></String>
+                    </ChoiceBox>
+                </HBox>
+
+                <Label text="0:00:00" GridPane.columnIndex="1" GridPane.rowIndex="0" GridPane.rowSpan="2" />
+
+                <CheckBox text="覆盖已有录音" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                <columnConstraints>
+                    <ColumnConstraints />
+                    <ColumnConstraints />
+                    <ColumnConstraints />
+                </columnConstraints>
+                <rowConstraints>
+                    <RowConstraints />
+                    <RowConstraints />
+                </rowConstraints>
+            </GridPane>
 
         </HBox>
         <!---->
 
         <SplitPane dividerPositions="0.63">
-            <GridPane alignment="CENTER">
+            <GridPane alignment="TOP_CENTER">
                 <children>
-                    <ProgressBar prefHeight="20.0" prefWidth="650" progress="0" GridPane.columnIndex="0" GridPane.columnSpan="10" GridPane.rowIndex="0" />
+                    <ProgressBar prefHeight="20.0" prefWidth="Infinity" progress="0" GridPane.columnIndex="0" GridPane.columnSpan="10" GridPane.rowIndex="0" />
                     <Label text="0" GridPane.columnIndex="0" GridPane.rowIndex="1" />
                     <Label text="50" GridPane.columnIndex="5" GridPane.rowIndex="1" />
                     <Label text="60" GridPane.columnIndex="6" GridPane.rowIndex="1" />
@@ -247,8 +250,8 @@
                     <Label text="80" GridPane.columnIndex="8" GridPane.rowIndex="1" />
                     <Label text="90" GridPane.columnIndex="9" GridPane.rowIndex="1" />
                     <Label text="100" GridPane.columnIndex="10" GridPane.rowIndex="1" />
-                    <ProgressBar prefHeight="20.0" prefWidth="650" progress="0" GridPane.columnIndex="0" GridPane.columnSpan="10" GridPane.rowIndex="2" />
-                    <TableView GridPane.columnIndex="0" GridPane.columnSpan="11" GridPane.rowIndex="3" />
+                    <ProgressBar prefHeight="20.0" prefWidth="Infinity" progress="0" GridPane.columnIndex="0" GridPane.columnSpan="10" GridPane.rowIndex="2" />
+                    <TableView GridPane.columnIndex="0" GridPane.columnSpan="11" GridPane.rowIndex="3"/>
                 </children>
                 <columnConstraints>
                     <ColumnConstraints hgrow="ALWAYS" percentWidth="10" />
@@ -275,7 +278,9 @@
                 <Tab closable="false" text="演示图片" />
                 <Tab closable="false" text="演示视频" />
                 <Tab closable="false" text="发音视频" />
-                <Tab closable="false" text="视频录制" />
+                <Tab closable="false" text="视频录制"  fx:id="tab_recordVideo">
+                    <ImageView fx:id="img"  fitWidth="400" fitHeight="300" preserveRatio="true"></ImageView>
+                </Tab>
                 <Tab closable="false" text="语图" />
             </TabPane>
         </SplitPane>
