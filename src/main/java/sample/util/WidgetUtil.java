@@ -12,7 +12,6 @@ import java.util.List;
  */
 public class WidgetUtil {
 
-
     public static Tab createNewTab(String title, Node content){
         Tab tab = new Tab();
         tab.setText(title);
@@ -22,7 +21,6 @@ public class WidgetUtil {
 
     public static void addTabToTabPane(TabPane pane, Tab tab){
         addTabToTabPane(pane, tab, false);
-
     }
 
     public static void addTabToTabPane(TabPane pane, Tab tab, boolean single) {
