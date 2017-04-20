@@ -108,7 +108,7 @@ public class DbHelper {
                 Dao<CodeBase,String> codeBaseDao = DaoManager.createDao(connectionSource,CodeBase.class);
                 List<CodeBase> codeBaseList = codeBaseDao.queryForEq("codeType",dataType);
                 for (CodeBase cb : codeBaseList) {
-                    Record tempRecord = new Record(baseId,cb.code,cb.code,"0","0",cb.IPA,cb.note,cb.spell,cb.english,cb.mwfy,cb.content,cb.rank,cb.yun,"");
+                    Record tempRecord = new Record(baseId,cb.code,cb.code,"0","0",cb.IPA,cb.note,cb.spell,cb.english,cb.mwfy,"",cb.content,cb.rank,cb.yun,"");
                     resultList.add(tempRecord);
                 }
             }

@@ -33,6 +33,8 @@ public class Record {
     @DatabaseField
     public String MWFY;
     @DatabaseField
+    public String free_trans;
+    @DatabaseField
     public String content;
     @DatabaseField
     public String rank;
@@ -44,7 +46,7 @@ public class Record {
     public Record() {
     }
 
-    public Record(int baseId, String investCode, String baseCode, String hide, String done, String IPA, String note, String spell, String english, String MWFY, String content, String rank, String yun, String createDate) {
+    public Record(int baseId, String investCode, String baseCode, String hide, String done, String IPA, String note, String spell, String english, String MWFY,String free_trans, String content, String rank, String yun, String createDate) {
         this.uuid = UUID.randomUUID().toString();
         this.baseId = baseId;
         this.investCode = investCode;
@@ -56,10 +58,19 @@ public class Record {
         this.spell = spell;
         this.english = english;
         this.MWFY = MWFY;
+        this.free_trans = free_trans;
         this.content = content;
         this.rank = rank;
         this.yun = yun;
         this.createDate = createDate;
+    }
+
+    public String getFree_trans() {
+        return free_trans;
+    }
+
+    public void setFree_trans(String free_trans) {
+        this.free_trans = free_trans;
     }
 
     public String getUuid() {

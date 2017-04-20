@@ -35,7 +35,7 @@
 
           <Menu mnemonicParsing="false" text="%menu_data">
             <items>
-              <MenuItem mnemonicParsing="false" text="%menu_data_ybzf" />
+              <MenuItem mnemonicParsing="false" text="%menu_data_ybzf" onAction="#ybzfClick"/>
               <MenuItem mnemonicParsing="false" text="%menu_data_ybcc" />
               <MenuItem mnemonicParsing="false" text="%menu_data_ybhy" />
                 <SeparatorMenuItem />
@@ -81,11 +81,6 @@
                     <SeparatorMenuItem />
                     <MenuItem mnemonicParsing="false" text="%menu_system_cdmlyhdz" fx:id="menu_system_cdmlyhdz" onAction="#onEnglish2ChineseClick"/>
                     <MenuItem mnemonicParsing="false" text="%menu_system_mmyz" fx:id="menu_system_mmyz" onAction="#onPasswordAnalyClick"/>
-                    <SeparatorMenuItem />
-                    <MenuItem accelerator="CTRL+W" mnemonicParsing="false" text="%menu_system_gb"
-                              fx:id="menu_system_gb"/>
-                    <MenuItem accelerator="CTRL+Q" mnemonicParsing="false" text="%menu_system_tc"
-                              fx:id="menu_system_tc"/>
 
 
                 </items>

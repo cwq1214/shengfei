@@ -156,18 +156,19 @@ public class RecordTabController extends BaseController {
 //            grabber.release();
 //            grabber.stop();
         showVideo = false;
-        webCamThread.submit(new Runnable() {
+        new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
                     if (grabber!=null){
+                        webCamThread.shutdownNow();
                         grabber.close();
                     }
                 } catch (FrameGrabber.Exception e) {
                     e.printStackTrace();
                 }
             }
-        });
+        }).start();
 
 
 

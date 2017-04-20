@@ -12,10 +12,11 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception{
-        ViewUtil.getInstance().openRecordTab();
-//        ViewUtil.getInstance().openMainView();
+//        ViewUtil.getInstance().openRecordTab();
+        ViewUtil.getInstance().openMainView();
 
         DbHelper.getInstance();
+
     }
 
     @Override

@@ -6,8 +6,10 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.web.WebView;
 import javafx.stage.Modality;
+import sample.controller.NewTableView.NewTableView;
 import sample.controller.openTable.OpenTableController;
 import sample.controller.openTable.OpenTableListener;
+import sample.controller.ybzf.YBZFController;
 import sample.entity.Table;
 import sample.util.Constant;
 import sample.util.DbHelper;
@@ -29,8 +31,15 @@ public class MainController extends BaseController{
     public Label changeLanguage;
 
     @FXML
+    public void ybzfClick(){
+        YBZFController vc = ((YBZFController) ViewUtil.getInstance().showView("view/ybzfView.fxml", "音标字符", -1, -1, ""));
+        vc.mStage.setResizable(false);
+        vc.mStage.show();
+    }
+
+    @FXML
     public void delTableClick(){
-        OpenTableController vc = ((OpenTableController) ViewUtil.getInstance().showView("view/openTable.fxml", "打开表", -1, -1, ""));
+        OpenTableController vc = ((OpenTableController) ViewUtil.getInstance().showView("view/openTable.fxml", "删除表", -1, -1, ""));
         vc.setOpen(false);
 
         vc.mStage.setResizable(false);
@@ -130,6 +139,7 @@ public class MainController extends BaseController{
         WidgetUtil.addTabToTabPane(contentPane, tab);
         WidgetUtil.selectTab(tab);
     }
+
 
     @FXML
     public void newSentenceTableClick(){
