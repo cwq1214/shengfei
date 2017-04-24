@@ -89,7 +89,7 @@ public class RecordTabController extends BaseController {
             int listDevices = org.bytedeco.javacpp.videoInputLib.videoInput.listDevices();
             for (int i = 0, max = listDevices; i < max; i++) {
                 String deviceName = org.bytedeco.javacpp.videoInputLib.videoInput.getDeviceName(i).getString();
-                System.out.println(deviceName);
+                cameraName.add(deviceName);
             }
 
         }else {
