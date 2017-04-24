@@ -10,6 +10,7 @@ import com.j256.ormlite.support.ConnectionSource;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Tab;
+import sample.controller.YBCC.YBCCBean;
 import sample.entity.*;
 
 import java.io.IOException;
@@ -33,6 +34,18 @@ public class DbHelper {
     Dao<CodeLangHanYu, String> hanyuDao;
     Dao<CodeIPABase, String> codeIPADao;
 
+    /**
+     * 删除某条record
+     * @param r
+     */
+    public void delRecord(Record r){
+        try {
+            Dao<Record,String> recordDao = DaoManager.createDao(connectionSource,Record.class);
+            recordDao.delete(r);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
 
     /**
@@ -72,7 +85,7 @@ public class DbHelper {
      * 把Record数据插入到数据库中
      * @param list
      */
-    public void insertRecord(ObservableList<Record> list){
+    public void insertRecord(ObservableList<YBCCBean> list){
         try {
             System.out.println("insert record in");
             Dao<Record,String> recordDao = DaoManager.createDao(connectionSource,Record.class);
@@ -80,7 +93,7 @@ public class DbHelper {
                 @Override
                 public Void call() throws Exception {
                     for (int i = 0; i < list.size(); i++) {
-                        recordDao.createOrUpdate(list.get(i));
+                        recordDao.createOrUpdate(list.get(i).getRecord());
                     }
                     return null;
                 }
@@ -99,18 +112,22 @@ public class DbHelper {
      * @param dataType 数据分类：字表，词表，句表
      * @return
      */
-    public ObservableList<Record> searchTempRecord(String dataType,int baseId){
-        List<Record> resultList = new ArrayList<>();
+    public ObservableList<YBCCBean> searchTempRecord2YBCCBean(String dataType, int baseId){
+        List<YBCCBean> resultList = new ArrayList<>();
+        List<Record> rList = new ArrayList<>();
         try {
             Dao<Record,String> recordDao = DaoManager.createDao(connectionSource,Record.class);
-            resultList = recordDao.queryForEq("baseId",baseId);
-            if (resultList.size() == 0){
+            rList = recordDao.queryForEq("baseId",baseId);
+            if (rList.size() == 0){
                 Dao<CodeBase,String> codeBaseDao = DaoManager.createDao(connectionSource,CodeBase.class);
                 List<CodeBase> codeBaseList = codeBaseDao.queryForEq("codeType",dataType);
                 for (CodeBase cb : codeBaseList) {
                     Record tempRecord = new Record(baseId,cb.code,cb.code,"0","0",cb.IPA,cb.note,cb.spell,cb.english,cb.mwfy,"",cb.content,cb.rank,cb.yun,"");
-                    resultList.add(tempRecord);
+                    rList.add(tempRecord);
                 }
+            }
+            for (Record r : rList){
+                resultList.add(new YBCCBean(r));
             }
         } catch (SQLException e) {
             e.printStackTrace();

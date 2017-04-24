@@ -4,6 +4,7 @@ import javafx.scene.Node;
 import javafx.scene.control.SingleSelectionModel;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import sample.controller.BaseController;
 
 import java.util.List;
 
@@ -17,6 +18,11 @@ public class WidgetUtil {
         tab.setText(title);
         tab.setContent(content);
         return tab;
+    }
+
+    public static void addTabToTabPane(TabPane pane, Tab tab, boolean single,BaseController vc){
+        tab.setUserData(vc);
+        addTabToTabPane(pane,tab,single);
     }
 
     public static void addTabToTabPane(TabPane pane, Tab tab){

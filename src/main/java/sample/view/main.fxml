@@ -27,19 +27,16 @@
                 <MenuItem accelerator="CTRL+O" mnemonicParsing="false" text="%menu_file_open" onAction="#openTableClick"/>
                 <MenuItem accelerator="CTRL+D" mnemonicParsing="false" text="%menu_file_delete" onAction="#delTableClick" />
                 <SeparatorMenuItem />
-                <MenuItem mnemonicParsing="false" text="%menu_file_importExcel" />
-                <MenuItem mnemonicParsing="false" text="%menu_file_importYBExcel" />
+                <MenuItem mnemonicParsing="false" text="%menu_file_import" />
                 <MenuItem mnemonicParsing="false" text="%menu_file_export" />
             </items>
           </Menu>
 
           <Menu mnemonicParsing="false" text="%menu_data">
             <items>
-              <MenuItem mnemonicParsing="false" text="%menu_data_ybzf" onAction="#ybzfClick"/>
-              <MenuItem mnemonicParsing="false" text="%menu_data_ybcc" />
+              <MenuItem mnemonicParsing="false" text="%menu_data_ybcc" onAction="#ybccClick"/>
               <MenuItem mnemonicParsing="false" text="%menu_data_ybhy" />
                 <SeparatorMenuItem />
-              <MenuItem mnemonicParsing="false" text="%menu_data_ybzf" />
               <MenuItem mnemonicParsing="false" text="%menu_data_tyzhch" />
                 <SeparatorMenuItem />
               <MenuItem mnemonicParsing="false" text="%menu_data_dbdz" />
@@ -74,7 +71,6 @@
                               onAction="#onFYDCZBClick"/>
                     <MenuItem mnemonicParsing="false" text="%menu_system_chdczb" fx:id="menu_system_chdczb" onAction="#onCHDCBClick"/>
                     <MenuItem mnemonicParsing="false" text="%menu_system_jzdczb" fx:id="menu_system_jzdczb" onAction="#onJZDCBClick"/>
-                    <MenuItem mnemonicParsing="false" text="%menu_system_hydczb" fx:id="menu_system_hydczb" onAction="#onHYDCBClick"/>
                     <SeparatorMenuItem />
                     <MenuItem mnemonicParsing="false" text="%menu_system_zgyydm" fx:id="menu_system_zgyydm" onAction="#onZGYYDMClick"/>
                     <MenuItem mnemonicParsing="false" text="%menu_system_yyybzf" fx:id="menu_system_yyybzf" onAction="#onYYYBZFClick"/>

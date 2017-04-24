@@ -16,5 +16,6 @@ public enum ClickType {
     DelBtnClick,
     ShowAllBtnClick,
     ShowOnlyKeepBtnClick,
-    ShowOnlyDisappearBtnClick
+    ShowOnlyDisappearBtnClick,
+    SaveBtnClick
 }

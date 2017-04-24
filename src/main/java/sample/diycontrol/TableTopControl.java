@@ -160,4 +160,9 @@ public class TableTopControl extends FlowPane{
     public void showOnlyDisappearBtnClick(){
         btnClickListener.onBtnClick(ClickType.ShowOnlyDisappearBtnClick);
     }
+
+    @FXML
+    public void saveBtnClick(){
+        btnClickListener.onBtnClick(ClickType.SaveBtnClick);
+    }
 }

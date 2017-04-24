@@ -7,9 +7,9 @@ import javafx.scene.control.*;
 import javafx.scene.web.WebView;
 import javafx.stage.Modality;
 import sample.controller.NewTableView.NewTableView;
+import sample.controller.YBCC.YBCCController;
 import sample.controller.openTable.OpenTableController;
 import sample.controller.openTable.OpenTableListener;
-import sample.controller.ybzf.YBZFController;
 import sample.entity.Table;
 import sample.util.Constant;
 import sample.util.DbHelper;
@@ -30,11 +30,22 @@ public class MainController extends BaseController{
     @FXML
     public Label changeLanguage;
 
+
     @FXML
-    public void ybzfClick(){
-        YBZFController vc = ((YBZFController) ViewUtil.getInstance().showView("view/ybzfView.fxml", "音标字符", -1, -1, ""));
-        vc.mStage.setResizable(false);
-        vc.mStage.show();
+    public void ybccClick(){
+        int tabIndex = contentPane.getSelectionModel().getSelectedIndex();
+        if (tabIndex != -1){
+            Tab t = contentPane.getTabs().get(tabIndex);
+            if (t.getUserData() !=  null && (t.getUserData() instanceof NewTableView)){
+                NewTableView vc = ((NewTableView) t.getUserData());
+
+                YBCCController yvc = ((YBCCController) ViewUtil.getInstance().showView("view/YBCCView.fxml", "音标查错", -1, -1, ""));
+                yvc.setAnalyDatas(vc.getOriginDatas());
+                yvc.mStage.setResizable(false);
+                yvc.mStage.show();
+
+            }
+        }
     }
 
     @FXML
@@ -53,46 +64,24 @@ public class MainController extends BaseController{
         vc.setListener(new OpenTableListener() {
             @Override
             public void onOpenTable(Table t) {
+                NewTableView vc = ((NewTableView) ViewUtil.getInstance().showView("view/newTableView.fxml", "", -1, -1, t));
                 if (t.datatype.equals("0")){
-                    NewTableView vc = ((NewTableView) ViewUtil.getInstance().showView("view/newTableView.fxml", "", -1, -1, t));
                     vc.setNewType(NewTableView.NewWordType);
-
-                    Tab tab = WidgetUtil.createNewTab(t.getTitle(), vc.getmParent());
-                    tab.setOnClosed(new EventHandler<Event>() {
-                        @Override
-                        public void handle(Event event) {
-                            vc.onTabClosed();
-                        }
-                    });
-                    WidgetUtil.addTabToTabPane(contentPane, tab);
-                    WidgetUtil.selectTab(tab);
                 }else if (t.datatype.equals("1")){
-                    NewTableView vc = ((NewTableView) ViewUtil.getInstance().showView("view/newTableView.fxml", "", -1, -1, t));
                     vc.setNewType(NewTableView.NewCiType);
-
-                    Tab tab = WidgetUtil.createNewTab(t.getTitle(), vc.getmParent());
-                    tab.setOnClosed(new EventHandler<Event>() {
-                        @Override
-                        public void handle(Event event) {
-                            vc.onTabClosed();
-                        }
-                    });
-                    WidgetUtil.addTabToTabPane(contentPane, tab);
-                    WidgetUtil.selectTab(tab);
                 }else if (t.datatype.equals("2")){
-                    NewTableView vc = ((NewTableView) ViewUtil.getInstance().showView("view/newTableView.fxml", "", -1, -1, t));
                     vc.setNewType(NewTableView.NewSentenceType);
-
-                    Tab tab = WidgetUtil.createNewTab(t.getTitle(), vc.getmParent());
-                    tab.setOnClosed(new EventHandler<Event>() {
-                        @Override
-                        public void handle(Event event) {
-                            vc.onTabClosed();
-                        }
-                    });
-                    WidgetUtil.addTabToTabPane(contentPane, tab);
-                    WidgetUtil.selectTab(tab);
                 }
+
+                Tab tab = WidgetUtil.createNewTab(t.getTitle(), vc.getmParent());
+                tab.setOnClosed(new EventHandler<Event>() {
+                    @Override
+                    public void handle(Event event) {
+                        vc.onTabClosed();
+                    }
+                });
+                WidgetUtil.addTabToTabPane(contentPane, tab,true,vc);
+                WidgetUtil.selectTab(tab);
             }
         });
         vc.setOpen(true);
@@ -117,7 +106,7 @@ public class MainController extends BaseController{
                 vc.onTabClosed();
             }
         });
-        WidgetUtil.addTabToTabPane(contentPane, tab);
+        WidgetUtil.addTabToTabPane(contentPane, tab,true,vc);
         WidgetUtil.selectTab(tab);
     }
 
@@ -136,7 +125,7 @@ public class MainController extends BaseController{
                 vc.onTabClosed();
             }
         });
-        WidgetUtil.addTabToTabPane(contentPane, tab);
+        WidgetUtil.addTabToTabPane(contentPane, tab,true,vc);
         WidgetUtil.selectTab(tab);
     }
 
@@ -156,7 +145,7 @@ public class MainController extends BaseController{
                 vc.onTabClosed();
             }
         });
-        WidgetUtil.addTabToTabPane(contentPane, tab);
+        WidgetUtil.addTabToTabPane(contentPane, tab,true,vc);
         WidgetUtil.selectTab(tab);
     }
 

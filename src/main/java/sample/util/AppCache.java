@@ -8,6 +8,8 @@ public class AppCache {
 
     boolean isCertificate = true;
 
+    private int osType;
+
     private AppCache() {
 
     }
@@ -23,5 +25,15 @@ public class AppCache {
 
     public void setCertificate(boolean certificate) {
         isCertificate = certificate;
+    }
+
+    public int getOsType(){
+        String osName = System.getProperty("os.name");
+        if (osName.toLowerCase().contains("windows")){
+            return 0;
+        }else if (osName.toLowerCase().contains("mac")){
+            return 1;
+        }
+        return -1;
     }
 }
