@@ -9,6 +9,7 @@ import org.bytedeco.javacv.*;
 import sample.util.Constant;
 
 import java.awt.image.BufferedImage;
+import java.io.File;
 
 /**
  * Created by chenweiqi on 2017/4/21.
@@ -157,6 +158,10 @@ public class VideoRecorder extends Thread {
 
     //初始化recorder
     private FrameRecorder initRecorder(String fileName, int captureWidth, int captureHeight){
+        File parentFile =new File(fileName).getParentFile();
+        if (!parentFile.exists()){
+            parentFile.mkdirs();
+        }
         recorder= new FFmpegFrameRecorder(fileName,captureWidth,captureHeight,0);
         /**
          * 该参数用于降低延迟 参考FFMPEG官方文档：https://trac.ffmpeg.org/wiki/StreamingGuide

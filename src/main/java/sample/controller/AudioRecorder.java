@@ -8,6 +8,7 @@ import sample.util.Constant;
 import javax.sound.sampled.*;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -124,7 +125,8 @@ public class AudioRecorder extends Thread {
 //                }
                 if (recordingAudio){
                     if (startRecordAudio){
-                        recorder = initRecorder(Constant.ROOT_FILE_DIR+"/audio/"+fileName+"_"+System.currentTimeMillis()+".wav");
+                        String filePath = Constant.ROOT_FILE_DIR+"/audio/"+fileName+"_"+System.currentTimeMillis()+".wav";
+                        recorder = initRecorder(filePath);
                         recorder.start();
                         startRecordAudio = false;
                         startRecordTimes = System.currentTimeMillis();
@@ -207,7 +209,13 @@ public class AudioRecorder extends Thread {
 
 
 
-    private FFmpegFrameRecorder initRecorder(String fileName){
+    private FFmpegFrameRecorder initRecorder(String fileName) throws IOException {
+        File parentFile =new File(fileName).getParentFile();
+        if (!parentFile.exists()){
+            parentFile.mkdirs();
+        }
+
+
         recorder= new FFmpegFrameRecorder(fileName,2);
 
 //        // 不可变(固定)音频比特率

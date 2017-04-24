@@ -159,7 +159,7 @@ public class RecordTabController extends BaseController {
         Image image;
         if (!recordingAudio){
             recordingAudio = true;
-            recordAudioThread.startRecordAudio(Constant.ROOT_FILE_DIR+"/"+fileName);
+            recordAudioThread.startRecordAudio("11");
             image = new Image(Main.class.getResourceAsStream("/sample/resource/img/b5.png"));
             setBtnDisable((Button) event.getSource(),false,true);
 
@@ -186,7 +186,7 @@ public class RecordTabController extends BaseController {
         Image image;
         if (!recordingVideo){
             recordingVideo = true;
-            recordVideoThread.startRecord(Constant.ROOT_FILE_DIR+"/"+fileName);
+            recordVideoThread.startRecord("11");
             image = new Image(Main.class.getResourceAsStream("/sample/resource/img/b5.png"));
             setBtnDisable((Button) event.getSource(),false,true);
         }else {
