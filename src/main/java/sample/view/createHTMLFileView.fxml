@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="sample.controller.CreateHTMLFileController"
+            prefHeight="600" prefWidth="800.0"
+            stylesheets="@css/createHTMLFile.css"
+            fx:id="borderPane"
+>
+
+    <left>
+        <VBox spacing="8" fx:id="pane_labelBox" style="-fx-border-width: 1px;-fx-border-color:gainsboro;-fx-padding: 8px" >
+            <Label fx:id="label_1" text="1.填写语档元数据" styleClass="item,sel"></Label>
+            <Label fx:id="label_2" text="2.输出调查表网页" styleClass="item"></Label>
+            <Label fx:id="label_3" text="3.组织网页文件" styleClass="item"></Label>
+            <Label fx:id="label_4" text="4.生成语档网页" styleClass="item"></Label>
+        </VBox>
+    </left>
+
+    <center>
+
+    </center>
+
+    <bottom>
+        <HBox spacing="8" alignment="CENTER">
+            <Button text="上一步" fx:id="btn_previous" onMouseClicked="#onPrevClick" visible="false"></Button>
+            <Button text="下一步" fx:id="btn_next" onMouseClicked="#onNextClick"></Button>
+            <Button text="取消" fx:id="btn_close" onMouseClicked="#onCloseClick"></Button>
+        </HBox>
+    </bottom>
+</BorderPane>

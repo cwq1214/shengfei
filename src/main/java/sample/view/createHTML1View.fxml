@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox   xmlns="http://javafx.com/javafx"
+        xmlns:fx="http://javafx.com/fxml"
+        fx:controller="sample.controller.CreateHTML1Controller"
+        stylesheets="@css/sf.css">
+    <Label text="1.填写语档元数据"  styleClass="yellowTitle" alignment="CENTER" prefWidth="9999"></Label>
+
+    <GridPane
+          vgap="8"
+          hgap="8"
+          alignment="CENTER"
+>
+
+    <Label text="语档编号" GridPane.rowIndex="1" GridPane.columnIndex="0"></Label>
+    <TextField GridPane.rowIndex="1" GridPane.columnIndex="1"></TextField>
+    <Label text="语档名称" GridPane.rowIndex="1" GridPane.columnIndex="2"></Label>
+    <TextField GridPane.rowIndex="1" GridPane.columnIndex="3"></TextField>
+
+    <Label text="创建人" GridPane.rowIndex="2" GridPane.columnIndex="0"></Label>
+    <TextField GridPane.rowIndex="2" GridPane.columnIndex="1"></TextField>
+    <Label text="贡献人" GridPane.rowIndex="2" GridPane.columnIndex="2"></Label>
+    <TextField GridPane.rowIndex="2" GridPane.columnIndex="3"></TextField>
+
+    <Label text="创建日期" GridPane.rowIndex="3" GridPane.columnIndex="0"></Label>
+    <TextField GridPane.rowIndex="3" GridPane.columnIndex="1"></TextField>
+    <Label text="创建地点" GridPane.rowIndex="3" GridPane.columnIndex="2"></Label>
+    <TextField GridPane.rowIndex="3" GridPane.columnIndex="3"></TextField>
+
+    <Label text="软件工具" GridPane.rowIndex="4" GridPane.columnIndex="0"></Label>
+    <TextField GridPane.rowIndex="4" GridPane.columnIndex="1"></TextField>
+    <Label text="馆藏机构" GridPane.rowIndex="4" GridPane.columnIndex="2"></Label>
+    <TextField GridPane.rowIndex="4" GridPane.columnIndex="3"></TextField>
+
+    <Label text="URL链接" GridPane.rowIndex="5" GridPane.columnIndex="0"></Label>
+    <TextField GridPane.rowIndex="5" GridPane.columnIndex="1" GridPane.columnSpan="3"></TextField>
+
+    <Label text="资源描述" GridPane.rowIndex="6" GridPane.columnIndex="0" GridPane.valignment="TOP">
+    </Label>
+    <TextArea GridPane.rowIndex="6" GridPane.columnIndex="1" GridPane.columnSpan="3"></TextArea>
+
+    <VBox  GridPane.rowIndex="7" GridPane.columnIndex="0" GridPane.columnSpan="4" GridPane.rowSpan="4" styleClass="hint">
+        <Label text="填表说明："></Label>
+        <Label text="资源描述是对整个语档对组成部分和内容进行简介"></Label>
+        <Label text="URL是语档资源在线浏览的网址"></Label>
+        <Label text="软件工具是指创建语档的软件工具"></Label>
+    </VBox>
+
+</GridPane>
+</VBox>

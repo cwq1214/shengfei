@@ -11,10 +11,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import sample.Main;
-import sample.controller.AboutController;
-import sample.controller.BaseController;
-import sample.controller.DbTableController;
-import sample.controller.MainController;
+import sample.controller.*;
 
 import java.io.IOException;
 import java.net.URL;
@@ -190,6 +187,34 @@ public class ViewUtil {
     public BaseController openReplaceDialog() throws IOException {
         return (BaseController) showView("view/replaceView.fxml", "替换", -1, -1, false);
     }
+
+    public CreateHTMLFileController openCreateHTMLFileView() throws IOException {
+        return (CreateHTMLFileController) showView("view/createHTMLFileView.fxml", "", -1, -1, false);
+
+    }
+
+    public CreateHTML1Controller openCreateHTML1View() throws IOException {
+        return (CreateHTML1Controller) showView("view/createHTML1View.fxml", "", -1, -1, false);
+
+    }
+    public CreateHTML2Controller openCreateHTML2View() throws IOException {
+        return (CreateHTML2Controller) showView("view/createHTML2View.fxml", "", -1, -1, false);
+
+    }
+
+    public CreateHTML3Controller openCreateHTML3View() throws IOException {
+        return (CreateHTML3Controller) showView("view/createHTML3View.fxml", "", -1, -1, false);
+
+    }
+
+    public CreateHTML4Controller openCreateHTML4View() throws IOException {
+        return (CreateHTML4Controller) showView("view/createHTML4View.fxml", "", -1, -1, false);
+
+    }
+
+
+
+
 
 
     private Object showView(String resourcePath) throws IOException {

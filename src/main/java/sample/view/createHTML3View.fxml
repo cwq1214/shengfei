@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<?import javafx.scene.layout.GridPane?>
+<VBox
+        alignment="TOP_CENTER"
+        prefHeight="400.0" prefWidth="600.0" stylesheets="@css/sf.css" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.controller.CreateHTML3Controller">
+
+    <Label text="3.组织网页文件" styleClass="yellowTitle" prefWidth="9999" alignment="CENTER"/>
+
+
+    <GridPane alignment="CENTER" vgap="8" hgap="8">
+
+        <Label text="概况" GridPane.rowIndex="0" GridPane.columnIndex="0" />
+        <TextField GridPane.rowIndex="0" GridPane.columnIndex="1" />
+        <Button text="添加文字" GridPane.rowIndex="0" GridPane.columnIndex="2"/>
+        <Label text="或" GridPane.rowIndex="0" GridPane.columnIndex="3"/>
+        <Button text="添加网页"  GridPane.columnIndex="4"/>
+
+        <Label text="方言字表" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+        <TextField GridPane.rowIndex="1" GridPane.columnIndex="1" GridPane.columnSpan="3"/>
+        <Button text="添加网页" GridPane.rowIndex="1" GridPane.columnIndex="4"/>
+
+        <Label text="词汇表" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+        <TextField GridPane.rowIndex="2" GridPane.columnIndex="1" GridPane.columnSpan="3"/>
+        <Button text="添加网页" GridPane.rowIndex="2" GridPane.columnIndex="4"/>
+
+        <Label text="句子表" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+        <TextField GridPane.rowIndex="3" GridPane.columnIndex="1" GridPane.columnSpan="3"/>
+        <Button text="添加网页" GridPane.rowIndex="3" GridPane.columnIndex="4"/>
+
+        <Label text="音系表" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+        <TextField GridPane.rowIndex="4" GridPane.columnIndex="1" GridPane.columnSpan="3"/>
+        <Button text="添加网页" GridPane.rowIndex="4" GridPane.columnIndex="4"/>
+
+        <Label text="单子对照表" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
+        <TextField GridPane.rowIndex="5" GridPane.columnIndex="1" GridPane.columnSpan="3"/>
+        <Button text="添加网页" GridPane.rowIndex="5" GridPane.columnIndex="4"/>
+
+        <Label text="词汇对照表" GridPane.rowIndex="6" GridPane.columnIndex="0"/>
+        <TextField GridPane.rowIndex="6" GridPane.columnIndex="1" GridPane.columnSpan="3"/>
+        <Button text="添加网页" GridPane.rowIndex="6" GridPane.columnIndex="4"/>
+
+        <Label text="句子对照表" GridPane.rowIndex="7" GridPane.columnIndex="0"/>
+        <TextField GridPane.rowIndex="7" GridPane.columnIndex="1" GridPane.columnSpan="3"/>
+        <Button text="添加网页" GridPane.rowIndex="7" GridPane.columnIndex="4"/>
+
+
+        <Label text="外部网页文件" GridPane.rowIndex="8" GridPane.columnIndex="0"/>
+        <TextField GridPane.rowIndex="8" GridPane.columnIndex="1" GridPane.columnSpan="3"/>
+        <Button text="添加网页" GridPane.rowIndex="8" GridPane.columnIndex="4"/>
+    </GridPane>
+
+
+    <VBox styleClass="hint">
+        <Label text="操作说明："></Label>
+        <Label text="（1）音系表和对照表网页文件，请先执行主菜单数据'数据'整理声韵调、多表对照命令来生成"></Label>
+        <Label text="（2）外部网页主要指话语资料网页文件，由其他软件生成"></Label>
+    </VBox>
+</VBox>

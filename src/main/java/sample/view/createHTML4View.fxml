@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="sample.controller.CreateHTML4Controller"
+            stylesheets="@css/sf.css"
+      spacing="16"
+            prefHeight="400.0" prefWidth="600.0">
+    <Label text="4.生成语档网页" alignment="CENTER" prefWidth="9999" styleClass="yellowTitle"></Label>
+
+    <HBox spacing="16" alignment="CENTER">
+        <Button text="生成并浏览"></Button>
+        <Button text="生成语档"></Button>
+        <Button text="取消"></Button>
+    </HBox>
+
+    <VBox styleClass="hint">
+        <Label text="操作说明："></Label>
+        <Label text="将上一步输出的网页文件和其他需要并入的网页文件读入。"></Label>
+    </VBox>
+</VBox>

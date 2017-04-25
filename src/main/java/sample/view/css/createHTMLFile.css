@@ -1,0 +1,11 @@
+.item{
+    -fx-font-size: 16px;
+    -fx-text-fill: blue;
+}
+.def.item{
+
+}
+.sel.item{
+    -fx-font-size: 20px;
+    -fx-font-style: oblique;
+}

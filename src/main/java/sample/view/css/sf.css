@@ -8,3 +8,51 @@
     -fx-border-width: 1px;
     -fx-padding: 4px,8px;
 }
+.redFont{
+    -fx-text-fill: red;
+}
+.yellowBackground{
+    -fx-background-color: lemonchiffon;
+}
+VBox.hint{
+    -fx-background-color: lemonchiffon;
+    -fx-padding: 8px !important;
+    -fx-alignment: top-left !important;
+}
+.hint>Label{
+    -fx-text-fill: #A32722;
+}
+
+
+VBox.alignmentCenter{
+    -fx-alignment: center;
+}
+HBox.alignmentCenter{
+    -fx-alignment: center;
+}
+.alignmentCenter HBox{
+    -fx-alignment: center;
+}
+.alignmentCenter VBox{
+    -fx-alignment: center;
+}
+
+
+VBox.alignmentRight{
+    -fx-alignment: center-right;
+}
+HBox.alignmentRight{
+    -fx-alignment: center-right;
+}
+.alignmentRight>HBox{
+    -fx-alignment: center-right;
+}
+.alignmentRight>VBox{
+    -fx-alignment: center-right;
+}
+.yellowTitle{
+    -fx-background-color: yellow;
+    -fx-border-color: blue;
+    -fx-border-width: 2px;
+    -fx-text-fill: blue;
+}
