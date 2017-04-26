@@ -6,10 +6,8 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.input.MouseEvent;
-import javafx.util.Callback;
 import sample.controller.BaseController;
 import sample.entity.Table;
 import sample.util.DbHelper;
@@ -75,6 +73,7 @@ public class OpenTableController extends BaseController {
                         tableNameDatas.remove(nowIndex);
                         listView.refresh();
                     }
+
                 }
             }
         });

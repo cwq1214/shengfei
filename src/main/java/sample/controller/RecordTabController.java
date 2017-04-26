@@ -21,7 +21,9 @@ import org.bytedeco.javacpp.opencv_videoio;
 import org.bytedeco.javacv.*;
 import sample.Main;
 import sample.util.AppCache;
+import sample.util.AudioRecorder;
 import sample.util.Constant;
+import sample.util.VideoRecorder;
 
 /**
  * Created by chenweiqi on 2017/4/18.

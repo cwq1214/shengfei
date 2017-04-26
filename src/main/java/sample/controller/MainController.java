@@ -24,7 +24,7 @@ import java.util.Arrays;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
-public class MainController extends BaseController{
+public class MainController extends BaseController {
     @FXML
     public MenuItem tutorial;
     @FXML
