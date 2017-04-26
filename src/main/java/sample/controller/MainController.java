@@ -1,11 +1,16 @@
 package sample.controller;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.Event;
 import javafx.event.EventHandler;
+import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.web.WebView;
 import javafx.stage.Modality;
+import javafx.stage.Window;
+import javafx.stage.WindowEvent;
 import sample.controller.NewTableView.NewTableView;
 import sample.controller.YBCC.YBCCController;
 import sample.controller.openTable.OpenTableController;
@@ -324,16 +329,41 @@ public class MainController extends BaseController{
     @FXML
     private void onRecordModeClick() throws IOException {
         RecordTabController controller = (RecordTabController) ViewUtil.getInstance().openRecordTab();
-        Tab tab = WidgetUtil.createNewTab("录音", controller.getmParent());
+        Tab tab = WidgetUtil.createNewTab("录制", controller.getmParent());
+
+        tab.setOnClosed(new EventHandler<Event>() {
+            @Override
+            public void handle(Event event) {
+                controller.stopPreview();
+            }
+        });
+
         WidgetUtil.addTabToTabPane(contentPane, tab, true);
         WidgetUtil.selectTab(tab);
 
+        controller.startPreview();
+
     }
+
+
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         super.initialize(location,resources);
-
         changeLanguage.setText(ViewUtil.currentLanguage);
+    }
+
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        //关闭窗口时，调用所有tab的onClose方法
+        if (contentPane.getTabs().size()!=0){
+            for (Tab tab :
+                    contentPane.getTabs()) {
+                tab.getOnClosed().handle(null);
+            }
+        }
     }
 }

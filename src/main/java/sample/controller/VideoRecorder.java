@@ -101,14 +101,18 @@ public class VideoRecorder extends Thread {
                 }
 
                 //预览摄像头
-                BufferedImage image = IplImageToBufferedImage(iplImage);
-                img.setImage(SwingFXUtils.toFXImage(image,new WritableImage(image.getWidth(),image.getHeight())));
-
+                if (img!=null) {
+                    BufferedImage image = IplImageToBufferedImage(iplImage);
+                    img.setImage(SwingFXUtils.toFXImage(image, new WritableImage(image.getWidth(), image.getHeight())));
+                }
                 if (startRecordTimes!=0){
                     long sub = System.currentTimeMillis()-startRecordTimes;
                     if (timeCallback!=null)
                         timeCallback.recordTime(sub);
                 }
+            }
+            if (grabber!=null){
+                grabber=null;
             }
 //                    Thread.sleep(100);
 
@@ -197,7 +201,7 @@ public class VideoRecorder extends Thread {
         return paintConverter.getBufferedImage(frame,1);
     }
 
-    public void close(){
+    public void stopPreview(){
         showVideo = false;
     }
 

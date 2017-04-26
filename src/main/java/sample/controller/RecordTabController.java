@@ -75,6 +75,11 @@ public class RecordTabController extends BaseController {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         super.initialize(location, resources);
+
+
+    }
+
+    public void startPreview(){
         defaultSetting();
         startPreviewVideo();
         startPreviewAudio();
@@ -84,28 +89,29 @@ public class RecordTabController extends BaseController {
 //        cb_resolution.getSelectionModel().select(0);
         List<String> cameraName= new ArrayList();
 
-        if (AppCache.getInstance().getOsType()==0) {
-            //此内容在windows下读取摄像头数量及名称
-            int listDevices = org.bytedeco.javacpp.videoInputLib.videoInput.listDevices();
-            for (int i = 0, max = listDevices; i < max; i++) {
-                String deviceName = org.bytedeco.javacpp.videoInputLib.videoInput.getDeviceName(i).getString();
-                cameraName.add(deviceName);
-            }
-
-        }else {
+//        if (AppCache.getInstance().getOsType()==0) {
+//            //此内容在windows下读取摄像头数量及名称
+//            int listDevices = org.bytedeco.javacpp.videoInputLib.videoInput.listDevices();
+//            for (int i = 0, max = listDevices; i < max; i++) {
+//                String deviceName = org.bytedeco.javacpp.videoInputLib.videoInput.getDeviceName(i).getString();
+//                cameraName.add(deviceName);
+//            }
+//
+//        }else {
             int cameraCount = 0;
-
             opencv_videoio.VideoCapture capture = new opencv_videoio.VideoCapture();
             while (true){
+                System.out.println("camera count "+cameraCount);
                 capture.open(cameraCount);
                 if (capture.isOpened()){
                     cameraName.add(String.valueOf(cameraCount));
                     cameraCount++;
+                    capture.close();
                 }else {
                     break;
                 }
             }
-        }
+//        }
         cb_cameraName.getItems().add(cameraName);
         cb_cameraName.getSelectionModel().select(0);
 
@@ -118,7 +124,7 @@ public class RecordTabController extends BaseController {
                 int imageWidth = Integer.parseInt(pix[0]);
                 int imageHeight = Integer.parseInt(pix[1]);
                 if (recordVideoThread!=null)
-                recordVideoThread.setResolution(imageWidth,imageHeight);
+                    recordVideoThread.setResolution(imageWidth,imageHeight);
             }
         });
 
@@ -256,6 +262,12 @@ public class RecordTabController extends BaseController {
         recordAudioThread.start();
     }
 
+    public void stopPreview(){
+        if (recordAudioThread!=null)
+            recordAudioThread.stopPreview();
+        if (recordVideoThread!=null)
+            recordVideoThread.stopPreview();
+    }
 
     private void showTimeOnLabel(long time){
         Platform.runLater(new Runnable() {

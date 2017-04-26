@@ -208,6 +208,10 @@ public class AudioRecorder extends Thread {
     }
 
 
+    public void stopPreview(){
+        showAudio = false;
+    }
+
 
     private FFmpegFrameRecorder initRecorder(String fileName) throws IOException {
         File parentFile =new File(fileName).getParentFile();
