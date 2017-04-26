@@ -11,10 +11,7 @@ import sample.controller.YBCC.YBCCController;
 import sample.controller.openTable.OpenTableController;
 import sample.controller.openTable.OpenTableListener;
 import sample.entity.Table;
-import sample.util.Constant;
-import sample.util.DbHelper;
-import sample.util.ViewUtil;
-import sample.util.WidgetUtil;
+import sample.util.*;
 
 import java.io.*;
 import java.net.URL;
@@ -175,7 +172,7 @@ public class MainController extends BaseController{
         try {
             String osName = System.getProperty("os.name");
             File file = new File(Constant.ROOT_FILE_DIR + "/English.xls");
-            if (osName.toLowerCase().contains("mac")) {
+            if (AppCache.getInstance().getOsType()!=0) {
                 Runtime.getRuntime().exec("open " + file.getAbsolutePath());
             } else {
                 Runtime.getRuntime().exec("cmd /c start " + Constant.ROOT_FILE_DIR + "/English.xls");
@@ -291,11 +288,51 @@ public class MainController extends BaseController{
         WidgetUtil.selectTab(tab);
     }
 
+    //说话人列表
+    @FXML
+    private void onSpeakerInfoTableClick() throws IOException {
+        SpeakerInfoTableController speakerInfoTableController = ViewUtil.getInstance().openSpeakerInoTableView();
+
+        Tab tab = WidgetUtil.createNewTab("说话人列表", speakerInfoTableController.getmParent());
+        WidgetUtil.addTabToTabPane(contentPane, tab, true);
+        WidgetUtil.selectTab(tab);
+
+    }
+
+    //调查表元数据信息
+    @FXML
+    private void onTableMetadataInfoClick() throws IOException {
+        TableMetadataInfoController controller = ViewUtil.getInstance().openTableMetadataInfoView();
+
+        Tab tab = WidgetUtil.createNewTab("调查表元数据信息", controller.getmParent());
+        WidgetUtil.addTabToTabPane(contentPane, tab, true);
+        WidgetUtil.selectTab(tab);
+    }
+
+    //导出网页
+    @FXML
+    private void onCreateHTMLFileClick()throws IOException{
+        CreateHTMLFileController controller = ViewUtil.getInstance().openCreateHTMLFileView();
+        controller.getmStage().setAlwaysOnTop(true);
+        controller.show();
+//        Tab tab = WidgetUtil.createNewTab("调查表元数据信息", controller.getmParent());
+//        WidgetUtil.addTabToTabPane(contentPane, tab, true);
+//        WidgetUtil.selectTab(tab);
+    }
+
+    //录音模式
+    @FXML
+    private void onRecordModeClick() throws IOException {
+        RecordTabController controller = (RecordTabController) ViewUtil.getInstance().openRecordTab();
+        Tab tab = WidgetUtil.createNewTab("录音", controller.getmParent());
+        WidgetUtil.addTabToTabPane(contentPane, tab, true);
+        WidgetUtil.selectTab(tab);
+
+    }
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         super.initialize(location,resources);
-        System.out.println(location.toString());
-        System.out.println(Arrays.toString(resources.keySet().toArray()));
 
         changeLanguage.setText(ViewUtil.currentLanguage);
     }

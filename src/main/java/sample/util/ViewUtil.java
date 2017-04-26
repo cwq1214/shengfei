@@ -103,7 +103,7 @@ public class ViewUtil {
     }
 
     public BaseController openRecordTab()throws IOException{
-        return (BaseController) showView("view/recordTabView.fxml", "录制", -1, -1, true);
+        return (BaseController) showView("view/recordTabView.fxml", "录制", -1, -1, false);
 
     }
 
@@ -212,6 +212,17 @@ public class ViewUtil {
 
     }
 
+    //说话人列表
+    public SpeakerInfoTableController openSpeakerInoTableView() throws IOException {
+        return (SpeakerInfoTableController) showView("view/speakerInfoTableView.fxml", "", -1, -1, false);
+
+    }
+
+    //调查表元数据信息
+    public TableMetadataInfoController openTableMetadataInfoView()throws IOException{
+        return (TableMetadataInfoController) showView("view/tableMetadataInfoView.fxml", "", -1, -1, false);
+
+    }
 
 
 

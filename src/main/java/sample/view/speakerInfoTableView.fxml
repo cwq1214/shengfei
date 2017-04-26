@@ -14,7 +14,7 @@
 
         <!--<SplitPane dividerPositions="0.7,0.3" orientation="VERTICAL">-->
             <VBox>
-                <Label text="说话人列表"></Label>
+                <Label text="说话人列表" prefWidth="999" alignment="CENTER"></Label>
                 <ListView prefHeight="3000" prefWidth="3000"></ListView>
                 <GridPane vgap="8" hgap="8" alignment="CENTER">
                     <Button text="添加说话人" GridPane.rowIndex="0" GridPane.columnIndex="0"></Button>
@@ -27,7 +27,7 @@
 
         <!--</SplitPane>-->
         <VBox>
-            <HBox><Label text="说话人基本情况"></Label><Label styleClass="redFont" text="（**为必填项）"></Label></HBox>
+            <HBox styleClass="yellowTitle"><Label text="说话人基本情况" style="-fx-text-fill: blue;"></Label><Label styleClass="redFont" text="（**为必填项）"></Label></HBox>
             <GridPane alignment="CENTER" hgap="8" vgap="8">
 
                 <HBox GridPane.rowIndex="0" GridPane.columnIndex="0" alignment="CENTER_RIGHT"><Label text="**" styleClass="redFont"></Label><Label text="关联调查字表" ></Label></HBox>
@@ -69,14 +69,14 @@
                 <HBox GridPane.rowIndex="9" GridPane.columnIndex="0" alignment="CENTER_RIGHT"><Label text="**" styleClass="redFont"></Label><Label text="工作角色" ></Label></HBox>
                 <TextField GridPane.rowIndex="9" GridPane.columnIndex="1" GridPane.columnSpan="3"></TextField>
 
-                <HBox GridPane.rowIndex="10" GridPane.columnIndex="0" ><Label text="**" styleClass="redFont"></Label><Label text="籍贯和居住地" ></Label></HBox>
+                <HBox GridPane.rowIndex="10" GridPane.columnIndex="0" alignment="CENTER_RIGHT"><Label text="**" styleClass="redFont"></Label><Label text="籍贯和居住地" ></Label></HBox>
                 <TextField GridPane.rowIndex="10" GridPane.columnIndex="1" GridPane.columnSpan="3"></TextField>
 
                 <HBox GridPane.rowIndex="11" GridPane.columnIndex="0" alignment="CENTER_RIGHT"><Label text="备注" ></Label></HBox>
-                <TextArea GridPane.rowIndex="11" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowSpan="3" maxHeight="100"></TextArea>
+                <TextArea GridPane.rowIndex="11" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowSpan="3" maxHeight="50"></TextArea>
 
 
-                <VBox styleClass="yellowBackground" GridPane.rowIndex="14" GridPane.columnIndex="0" GridPane.columnSpan="4" GridPane.rowSpan="4">
+                <VBox styleClass="hint" GridPane.rowIndex="14" GridPane.columnIndex="0" GridPane.columnSpan="4" GridPane.rowSpan="4" >
                     <Label text="填表说明："></Label>
                     <Label text="（1）本表可以记录发音人说话人或其他有关人员的基本情况。"></Label>
                     <Label text="（2）常用语言是说话人日常生活用的最多的语言。"></Label>

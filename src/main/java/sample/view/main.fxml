@@ -44,11 +44,9 @@
           </Menu>
           <Menu mnemonicParsing="false" text="%menu_option">
             <items>
-                <RadioMenuItem selected="true" text="%menu_option_zbms">
-                     <toggleGroup>
-                        <ToggleGroup fx:id="mode" />
-                     </toggleGroup></RadioMenuItem>
-                <RadioMenuItem text="%menu_option_lyms" toggleGroup="$mode" />
+
+                <RadioMenuItem selected="true" text="%menu_option_zbms"><toggleGroup><ToggleGroup fx:id="mode" /></toggleGroup></RadioMenuItem>
+                <RadioMenuItem text="%menu_option_lyms" toggleGroup="$mode" onAction="#onRecordModeClick"/>
                 <RadioMenuItem text="%menu_option_zxms" toggleGroup="$mode" />
                 <SeparatorMenuItem />
                 <MenuItem mnemonicParsing="false" text="%menu_option_zbtybh" />
@@ -60,15 +58,14 @@
           </Menu>
             <Menu mnemonicParsing="false" text="%menu_yudang">
                 <items>
-                    <MenuItem mnemonicParsing="false" text="%menu_archives_shrxxb" />
-                    <MenuItem mnemonicParsing="false" text="%menu_archives_dcys" />
-                    <MenuItem mnemonicParsing="false" text="%menu_archives_cjydwy" />
+                    <MenuItem mnemonicParsing="false" text="%menu_archives_shrxxb" onAction="#onSpeakerInfoTableClick"/>
+                    <MenuItem mnemonicParsing="false" text="%menu_archives_dcys" onAction="#onTableMetadataInfoClick"/>
+                    <MenuItem mnemonicParsing="false" text="%menu_archives_cjydwy" onAction="#onCreateHTMLFileClick"/>
                 </items>
             </Menu>
             <Menu mnemonicParsing="false" text="%menu_system">
                 <items>
-                    <MenuItem mnemonicParsing="false" text="%menu_system_fydczb" fx:id="menu_system_fydczb"
-                              onAction="#onFYDCZBClick"/>
+                    <MenuItem mnemonicParsing="false" text="%menu_system_fydczb" fx:id="menu_system_fydczb" onAction="#onFYDCZBClick"/>
                     <MenuItem mnemonicParsing="false" text="%menu_system_chdczb" fx:id="menu_system_chdczb" onAction="#onCHDCBClick"/>
                     <MenuItem mnemonicParsing="false" text="%menu_system_jzdczb" fx:id="menu_system_jzdczb" onAction="#onJZDCBClick"/>
                     <SeparatorMenuItem />

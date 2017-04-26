@@ -25,7 +25,7 @@
     </VBox>
 
     <GridPane alignment="TOP_CENTER" vgap="8" hgap="8">
-        <HBox  GridPane.rowIndex="0" GridPane.columnIndex="0" GridPane.columnSpan="4"><Label text="元数据列表"></Label><Label styleClass="redFont" text="（**）为必填项"></Label></HBox>
+        <HBox  GridPane.rowIndex="0" GridPane.columnIndex="0" GridPane.columnSpan="4" styleClass="yellowTitle"><Label text="元数据列表" style="-fx-text-fill: blue;"></Label><Label styleClass="redFont" text="（**）为必填项"></Label></HBox>
 
         <HBox GridPane.rowIndex="1" GridPane.columnIndex="0" alignment="CENTER_RIGHT"><Label text="调查表文件"></Label></HBox>
         <TextField GridPane.rowIndex="1" GridPane.columnIndex="1" GridPane.columnSpan="3" editable="false"></TextField>
@@ -76,7 +76,7 @@
         <HBox GridPane.rowIndex="12" GridPane.columnIndex="0" alignment="CENTER_RIGHT"><Label text="备注"></Label></HBox>
         <TextArea GridPane.rowIndex="12" GridPane.columnIndex="1" GridPane.rowSpan="2" GridPane.columnSpan="3" maxHeight="50"></TextArea>
 
-        <VBox GridPane.rowIndex="15" GridPane.columnIndex="0" GridPane.rowSpan="9" GridPane.columnSpan="4" >
+        <VBox GridPane.rowIndex="15" GridPane.columnIndex="0" GridPane.rowSpan="9" GridPane.columnSpan="4"  styleClass="hint">
             <Label text="填表说明："></Label>
             <Label text="（1）语料描述指调查表语料内容简介。"></Label>
             <Label text="（2）项目名称和编号指资助本表语料记录的资金。"></Label>

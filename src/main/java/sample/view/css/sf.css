@@ -51,6 +51,7 @@ HBox.alignmentRight{
     -fx-alignment: center-right;
 }
 .yellowTitle{
+    -fx-alignment: center;
     -fx-background-color: yellow;
     -fx-border-color: blue;
     -fx-border-width: 2px;
