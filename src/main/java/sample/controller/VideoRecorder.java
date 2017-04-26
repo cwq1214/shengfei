@@ -112,7 +112,12 @@ public class VideoRecorder extends Thread {
                 }
             }
             if (grabber!=null){
-                grabber=null;
+                System.out.println("grabber not null");
+//                grabber=null;
+
+                grabber.release();
+
+                System.gc();
             }
 //                    Thread.sleep(100);
 

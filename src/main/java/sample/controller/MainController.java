@@ -334,6 +334,7 @@ public class MainController extends BaseController{
         tab.setOnClosed(new EventHandler<Event>() {
             @Override
             public void handle(Event event) {
+                System.out.println("close");
                 controller.stopPreview();
             }
         });

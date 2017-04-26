@@ -3,6 +3,7 @@ package sample.controller;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -12,10 +13,12 @@ import javafx.scene.image.ImageView;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 
 import org.bytedeco.javacpp.opencv_videoio;
+import org.bytedeco.javacv.*;
 import sample.Main;
 import sample.util.AppCache;
 import sample.util.Constant;
@@ -89,30 +92,46 @@ public class RecordTabController extends BaseController {
 //        cb_resolution.getSelectionModel().select(0);
         List<String> cameraName= new ArrayList();
 
-//        if (AppCache.getInstance().getOsType()==0) {
-//            //此内容在windows下读取摄像头数量及名称
-//            int listDevices = org.bytedeco.javacpp.videoInputLib.videoInput.listDevices();
-//            for (int i = 0, max = listDevices; i < max; i++) {
-//                String deviceName = org.bytedeco.javacpp.videoInputLib.videoInput.getDeviceName(i).getString();
-//                cameraName.add(deviceName);
-//            }
-//
-//        }else {
-            int cameraCount = 0;
-            opencv_videoio.VideoCapture capture = new opencv_videoio.VideoCapture();
-            while (true){
-                System.out.println("camera count "+cameraCount);
-                capture.open(cameraCount);
-                if (capture.isOpened()){
-                    cameraName.add(String.valueOf(cameraCount));
-                    cameraCount++;
-                    capture.close();
-                }else {
-                    break;
-                }
+        if (AppCache.getInstance().getOsType()==0) {
+            //此内容在windows下读取摄像头数量及名称
+            int listDevices = org.bytedeco.javacpp.videoInputLib.videoInput.listDevices();
+            for (int i = 0, max = listDevices; i < max; i++) {
+                String deviceName = org.bytedeco.javacpp.videoInputLib.videoInput.getDeviceName(i).getString();
+                cameraName.add(deviceName);
             }
-//        }
-        cb_cameraName.getItems().add(cameraName);
+
+        }else {
+            int cameraCount = 0;
+//            opencv_videoio.VideoCapture capture ;
+//            while (true){
+//                capture = new opencv_videoio.VideoCapture(cameraCount);
+//                if (capture.isOpened()){
+//                    cameraName.add(String.valueOf(cameraCount));
+//                    cameraCount++;
+//                    capture.close();
+//                }else {
+//                    break;
+//                }
+//            }
+//            OpenCVFrameGrabber grabber;
+//            while (true){
+//                grabber = new OpenCVFrameGrabber(cameraCount);
+//                try {
+//                    grabber.start();
+//                    grabber.grab();
+//                    System.out.println(cameraCount);
+//                    cameraName.add(cameraCount+"");
+//                    cameraCount++;
+//                    grabber=null;
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                    break;
+//                }
+//            }
+
+
+        }
+        cb_cameraName.setItems(FXCollections.observableArrayList(cameraName));
         cb_cameraName.getSelectionModel().select(0);
 
 
