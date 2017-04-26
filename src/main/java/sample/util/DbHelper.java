@@ -358,4 +358,83 @@ public class DbHelper {
         return null;
     }
 
+    public List<Speaker> getSpeakers(){
+        try {
+            return getSpeakerDao().queryForAll();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public Speaker getSpeakerById(Integer id){
+        if (id==null){
+            return null;
+        }
+        try {
+            return getSpeakerDao().queryForId(id);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public int addOrUpdate(Speaker speaker){
+        try {
+            return getSpeakerDao().createOrUpdate(speaker).getNumLinesChanged();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public int deleteSpeaker(Speaker speaker){
+        try {
+            return getSpeakerDao().delete(speaker);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public int deleteSpeakerById(Integer id){
+        try {
+            return getSpeakerDao().deleteById(id);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+
+
+
+    public Table getTableById(Integer id){
+        try {
+            return getTableDao().queryForId(id);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
+
+    private Dao<Speaker,Integer> getSpeakerDao(){
+        try {
+            return DaoManager.createDao(connectionSource,Speaker.class);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private Dao<Table,Integer> getTableDao(){
+        try {
+            return DaoManager.createDao(connectionSource,Table.class);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

@@ -6,6 +6,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import org.bytedeco.javacpp.opencv_core;
 import org.bytedeco.javacv.*;
+import sample.util.AppCache;
 import sample.util.Constant;
 
 import java.awt.image.BufferedImage;
@@ -112,10 +113,9 @@ public class VideoRecorder extends Thread {
                 }
             }
             if (grabber!=null){
-                System.out.println("grabber not null");
-//                grabber=null;
-
+                grabber.stop();
                 grabber.release();
+                grabber = null;
 
                 System.gc();
             }

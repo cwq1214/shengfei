@@ -9,10 +9,10 @@ import javafx.beans.property.SimpleStringProperty;
  */
 @DatabaseTable(tableName = "tbl_speaker")
 public class Speaker {
-    @DatabaseField
+    @DatabaseField(generatedId = true)
     public Integer ID;
     @DatabaseField
-    public String withable;
+    public String withtable;
     @DatabaseField
     public String speakcode;
     @DatabaseField
@@ -46,12 +46,12 @@ public class Speaker {
         this.ID = ID;
     }
 
-    public String getWithable() {
-        return withable;
+    public String getWithtable() {
+        return withtable;
     }
 
-    public void setWithable(String withable) {
-        this.withable = withable;
+    public void setWithtable(String withtable) {
+        this.withtable = withtable;
     }
 
     public String getSpeakcode() {
@@ -148,5 +148,25 @@ public class Speaker {
 
     public void setNotetext(String notetext) {
         this.notetext = notetext;
+    }
+
+    @Override
+    public String toString() {
+        return "Speaker{" +
+                "ID=" + ID +
+                ", withtable='" + withtable + '\'' +
+                ", speakcode='" + speakcode + '\'' +
+                ", realname='" + realname + '\'' +
+                ", sex='" + sex + '\'' +
+                ", birth='" + birth + '\'' +
+                ", usualLang='" + usualLang + '\'' +
+                ", motherLang='" + motherLang + '\'' +
+                ", secondLang='" + secondLang + '\'' +
+                ", education='" + education + '\'' +
+                ", job='" + job + '\'' +
+                ", workRole='" + workRole + '\'' +
+                ", addr='" + addr + '\'' +
+                ", notetext='" + notetext + '\'' +
+                '}';
     }
 }
