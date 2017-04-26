@@ -363,7 +363,8 @@ public class MainController extends BaseController {
         if (contentPane.getTabs().size()!=0){
             for (Tab tab :
                     contentPane.getTabs()) {
-                tab.getOnClosed().handle(null);
+                if (tab.getOnClosed()!=null)
+                    tab.getOnClosed().handle(null);
             }
         }
     }
