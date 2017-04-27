@@ -211,4 +211,28 @@ public class Table {
     public void setCustom(String custom) {
         this.custom = custom;
     }
+
+    @Override
+    public String toString() {
+        return "Table{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", datatype='" + datatype + '\'' +
+                ", projectname='" + projectname + '\'' +
+                ", creator='" + creator + '\'' +
+                ", speaker='" + speaker + '\'' +
+                ", contributor='" + contributor + '\'' +
+                ", recordingdate='" + recordingdate + '\'' +
+                ", recordingplace='" + recordingplace + '\'' +
+                ", language='" + language + '\'' +
+                ", languagecode='" + languagecode + '\'' +
+                ", languageplace='" + languageplace + '\'' +
+                ", datades='" + datades + '\'' +
+                ", equipment='" + equipment + '\'' +
+                ", software='" + software + '\'' +
+                ", rightl='" + rightl + '\'' +
+                ", snote='" + snote + '\'' +
+                ", custom='" + custom + '\'' +
+                '}';
+    }
 }

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.geometry.Insets?>
+<GridPane xmlns="http://javafx.com/javafx"
+          xmlns:fx="http://javafx.com/fxml"
+          fx:controller="sample.controller.AddMetadataController"
+          vgap="8"
+          hgap="8"
+          fx:id="gridPane"
+          alignment="CENTER">
+    <padding>
+        <Insets>
+            <left>8</left>
+            <right>8</right>
+            <top>8</top>
+            <bottom>8</bottom>
+        </Insets>
+    </padding>
+    <HBox GridPane.rowIndex="0" GridPane.columnIndex="1" alignment="CENTER"><Label text="元素" ></Label></HBox>
+    <HBox GridPane.rowIndex="0" GridPane.columnIndex="2" alignment="CENTER"><Label text="内容" ></Label></HBox>
+
+    <HBox GridPane.rowIndex="1" GridPane.columnIndex="0" alignment="CENTER"><Label text="自定义元数据一" ></Label></HBox>
+    <TextField fx:id="input_key1" GridPane.rowIndex="1" GridPane.columnIndex="1"></TextField>
+    <TextField fx:id="input_value1" GridPane.rowIndex="1" GridPane.columnIndex="2"></TextField>
+
+    <HBox GridPane.rowIndex="2" GridPane.columnIndex="0" alignment="CENTER"><Label text="自定义元数据二" ></Label></HBox>
+    <TextField fx:id="input_key2" GridPane.rowIndex="2" GridPane.columnIndex="1"></TextField>
+    <TextField fx:id="input_value2" GridPane.rowIndex="2" GridPane.columnIndex="2"></TextField>
+
+    <HBox GridPane.rowIndex="3" GridPane.columnIndex="0" alignment="CENTER"><Label text="自定义元数据三" ></Label></HBox>
+    <TextField fx:id="input_key3" GridPane.rowIndex="3" GridPane.columnIndex="1"></TextField>
+    <TextField fx:id="input_value3" GridPane.rowIndex="3" GridPane.columnIndex="2"></TextField>
+
+    <HBox GridPane.rowIndex="4" GridPane.columnIndex="0" alignment="CENTER"><Label text="自定义元数据四" ></Label></HBox>
+    <TextField fx:id="input_key4" GridPane.rowIndex="4" GridPane.columnIndex="1"></TextField>
+    <TextField fx:id="input_value4" GridPane.rowIndex="4" GridPane.columnIndex="2"></TextField>
+
+    <HBox GridPane.rowIndex="5" GridPane.columnIndex="0" alignment="CENTER"><Label text="自定义元数据五" ></Label></HBox>
+    <TextField fx:id="input_key5" GridPane.rowIndex="5" GridPane.columnIndex="1"></TextField>
+    <TextField fx:id="input_value5" GridPane.rowIndex="5" GridPane.columnIndex="2"></TextField>
+
+    <HBox GridPane.rowIndex="6" GridPane.columnIndex="0" GridPane.columnSpan="3" alignment="CENTER" spacing="16">
+        <Button text="确定" onAction="#onDoneClick"></Button>
+        <Button text="取消" onAction="#onCancelClick"></Button>
+    </HBox>
+</GridPane>

@@ -418,7 +418,23 @@ public class DbHelper {
         return null;
     }
 
+    public List<Table> getAllTables(){
+        try {
+            return getTableDao().queryForAll();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
+    public int addOrUpdateTable(Table table){
+        try {
+            return getTableDao().createOrUpdate(table).getNumLinesChanged();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
 
     private Dao<Speaker,Integer> getSpeakerDao(){
         try {
@@ -437,4 +453,5 @@ public class DbHelper {
         }
         return null;
     }
+
 }

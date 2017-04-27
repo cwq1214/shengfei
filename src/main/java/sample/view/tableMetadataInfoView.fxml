@@ -16,11 +16,11 @@
 
    <VBox alignment="CENTER" styleClass="showBorder">
         <Label text="调查表清单"></Label>
-        <ListView prefHeight="3000"></ListView>
+        <ListView prefHeight="3000" fx:id="lv_table"></ListView>
         <HBox spacing="8" alignment="CENTER">
-            <Button text="调查表排序"></Button>
-            <Button text="添加元数据"></Button>
-            <Button text="清除元数据"></Button>
+            <Button text="调查表排序" onAction="#onSortTableClick"></Button>
+            <Button text="添加元数据" onAction="#onAddTableClick"></Button>
+            <Button text="清除元数据" onAction="#onDelTableClick"></Button>
         </HBox>
     </VBox>
 
@@ -28,53 +28,55 @@
         <HBox  GridPane.rowIndex="0" GridPane.columnIndex="0" GridPane.columnSpan="4" styleClass="yellowTitle"><Label text="元数据列表" style="-fx-text-fill: blue;"></Label><Label styleClass="redFont" text="（**）为必填项"></Label></HBox>
 
         <HBox GridPane.rowIndex="1" GridPane.columnIndex="0" alignment="CENTER_RIGHT"><Label text="调查表文件"></Label></HBox>
-        <TextField GridPane.rowIndex="1" GridPane.columnIndex="1" GridPane.columnSpan="3" editable="false"></TextField>
+        <TextField fx:id="input_title" GridPane.rowIndex="1" GridPane.columnIndex="1" GridPane.columnSpan="3" editable="false"></TextField>
 
         <HBox  GridPane.rowIndex="2" GridPane.columnIndex="0" alignment="CENTER_RIGHT"><Label text="语科类型"></Label></HBox>
-        <ChoiceBox  GridPane.rowIndex="2" GridPane.columnIndex="1" >
+        <ChoiceBox fx:id="cb_datatype"  GridPane.rowIndex="2" GridPane.columnIndex="1" value="字汇" >
                 <String fx:value="字汇"></String>
-                <String fx:value="字汇"></String>
+                <String fx:value="词汇"></String>
+                <String fx:value="句子"></String>
+                <String fx:value="话语"></String>
         </ChoiceBox>
 
         <HBox GridPane.rowIndex="3" GridPane.columnIndex="0" alignment="CENTER_RIGHT"><Label text="语科描述"></Label></HBox>
-        <TextField GridPane.rowIndex="3" GridPane.columnIndex="1" GridPane.columnSpan="3"></TextField>
+        <TextField fx:id="input_datades" GridPane.rowIndex="3" GridPane.columnIndex="1" GridPane.columnSpan="3"></TextField>
 
         <HBox GridPane.rowIndex="4" GridPane.columnIndex="0" alignment="CENTER_RIGHT"><Label text="项目名称和编号"></Label></HBox>
-        <TextField GridPane.rowIndex="4" GridPane.columnIndex="1" GridPane.columnSpan="3"></TextField>
+        <TextField fx:id="input_projectname" GridPane.rowIndex="4" GridPane.columnIndex="1" GridPane.columnSpan="3"></TextField>
 
         <HBox GridPane.rowIndex="5" GridPane.columnIndex="0" alignment="CENTER_RIGHT"><Label text="**" styleClass="redFont"></Label><Label text="发音人／说话人"></Label></HBox>
-        <TextField GridPane.rowIndex="5" GridPane.columnIndex="1"></TextField>
+        <TextField fx:id="input_speaker" GridPane.rowIndex="5" GridPane.columnIndex="1"></TextField>
         <HBox GridPane.rowIndex="5" GridPane.columnIndex="2" alignment="CENTER_RIGHT"><Label text="**" styleClass="redFont"></Label><Label text="创建人"></Label></HBox>
-        <TextField GridPane.rowIndex="5" GridPane.columnIndex="3"></TextField>
+        <TextField fx:id="input_creator" GridPane.rowIndex="5" GridPane.columnIndex="3"></TextField>
 
         <HBox GridPane.rowIndex="6" GridPane.columnIndex="0" alignment="CENTER_RIGHT"><Label text="贡献人"></Label></HBox>
-        <TextField GridPane.rowIndex="6" GridPane.columnIndex="1" GridPane.columnSpan="3"></TextField>
+        <TextField fx:id="input_contributor" GridPane.rowIndex="6" GridPane.columnIndex="1" GridPane.columnSpan="3"></TextField>
 
         <HBox GridPane.rowIndex="7" GridPane.columnIndex="0" alignment="CENTER_RIGHT"><Label text="**" styleClass="redFont"></Label><Label text="采录日期(yyyy/MM/dd)"><tooltip><Tooltip text="采录日期(yyyy/MM/dd)"></Tooltip></tooltip></Label></HBox>
-        <TextField GridPane.rowIndex="7" GridPane.columnIndex="1" GridPane.columnSpan="3"></TextField>
+        <TextField fx:id="input_recordingdate" GridPane.rowIndex="7" GridPane.columnIndex="1" GridPane.columnSpan="3"></TextField>
 
         <HBox GridPane.rowIndex="8" GridPane.columnIndex="0" alignment="CENTER_RIGHT"><Label text="**" styleClass="redFont"></Label><Label text="采录地点"></Label></HBox>
-        <TextField GridPane.rowIndex="8" GridPane.columnIndex="1" ></TextField>
+        <TextField fx:id="input_recordingplace" GridPane.rowIndex="8" GridPane.columnIndex="1" ></TextField>
         <HBox GridPane.rowIndex="8" GridPane.columnIndex="2" alignment="CENTER_RIGHT"><Label text="**" styleClass="redFont"></Label><Label text="语言地点"></Label></HBox>
-        <TextField GridPane.rowIndex="8" GridPane.columnIndex="3" ></TextField>
+        <TextField fx:id="input_languageplace" GridPane.rowIndex="8" GridPane.columnIndex="3" ></TextField>
 
 
         <HBox GridPane.rowIndex="9" GridPane.columnIndex="0" alignment="CENTER_RIGHT"><Label text="**" styleClass="redFont"></Label><Label text="语言名称"></Label></HBox>
-        <TextField GridPane.rowIndex="9" GridPane.columnIndex="1"></TextField>
+        <TextField fx:id="input_language" GridPane.rowIndex="9" GridPane.columnIndex="1"></TextField>
         <HBox GridPane.rowIndex="9" GridPane.columnIndex="2" alignment="CENTER_RIGHT"><Label text="语言代码"></Label></HBox>
-        <TextField GridPane.rowIndex="9" GridPane.columnIndex="3"></TextField>
+        <TextField fx:id="input_languagecode" GridPane.rowIndex="9" GridPane.columnIndex="3"></TextField>
 
 
         <HBox GridPane.rowIndex="10" GridPane.columnIndex="0" alignment="CENTER_RIGHT"><Label text="录音设备"></Label></HBox>
-        <TextField GridPane.rowIndex="10" GridPane.columnIndex="1"></TextField>
+        <TextField fx:id="input_equipment" GridPane.rowIndex="10" GridPane.columnIndex="1"></TextField>
         <HBox GridPane.rowIndex="10" GridPane.columnIndex="2" alignment="CENTER_RIGHT"><Label text="软件工具"></Label></HBox>
-        <TextField GridPane.rowIndex="10" GridPane.columnIndex="3" ></TextField>
+        <TextField fx:id="input_software" GridPane.rowIndex="10" GridPane.columnIndex="3" ></TextField>
 
         <HBox GridPane.rowIndex="11" GridPane.columnIndex="0" alignment="CENTER_RIGHT"><Label text="使用权限"></Label></HBox>
-        <TextField GridPane.rowIndex="11" GridPane.columnIndex="1" GridPane.columnSpan="3"></TextField>
+        <TextField fx:id="input_rightl" GridPane.rowIndex="11" GridPane.columnIndex="1" GridPane.columnSpan="3"></TextField>
 
         <HBox GridPane.rowIndex="12" GridPane.columnIndex="0" alignment="CENTER_RIGHT"><Label text="备注"></Label></HBox>
-        <TextArea GridPane.rowIndex="12" GridPane.columnIndex="1" GridPane.rowSpan="2" GridPane.columnSpan="3" maxHeight="50"></TextArea>
+        <TextArea fx:id="input_snote" GridPane.rowIndex="12" GridPane.columnIndex="1" GridPane.rowSpan="2" GridPane.columnSpan="3" maxHeight="50"></TextArea>
 
         <VBox GridPane.rowIndex="15" GridPane.columnIndex="0" GridPane.rowSpan="9" GridPane.columnSpan="4"  styleClass="hint">
             <Label text="填表说明："></Label>
@@ -89,8 +91,8 @@
         </VBox>
 
         <HBox GridPane.rowIndex="25" GridPane.columnIndex="0" GridPane.columnSpan="4" alignment="CENTER" spacing="16">
-            <Button text="确定"></Button>
-            <Button text="关闭"></Button>
+            <Button text="确定" onAction="#onDoneClick"></Button>
+            <Button text="关闭" onAction="#onCloseClick"></Button>
         </HBox>
 
         <columnConstraints>

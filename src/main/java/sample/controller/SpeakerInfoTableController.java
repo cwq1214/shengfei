@@ -185,7 +185,12 @@ public class SpeakerInfoTableController extends BaseController {
     //取消
     @FXML
     private void onCancelClick(){
-        showSelSpeakerInfo();
+        if (selSpeaker!=null){
+            showSelSpeakerInfo();
+        }else {
+            clearInput();
+        }
+
     }
 
     //添加说话人

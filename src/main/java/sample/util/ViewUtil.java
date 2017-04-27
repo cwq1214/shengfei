@@ -211,17 +211,21 @@ public class ViewUtil {
 
     //说话人列表
     public SpeakerInfoTableController openSpeakerInoTableView() throws IOException {
-        return (SpeakerInfoTableController) showView("view/speakerInfoTableView.fxml", "", -1, -1, false);
+        return (SpeakerInfoTableController) showView("view/speakerInfoTableView.fxml", "说话人列表", -1, -1, false);
 
     }
 
     //调查表元数据信息
     public TableMetadataInfoController openTableMetadataInfoView()throws IOException{
-        return (TableMetadataInfoController) showView("view/tableMetadataInfoView.fxml", "", -1, -1, false);
+        return (TableMetadataInfoController) showView("view/tableMetadataInfoView.fxml", "调查表元数据信息", -1, -1, false);
 
     }
 
+    //添加元数据对话框
+    public AddMetadataController openAddMetaDataView() throws IOException {
+        return (AddMetadataController) showView("view/addMetadataView.fxml", "添加元数据", -1, -1, false);
 
+    }
 
 
 
