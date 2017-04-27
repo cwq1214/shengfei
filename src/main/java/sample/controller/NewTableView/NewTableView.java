@@ -12,6 +12,8 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
 import javafx.util.converter.DefaultStringConverter;
@@ -61,6 +63,10 @@ public class NewTableView extends BaseController {
 
     public ObservableList getOriginDatas() {
         return originDatas;
+    }
+
+    public void refreshTableView(){
+        tableView.refresh();
     }
 
     @Override
@@ -741,7 +747,14 @@ public class NewTableView extends BaseController {
                     int colIndex = getTableView().getColumns().indexOf(getTableColumn());
 
                     try {
-                        Record r = ((YBCCBean) tableDatas.get(getTableRow().getIndex())).getRecord();
+                        YBCCBean bean = (YBCCBean) tableDatas.get(getTableRow().getIndex());
+                        Record r = bean.getRecord();
+
+                        if (bean.getWrongReason() == null || bean.getWrongReason().equals("")){
+                            getTableRow().setStyle("");
+                        }else {
+                            getTableRow().setStyle("-fx-background-color: deepskyblue");
+                        }
 
                         String regEx = "^[A-Z0-9]*$";
                         Pattern pattern = Pattern.compile(regEx);

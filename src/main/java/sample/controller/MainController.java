@@ -42,9 +42,12 @@ public class MainController extends BaseController {
                 NewTableView vc = ((NewTableView) t.getUserData());
 
                 YBCCController yvc = ((YBCCController) ViewUtil.getInstance().showView("view/YBCCView.fxml", "音标查错", -1, -1, ""));
+                yvc.setTbVC(vc);
                 yvc.setAnalyDatas(vc.getOriginDatas());
                 yvc.mStage.setResizable(false);
+                yvc.mStage.initModality(Modality.APPLICATION_MODAL);
                 yvc.mStage.show();
+
 
             }
         }

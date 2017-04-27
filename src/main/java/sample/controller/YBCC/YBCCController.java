@@ -10,6 +10,7 @@ import javafx.scene.control.*;
 import javafx.stage.WindowEvent;
 import javafx.util.Callback;
 import sample.controller.BaseController;
+import sample.controller.NewTableView.NewTableView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,11 +33,20 @@ public class YBCCController extends BaseController {
     private ObservableList<YBCCBean> analyDatas;
     private ObservableList<YBCCBean> showDatas;
 
+    private NewTableView tbVC;
+
     private String biaoDian = "。，、：∶；‘’“”〝〞ˆˇ﹕︰﹔﹖﹑·¨.¸´？！～—｜‖＂〃｀@﹫¡¿﹏﹋︴々﹟#﹩$﹠&﹪%﹡﹢×﹦‐￣¯―﹨˜﹍﹎＿~（）〈〉‹›﹛﹜『』〖〗［］《》〔〕{}「」【】︵︷︿︹︽_︶︸﹀︺︾ˉ﹂﹄︼﹁﹃︻▲●□…→";
-    private String baseYuan = "aᴀɑɒøoɔeᴇɛæəɤiɯuyptkbdɡqʔˀŋ";
+    private String baseYuan = "əɛɿʮʅʯiyɪʏeøᴇɛεɛœæaɶɑɒʌɔɤoɷʊƜɯuɨʉɘɵəǝɚɜɝɞɐᴀɩϊàáâãäåḁèéêëḙḛẽìíîïòóôõöùúûüṵṷāăēĕěĩīĭōŏőũūŭůűǎǐǒǔǖǘǚǜǣȁȅȇȉȋȍȗ";
+    private String doubleYuan = "ai ei ui ao ou iu ie ue";
+    private String wrongSD = "111 222 333 444 555 123 124 125 234 235 345 543 542 541 432 431 321";
+    private String currectZeroSD = "01 02 03 04 05";
 
     public ObservableList<YBCCBean> getAnalyDatas() {
         return analyDatas;
+    }
+
+    public void setTbVC(NewTableView tbVC) {
+        this.tbVC = tbVC;
     }
 
     public void setAnalyDatas(ObservableList<YBCCBean> analyDatas) {
@@ -50,7 +60,7 @@ public class YBCCController extends BaseController {
                 return true;
             }
         }));
-
+        System.out.println("analy datas count:"+this.analyDatas.size());
         showDatas = FXCollections.observableArrayList();
     }
 
@@ -62,6 +72,7 @@ public class YBCCController extends BaseController {
         TableColumn<YBCCBean,String> ipaCol = new TableColumn<>("音标注音");
         TableColumn<YBCCBean,String> reasonCol = new TableColumn<>("错误原因");
 
+        ipaCol.setMinWidth(150);
         reasonCol.setMinWidth(200);
 
         codeCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<YBCCBean, String>, ObservableValue<String>>() {
@@ -132,7 +143,7 @@ public class YBCCController extends BaseController {
     public ArrayList splitIPA(String str){
         ArrayList result = new ArrayList();
 
-        String regEx = "[^0-5-;]+[0-5]+(-[0-5]+)?";
+        String regEx = "[^\\d-;]+[\\d]+(-\\d+)?";
         Pattern pattern = Pattern.compile(regEx);
         Matcher m = pattern.matcher(str);
         while (m.find()){
@@ -151,16 +162,153 @@ public class YBCCController extends BaseController {
         return length == originStr.length();
     }
 
-    public boolean checkShengMuYunMuShengDiao(YBCCBean bean,ArrayList<String> voiceList){
-        for (String s : voiceList) {
-
+    public boolean checkSDNum(String sd){
+        //判断是否0-5
+        if (sd.matches("^[0-5]+$")){
+            //判断是否必错声调
+            if (wrongSD.contains(" "+sd+" ")){
+                return false;
+            }else {
+                //假如包含0的话，检测是否对的情况
+                if (sd.contains("0") && !currectZeroSD.contains(" "+sd+" ")){
+                    return false;
+                }
+                return true;
+            }
         }
         return false;
     }
 
+    public boolean checkShengMuYunMuShengDiao(YBCCBean bean,ArrayList<String> voiceList){
+        String regEx = "[^\\d-]+";
+        Pattern pattern = Pattern.compile(regEx);
+
+        //声母 韵母 声调
+        String sm = "";
+        String ym = "";
+        String sd = "";
+
+        for (String s : voiceList) {
+            sm = "";
+            ym = "";
+            sd = "";
+
+            //分割声韵与声调
+            Matcher matcher = pattern.matcher(s);
+            matcher.find();
+
+            String sy = matcher.group();
+            System.out.println("声韵:"+sy);
+
+            boolean isFindSm = false;
+
+            //记录最长连续元音
+            int maxSMCount = 0;
+            int tempSMCount = 0;
+
+            for (int i = 0; i < sy.length(); i++) {
+                Character c = sy.charAt(i);
+                //找出声母韵母
+                if (baseYuan.contains(c.toString())){
+                    tempSMCount++;
+
+                    //判断找到声母没有
+                    if (!isFindSm){
+                        //元音开头
+                        if (i == 0){
+                            sm = "";
+                            ym = sy;
+                        }else {
+                            sm = sy.substring(0,i);
+                            ym = sy.substring(i);
+                        }
+                        isFindSm = true;
+                    }
+
+                    //判断连续元音
+                    for (int j = i + 1 ;j < sy.length(); j++){
+                        Character afterC = sy.charAt(j);
+                        String tempStr = sy.substring(i,j);
+                        if (baseYuan.contains(afterC.toString()) && !tempStr.matches("[0-5]+")){
+                            //判断两个原因字母是否相连,且为复韵母
+                            if(i + 1 == j && doubleYuan.contains(tempStr)){
+                                continue;
+                            }
+
+                            bean.setWrongReason("元音字母之间没有包含声调");
+                            return false;
+                        }
+                    }
+                }else {
+                    if (tempSMCount > maxSMCount){
+                        maxSMCount = tempSMCount;
+                    }
+                    tempSMCount = 0;
+                }
+
+            }
+
+            if (tempSMCount > maxSMCount){
+                maxSMCount = tempSMCount;
+            }
+            tempSMCount = 0;
+
+            //判断连续元音 长度为三有可能错，超过三一定错
+            if (maxSMCount == 3){
+                bean.setWrongReason("出现连续三个元音字符，有可能出错");
+                return false;
+            }
+
+            if (maxSMCount > 3){
+                bean.setWrongReason("出现超过连续三个元音字符，声韵错漏");
+                return false;
+            }
+
+            //声调
+            sd = s.substring(matcher.end());
+
+            System.out.println("声母:"+sm);
+            System.out.println("韵母:"+ym);
+            System.out.println("声调:"+sd);
+
+
+            //声韵为空
+            if (sm.equals("") && ym.equals("")){
+                bean.setWrongReason("声韵错漏");
+                return false;
+            }
+
+
+
+            //声调为空
+            if (sd.equals("")){
+                bean.setWrongReason("声调错漏");
+                return false;
+            }
+
+
+            //声调存在变调的情况
+            if(sd.contains("-")){
+                String[] sds = sd.split("-");
+                if (checkSDNum(sds[0]) && checkSDNum(sds[1])){
+
+                }else{
+                    bean.setWrongReason("声调错漏");
+                    return false;
+                }
+            }else{
+                if (!checkSDNum(sd)){
+                    bean.setWrongReason("声调错漏");
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
     public boolean hasWrong(YBCCBean bean){
         String ipa = bean.getRecord().getIPA();
-        ipa.replace(" ","");
+        ipa = ipa.replaceAll(" ","");
 
         System.out.println("****************************");
         System.out.println("IPA:"+ipa);
@@ -173,8 +321,8 @@ public class YBCCController extends BaseController {
             //是否包含非法标点符号
             bean.setWrongReason("包含非法标点符号");
             return true;
-        }else if(!ipa.substring(ipa.length()-2).matches("[1-5]+")){
-            bean.setWrongReason("缺少音韵调");
+        }else if(!ipa.substring(ipa.length()-1).matches("[1-5]+")){
+            bean.setWrongReason("声调错误");
             return true;
         }else{
             //通过分号分割
@@ -182,6 +330,8 @@ public class YBCCController extends BaseController {
             //遍历每种读音是否存在不正确情况
             for (String voice : differentVoice) {
                 System.out.println("voice:"+voice);
+
+                //分割出单个字的声韵母声调
                 ArrayList<String> result = splitIPA(voice);
 
                 //判断格式是否正确xxx55-55，这种格式
@@ -209,26 +359,30 @@ public class YBCCController extends BaseController {
             public void handle(WindowEvent event) {
                 for (int i = 0; i < analyDatas.size(); i++) {
                     YBCCBean bean = analyDatas.get(i);
+
                     //分析得出有可能错误
                     if (hasWrong(bean)){
-                        int result = wrongTipAlert("",bean.getRecord().getInvestCode()+":"+bean.getWrongReason()+"\n\n");
+                        int result = wrongTipAlert("",bean.getRecord().getInvestCode()+":"+bean.getWrongReason()+"\n"+"条目音标:"+bean.getRecord().getIPA()+"\n\n");
                         if (result == 0){
-
+                            showDatas.add(bean);
                         }else if (result == 1){
-
+                            bean.setWrongReason("");
+                            continue;
                         }else if (result == 2){
-
+                            bean.setWrongReason("");
+                            break;
                         }else if (result == 3){
-
+                            break;
                         }else if (result == -1){
 
                         }
-                        showDatas.add(bean);
+
                         tableView.setItems(showDatas);
                         tableView.refresh();
                     }
                     progressBar.setProgress(( i + 1 )*1.0/analyDatas.size());
                 }
+                tbVC.refreshTableView();
             }
         });
     }
