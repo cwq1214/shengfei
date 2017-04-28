@@ -35,6 +35,7 @@ public class YBCCController extends BaseController {
 
     private NewTableView tbVC;
 
+
     private String biaoDian = "。，、：∶；‘’“”〝〞ˆˇ﹕︰﹔﹖﹑·¨.¸´？！～—｜‖＂〃｀@﹫¡¿﹏﹋︴々﹟#﹩$﹠&﹪%﹡﹢×﹦‐￣¯―﹨˜﹍﹎＿~（）〈〉‹›﹛﹜『』〖〗［］《》〔〕{}「」【】︵︷︿︹︽_︶︸﹀︺︾ˉ﹂﹄︼﹁﹃︻▲●□…→";
     private String baseYuan = "əɛɿʮʅʯiyɪʏeøᴇɛεɛœæaɶɑɒʌɔɤoɷʊƜɯuɨʉɘɵəǝɚɜɝɞɐᴀɩϊàáâãäåḁèéêëḙḛẽìíîïòóôõöùúûüṵṷāăēĕěĩīĭōŏőũūŭůűǎǐǒǔǖǘǚǜǣȁȅȇȉȋȍȗ";
     private String doubleYuan = "ai ei ui ao ou iu ie ue";
@@ -350,6 +351,12 @@ public class YBCCController extends BaseController {
         return false;
     }
 
+    public void resetAllWrongReason(){
+        for (YBCCBean bean : analyDatas) {
+            bean.setWrongReason("");
+        }
+    }
+
     @Override
     public void onCreatedView() {
         super.onCreatedView();
@@ -372,6 +379,7 @@ public class YBCCController extends BaseController {
                             bean.setWrongReason("");
                             break;
                         }else if (result == 3){
+                            resetAllWrongReason();
                             break;
                         }else if (result == -1){
 

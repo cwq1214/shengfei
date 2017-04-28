@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.VBox?>
+
+<?import sample.diycontrol.TopicSpeakControl?>
+<BorderPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.controller.NewTableView.NewTopicEditController">
+   <top>
+      <VBox prefHeight="150.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+         <children>
+            <FlowPane hgap="10.0" prefHeight="50.0" prefWidth="200.0">
+               <children>
+                  <Label text="查找:">
+                     <FlowPane.margin>
+                        <Insets left="5.0" />
+                     </FlowPane.margin>
+                  </Label>
+                  <TextField promptText="请输入查找关键字" />
+                  <Button mnemonicParsing="false" text="查找" />
+                  <Button mnemonicParsing="false" text="查找下一个" />
+                  <Label text="替换:">
+                     <FlowPane.margin>
+                        <Insets left="20.0" />
+                     </FlowPane.margin>
+                  </Label>
+                  <TextField promptText="请输入替换前内容" />
+                  <TextField promptText="请输入替换后内容" />
+                  <Button mnemonicParsing="false" text="替换" />
+                  <Button mnemonicParsing="false" text="替换全部" />
+               </children>
+            </FlowPane>
+            <TextArea prefHeight="200.0" prefWidth="200.0" />
+         </children></VBox>
+   </top>
+   <center>
+      <ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" >
+         <TopicSpeakControl />
+      </ScrollPane>
+   </center>
+</BorderPane>

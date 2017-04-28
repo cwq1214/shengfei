@@ -1,12 +1,15 @@
 package sample.controller;
 
 import javafx.application.Platform;
+import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
@@ -17,9 +20,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import javafx.util.Callback;
 import org.bytedeco.javacpp.opencv_videoio;
 import org.bytedeco.javacv.*;
 import sample.Main;
+import sample.controller.YBCC.YBCCBean;
+import sample.entity.Record;
 import sample.util.AppCache;
 import sample.util.AudioRecorder;
 import sample.util.Constant;
@@ -56,8 +62,11 @@ public class RecordTabController extends BaseController {
     ProgressBar pgb_pg1;
     @FXML
     ProgressBar pgb_pg2;
+    @FXML
+    TableView tableView;
 
 
+    public String tableType;
 
     //是否录像
     boolean recordingVideo = false;
@@ -71,16 +80,25 @@ public class RecordTabController extends BaseController {
     AudioRecorder recordAudioThread;
 
 
+    //要录音的数据
+    private ObservableList<Record> recordDatas;
 
     long startRecordTimes;
 
     //保存的文件名称
     String fileName;
 
+    public ObservableList<Record> getRecordDatas() {
+        return recordDatas;
+    }
+
+    public void setRecordDatas(ObservableList<Record> recordDatas) {
+        this.recordDatas = recordDatas;
+    }
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         super.initialize(location, resources);
-
 
     }
 
@@ -88,6 +106,54 @@ public class RecordTabController extends BaseController {
         defaultSetting();
         startPreviewVideo();
         startPreviewAudio();
+
+        setupTablView();
+    }
+
+    public void setupTablView(){
+        TableColumn<Record,String> doneCol = new TableColumn<>("录音状态");
+        TableColumn<Record,String> codeCol = new TableColumn<>("编码");
+        TableColumn<Record,String> rankCol = new TableColumn<>("分级");
+        TableColumn<Record,String> yunCol = new TableColumn<>("音韵");
+        TableColumn<Record,String> IPACol = new TableColumn<>("音标注音");
+        TableColumn<Record,String> spellCol = new TableColumn<>("拼音");
+        TableColumn<Record,String> englishCol = new TableColumn<>("英语");
+        TableColumn<Record,String> noteCol = new TableColumn<>("注释");
+        TableColumn<Record,String> recordDateCol = new TableColumn<>("录音日期");
+        TableColumn<Record,String> contentCol = new TableColumn<>("内容");
+        TableColumn<Record,String> mwfyCol = new TableColumn<>("民族文字或方言字");
+        TableColumn<Record,String> freeTran = new TableColumn<>("普通话词对译");
+
+        doneCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Record, String>, ObservableValue<String>>() {
+            @Override
+            public ObservableValue<String> call(TableColumn.CellDataFeatures<Record, String> param) {
+                if (param.getValue().getDone().equals("0")){
+                    return new ReadOnlyStringWrapper("未录");
+                }
+                return new ReadOnlyStringWrapper("已录");
+            }
+        });
+        codeCol.setCellValueFactory(new PropertyValueFactory<>("investCode"));
+        rankCol.setCellValueFactory(new PropertyValueFactory<>("rank"));
+        yunCol.setCellValueFactory(new PropertyValueFactory<>("yun"));
+        IPACol.setCellValueFactory(new PropertyValueFactory<>("IPA"));
+        spellCol.setCellValueFactory(new PropertyValueFactory<>("spell"));
+        englishCol.setCellValueFactory(new PropertyValueFactory<>("english"));
+        noteCol.setCellValueFactory(new PropertyValueFactory<>("note"));
+        recordDateCol.setCellValueFactory(new PropertyValueFactory<>("createDate"));
+        contentCol.setCellValueFactory(new PropertyValueFactory<>("content"));
+        mwfyCol.setCellValueFactory(new PropertyValueFactory<>("MWFY"));
+        freeTran.setCellValueFactory(new PropertyValueFactory<>("free_trans"));
+
+        if (tableType.equals("0")) {
+            tableView.getColumns().addAll(codeCol, doneCol, contentCol, englishCol, yunCol, noteCol, rankCol, spellCol, IPACol, recordDateCol);
+        }else if (tableType.equals("1")){
+            tableView.getColumns().addAll(doneCol, codeCol, rankCol, contentCol, mwfyCol, IPACol, spellCol,englishCol, noteCol, recordDateCol);
+        }else if (tableType.equals("2")){
+            tableView.getColumns().addAll(doneCol, codeCol, rankCol, contentCol, mwfyCol, IPACol, freeTran, noteCol, englishCol, recordDateCol);
+        }
+
+        tableView.setItems(recordDatas);
     }
 
     private void defaultSetting(){

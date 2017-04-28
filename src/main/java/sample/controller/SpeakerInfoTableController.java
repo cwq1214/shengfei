@@ -110,8 +110,11 @@ public class SpeakerInfoTableController extends BaseController {
                     @Override
                     protected void updateItem(Object item, boolean empty) {
                         super.updateItem(item, empty);
-                        if (!empty && item != null)
+                        if (!empty && item != null) {
                             this.setText(((Table) item).getTitle());
+                        }else {
+                            this.setText(null);
+                        }
                     }
                 };
             }

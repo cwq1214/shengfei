@@ -1,28 +1,28 @@
 package sample.controller;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
+import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.event.EventHandler;
-import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.web.WebView;
 import javafx.stage.Modality;
-import javafx.stage.Window;
-import javafx.stage.WindowEvent;
-import sample.controller.NewTableView.NewTableView;
+import sample.controller.NewTableView.*;
+import sample.controller.YBCC.YBCCBean;
 import sample.controller.YBCC.YBCCController;
 import sample.controller.openTable.OpenTableController;
 import sample.controller.openTable.OpenTableListener;
+import sample.entity.Record;
 import sample.entity.Table;
+import sample.entity.Topic;
 import sample.util.*;
 
 import java.io.*;
 import java.net.URL;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.function.Predicate;
 
 public class MainController extends BaseController {
     @FXML
@@ -34,12 +34,62 @@ public class MainController extends BaseController {
 
 
     @FXML
+    public void newDiscourceClick(){
+        NewTopicKindSelectController vc = ((NewTopicKindSelectController) ViewUtil.getInstance().showView("view/newTopicKindSelect.fxml", "选择一个话题", -1, -1, ""));
+        vc.setListener(new NewTopicKindSelectListener() {
+            @Override
+            public void onClickNextStep(TopicBean bean) {
+                Table t = new Table("","3","","","","","","","","","","","","","","","");
+                DbHelper.getInstance().insertNewTable(t);
+
+                NewTopicEditController editVC = ((NewTopicEditController) ViewUtil.getInstance().showView("view/newTopicEditView.fxml", "话题表", -1, -1, ""));
+                editVC.setBaseMsg(bean.getCode(),t.getId());
+
+
+                Tab tab = WidgetUtil.createNewTab(t.getTitle(), editVC.getmParent());
+                tab.setOnClosed(new EventHandler<Event>() {
+                    @Override
+                    public void handle(Event event) {
+                        vc.onTabClosed();
+                    }
+                });
+                WidgetUtil.addTabToTabPane(contentPane, tab,true,editVC);
+                WidgetUtil.selectTab(tab);
+            }
+        });
+
+        vc.mStage.setResizable(false);
+        vc.mStage.initModality(Modality.APPLICATION_MODAL);
+        vc.mStage.show();
+    }
+
+    @FXML
+    public void zlyydClick(){
+        int tabIndex = contentPane.getSelectionModel().getSelectedIndex();
+        if (tabIndex != -1){
+            Tab t = contentPane.getTabs().get(tabIndex);
+            if (t.getUserData() !=  null && (t.getUserData() instanceof NewTableView)){
+                NewTableView vc = ((NewTableView) t.getUserData());
+
+                //已经进行过音标差错
+                if (vc.isCanZlyyd()){
+                    System.out.println("can zlyyd");
+                }else{
+
+                }
+
+            }
+        }
+    }
+
+    @FXML
     public void ybccClick(){
         int tabIndex = contentPane.getSelectionModel().getSelectedIndex();
         if (tabIndex != -1){
             Tab t = contentPane.getTabs().get(tabIndex);
             if (t.getUserData() !=  null && (t.getUserData() instanceof NewTableView)){
                 NewTableView vc = ((NewTableView) t.getUserData());
+                vc.setCanZlyyd(true);
 
                 YBCCController yvc = ((YBCCController) ViewUtil.getInstance().showView("view/YBCCView.fxml", "音标查错", -1, -1, ""));
                 yvc.setTbVC(vc);
@@ -69,24 +119,40 @@ public class MainController extends BaseController {
         vc.setListener(new OpenTableListener() {
             @Override
             public void onOpenTable(Table t) {
-                NewTableView vc = ((NewTableView) ViewUtil.getInstance().showView("view/newTableView.fxml", "", -1, -1, t));
-                if (t.datatype.equals("0")){
-                    vc.setNewType(NewTableView.NewWordType);
-                }else if (t.datatype.equals("1")){
-                    vc.setNewType(NewTableView.NewCiType);
-                }else if (t.datatype.equals("2")){
-                    vc.setNewType(NewTableView.NewSentenceType);
-                }
+                //判断是否话题表
+                if (t.datatype.equalsIgnoreCase("3")){
+                    NewTopicEditController editVC = ((NewTopicEditController) ViewUtil.getInstance().showView("view/newTopicEditView.fxml", "话题表", -1, -1, ""));
+                    editVC.setBaseMsg("",t.getId());
 
-                Tab tab = WidgetUtil.createNewTab(t.getTitle(), vc.getmParent());
-                tab.setOnClosed(new EventHandler<Event>() {
-                    @Override
-                    public void handle(Event event) {
-                        vc.onTabClosed();
+                    Tab tab = WidgetUtil.createNewTab(t.getTitle(), editVC.getmParent());
+                    tab.setOnClosed(new EventHandler<Event>() {
+                        @Override
+                        public void handle(Event event) {
+                            vc.onTabClosed();
+                        }
+                    });
+                    WidgetUtil.addTabToTabPane(contentPane, tab,true,editVC);
+                    WidgetUtil.selectTab(tab);
+                }else {
+                    NewTableView vc = ((NewTableView) ViewUtil.getInstance().showView("view/newTableView.fxml", "", -1, -1, t));
+                    if (t.datatype.equals("0")){
+                        vc.setNewType(NewTableView.NewWordType);
+                    }else if (t.datatype.equals("1")){
+                        vc.setNewType(NewTableView.NewCiType);
+                    }else if (t.datatype.equals("2")){
+                        vc.setNewType(NewTableView.NewSentenceType);
                     }
-                });
-                WidgetUtil.addTabToTabPane(contentPane, tab,true,vc);
-                WidgetUtil.selectTab(tab);
+
+                    Tab tab = WidgetUtil.createNewTab(t.getTitle(), vc.getmParent());
+                    tab.setOnClosed(new EventHandler<Event>() {
+                        @Override
+                        public void handle(Event event) {
+                            vc.onTabClosed();
+                        }
+                    });
+                    WidgetUtil.addTabToTabPane(contentPane, tab,true,vc);
+                    WidgetUtil.selectTab(tab);
+                }
             }
         });
         vc.setOpen(true);
@@ -331,22 +397,36 @@ public class MainController extends BaseController {
     //录音模式
     @FXML
     private void onRecordModeClick() throws IOException {
-        RecordTabController controller = (RecordTabController) ViewUtil.getInstance().openRecordTab();
-        Tab tab = WidgetUtil.createNewTab("录制", controller.getmParent());
+        int nowIndex = contentPane.getSelectionModel().getSelectedIndex();
+        if (nowIndex != -1){
+            Tab t = contentPane.getTabs().get(nowIndex);
+            if (t.getUserData() !=  null && (t.getUserData() instanceof NewTableView)) {
+                //获取controller，先保存数据，然后关闭
+                NewTableView vc = ((NewTableView) t.getUserData());
+                ObservableList<Record> recordDatas = vc.getKeepAndHaveIPAOriginDatas();
+                vc.saveBtnClick();
+                contentPane.getTabs().remove(nowIndex);
 
-        tab.setOnClosed(new EventHandler<Event>() {
-            @Override
-            public void handle(Event event) {
-                System.out.println("close");
-                controller.stopPreview();
+                RecordTabController controller = (RecordTabController) ViewUtil.getInstance().openRecordTab();
+                controller.tableType = ((Table) vc.preData).getDatatype();
+                controller.setRecordDatas(recordDatas);
+                Tab tab = WidgetUtil.createNewTab("录制", controller.getmParent());
+
+                tab.setOnClosed(new EventHandler<Event>() {
+                    @Override
+                    public void handle(Event event) {
+                        System.out.println("close");
+                        controller.stopPreview();
+                    }
+                });
+
+                WidgetUtil.addTabToTabPane(contentPane, tab, true);
+                WidgetUtil.selectTab(tab);
+
+                controller.startPreview();
             }
-        });
 
-        WidgetUtil.addTabToTabPane(contentPane, tab, true);
-        WidgetUtil.selectTab(tab);
-
-        controller.startPreview();
-
+        }
     }
 
 

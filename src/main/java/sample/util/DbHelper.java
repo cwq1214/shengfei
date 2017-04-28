@@ -34,6 +34,8 @@ public class DbHelper {
     Dao<CodeLangHanYu, String> hanyuDao;
     Dao<CodeIPABase, String> codeIPADao;
 
+
+
     /**
      * 删除某条record
      * @param r
@@ -47,6 +49,18 @@ public class DbHelper {
         }
     }
 
+    /**
+     * 删除话题表
+     * @param t
+     */
+    public void delTopicTable(Topic t){
+        try {
+            Dao<Topic,String> topicDao = DaoManager.createDao(connectionSource,Topic.class);
+            topicDao.delete(t);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
     /**
      * 删除table表以及record表相应的数据
@@ -66,11 +80,11 @@ public class DbHelper {
     }
 
     /**
-     * 查询所有字表、词表、句表信息
+     * 查询所有字表、词表、句表、话题信息
      * @return
      */
-    public ObservableList<Table> searchAllTable(){
-        List<Table> resultList = new ArrayList<>();
+    public ObservableList searchAllTable(){
+        List resultList = new ArrayList<>();
         try {
             Dao<Table,String > tableDao = DaoManager.createDao(connectionSource,Table.class);
             resultList = tableDao.queryForAll();
@@ -136,6 +150,27 @@ public class DbHelper {
     }
 
     /**
+     * 创建话题表
+     * @param t
+     */
+    public ObservableList<Topic> insertTopicTable(Topic t){
+        List<Topic> result = new ArrayList<>();
+        try {
+            Dao<Topic,String> topicDao = DaoManager.createDao(connectionSource,Topic.class);
+            List<Topic> temp = topicDao.queryForEq("baseId",t.getBaseId());
+            if (temp.size() == 0){
+                topicDao.create(t);
+                result.add(t);
+            }else{
+                result.addAll(temp);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return FXCollections.observableArrayList(result);
+    }
+
+    /**
      * 创建新字表、词表、句表，并插入数据库
      * @param t
      */
@@ -152,7 +187,7 @@ public class DbHelper {
                 lastIndex = 1;
             }else{
                 Table lastT = ((Table) tempTable.get(tempTable.size() - 1));
-                lastIndex = Integer.parseInt(lastT.getTitle().substring(2,lastT.getTitle().length()))+1;
+                lastIndex = Integer.parseInt(lastT.getTitle().substring(t.datatype.equalsIgnoreCase("3")?3:2,lastT.getTitle().length()))+1;
             }
 
             if (t.datatype.equalsIgnoreCase("0")){
@@ -161,6 +196,8 @@ public class DbHelper {
                 titlePre = "词表";
             }else if(t.datatype.equalsIgnoreCase("2")){
                 titlePre = "句表";
+            }else if(t.datatype.equalsIgnoreCase("3")){
+                titlePre = "话题表";
             }
 
             tableDao.create(t);

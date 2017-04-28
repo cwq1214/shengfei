@@ -3,6 +3,11 @@ package sample.entity;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
+import java.util.UUID;
+
 /**
  * Created by chenweiqi on 2017/4/11.
  */
@@ -11,7 +16,9 @@ public class Topic {
     @DatabaseField(id = true, canBeNull = false)
     public String uuid;
     @DatabaseField
-    public int type;
+    public int baseId;
+    @DatabaseField
+    public String kindCode;
     @DatabaseField
     public String content;
     @DatabaseField
@@ -33,6 +40,18 @@ public class Topic {
     @DatabaseField
     public String createDate;
 
+    public Topic() {
+    }
+
+    public Topic(String kindCode,int baseId) {
+        this.kindCode = kindCode;
+        this.baseId = baseId;
+
+        this.uuid = UUID.randomUUID().toString();
+
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        this.createDate = df.format(new Date());
+    }
 
     public String getUuid() {
         return uuid;
@@ -42,12 +61,20 @@ public class Topic {
         this.uuid = uuid;
     }
 
-    public int getType() {
-        return type;
+    public int getBaseId() {
+        return baseId;
     }
 
-    public void setType(int type) {
-        this.type = type;
+    public void setBaseId(int baseId) {
+        this.baseId = baseId;
+    }
+
+    public String getKindCode() {
+        return kindCode;
+    }
+
+    public void setKindCode(String kindCode) {
+        this.kindCode = kindCode;
     }
 
     public String getContent() {

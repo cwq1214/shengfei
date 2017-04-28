@@ -269,7 +269,7 @@
                     <Label text="90" GridPane.columnIndex="9" GridPane.rowIndex="1" />
                     <Label text="100" GridPane.columnIndex="10" GridPane.rowIndex="1" />
                     <ProgressBar fx:id="pgb_pg2"  prefHeight="20.0" prefWidth="Infinity" progress="0" GridPane.columnIndex="0" GridPane.columnSpan="10" GridPane.rowIndex="2" />
-                    <TableView GridPane.columnIndex="0" GridPane.columnSpan="11" GridPane.rowIndex="3"/>
+                    <TableView GridPane.columnIndex="0" GridPane.columnSpan="11" GridPane.rowIndex="3" fx:id="tableView"/>
                 </children>
                 <columnConstraints>
                     <ColumnConstraints hgrow="ALWAYS" percentWidth="10" />

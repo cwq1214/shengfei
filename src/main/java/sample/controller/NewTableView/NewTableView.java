@@ -12,8 +12,6 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
 import javafx.util.converter.DefaultStringConverter;
@@ -30,6 +28,8 @@ import sample.util.DbHelper;
 import sample.util.ViewUtil;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -53,6 +53,8 @@ public class NewTableView extends BaseController {
 
     private ObservableList originDatas;
 
+    private boolean canZlyyd = false;
+
     private MyTFCell nowEditCell;
 
     @FXML
@@ -67,6 +69,25 @@ public class NewTableView extends BaseController {
 
     public void refreshTableView(){
         tableView.refresh();
+    }
+
+    public boolean isCanZlyyd() {
+        return canZlyyd;
+    }
+
+    public void setCanZlyyd(boolean canZlyyd) {
+        this.canZlyyd = canZlyyd;
+    }
+
+    public ObservableList<Record> getKeepAndHaveIPAOriginDatas(){
+        List<Record> result = new ArrayList<>();
+        for (int i = 0; i < originDatas.size(); i++) {
+            YBCCBean bean = ((YBCCBean) originDatas.get(i));
+            if (bean.getRecord().getHide().equals("0") && !(bean.getRecord().getIPA() == null || bean.getRecord().getIPA().equals(""))){
+                result.add(bean.getRecord());
+            }
+        }
+        return FXCollections.observableArrayList(result);
     }
 
     @Override
@@ -260,11 +281,15 @@ public class NewTableView extends BaseController {
                         tableView.refresh();
                         break;
                     case SaveBtnClick:
-                        DbHelper.getInstance().insertRecord(originDatas);
+                        saveBtnClick();
                         break;
                 }
             }
         });
+    }
+
+    public void saveBtnClick(){
+        DbHelper.getInstance().insertRecord(originDatas);
     }
 
     public void addBtnClick(){

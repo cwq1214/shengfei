@@ -10,6 +10,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.input.MouseEvent;
 import sample.controller.BaseController;
 import sample.entity.Table;
+import sample.entity.Topic;
 import sample.util.DbHelper;
 
 import java.util.ArrayList;
@@ -60,20 +61,7 @@ public class OpenTableController extends BaseController {
             @Override
             public void handle(MouseEvent event) {
                 if (event.getClickCount() == 2){
-                    int nowIndex = listView.getSelectionModel().getSelectedIndex();
-
-                    if (isOpen){
-                        if (nowIndex != -1){
-                            listener.onOpenTable(tableDatas.get(nowIndex));
-                            mStage.close();
-                        }
-                    }else{
-                        DbHelper.getInstance().delTableAndRecord(tableDatas.get(nowIndex));
-                        tableDatas.remove(nowIndex);
-                        tableNameDatas.remove(nowIndex);
-                        listView.refresh();
-                    }
-
+                    openOrDelTable();
                 }
             }
         });
@@ -93,18 +81,7 @@ public class OpenTableController extends BaseController {
 
     @FXML
     public void openBtnClick(){
-        int nowIndex = listView.getSelectionModel().getSelectedIndex();
-        if (isOpen){
-            if (nowIndex != -1){
-                listener.onOpenTable(tableDatas.get(nowIndex));
-                mStage.close();
-            }
-        }else {
-            DbHelper.getInstance().delTableAndRecord(tableDatas.get(nowIndex));
-            tableDatas.remove(nowIndex);
-            tableNameDatas.remove(nowIndex);
-            listView.refresh();
-        }
+        openOrDelTable();
     }
 
     @FXML
@@ -112,4 +89,21 @@ public class OpenTableController extends BaseController {
         mStage.close();
     }
 
+
+    public void openOrDelTable(){
+        int nowIndex = listView.getSelectionModel().getSelectedIndex();
+        if (isOpen){
+            if (nowIndex != -1){
+                listener.onOpenTable(tableDatas.get(nowIndex));
+                mStage.close();
+            }
+        }else {
+            if (nowIndex != -1){
+                DbHelper.getInstance().delTableAndRecord(tableDatas.get(nowIndex));
+                tableDatas.remove(nowIndex);
+                tableNameDatas.remove(nowIndex);
+                listView.refresh();
+            }
+        }
+    }
 }
