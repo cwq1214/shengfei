@@ -24,7 +24,7 @@
    <top>
       <VBox BorderPane.alignment="CENTER">
          <children>
-              <TableTopControl fx:id="tableTopCtl" minWidth="200.0" />
+            <TableTopControl fx:id="tableTopCtl" minWidth="200.0"/>
          </children>
          <BorderPane.margin>
             <Insets top="10.0" />

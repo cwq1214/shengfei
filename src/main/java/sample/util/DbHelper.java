@@ -10,6 +10,9 @@ import com.j256.ormlite.support.ConnectionSource;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Tab;
+import sample.controller.NewTableView.NewTopicKindSelectController;
+import sample.controller.NewTableView.NewTopicKindSelectListener;
+import sample.controller.NewTableView.TopicBean;
 import sample.controller.YBCC.YBCCBean;
 import sample.entity.*;
 
@@ -35,6 +38,36 @@ public class DbHelper {
     Dao<CodeIPABase, String> codeIPADao;
 
 
+
+    public void saveTopics(ObservableList<Topic> topics){
+        try {
+            Dao<Topic,String> topicDao = DaoManager.createDao(connectionSource,Topic.class);
+
+            topicDao.callBatchTasks(new Callable<Void>() {
+                @Override
+                public Void call() throws Exception {
+                    List<Topic> temp = topicDao.queryForEq("baseId",topics.get(0).getBaseId());
+
+                    int lastSpeakerId = 0;
+                    if (temp.size() != 0){
+                        lastSpeakerId = Integer.parseInt(temp.get(temp.size() - 1).getSpeakerId());
+                    }
+
+                    for (Topic t: topics) {
+                        if (t.getSpeakerId() == null || t.getSpeakerId().length() == 0){
+                            t.setSpeakerId(Integer.toString(++lastSpeakerId));
+                        }
+                        topicDao.createOrUpdate(t);
+                    }
+                    return null;
+                }
+            });
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     /**
      * 删除某条record
@@ -150,17 +183,16 @@ public class DbHelper {
     }
 
     /**
-     * 创建话题表
-     * @param t
+     * 查询话题表
+     * @param baseId
      */
-    public ObservableList<Topic> insertTopicTable(Topic t){
+    public ObservableList<Topic> searchTopicData(String kindCode,int baseId){
         List<Topic> result = new ArrayList<>();
         try {
             Dao<Topic,String> topicDao = DaoManager.createDao(connectionSource,Topic.class);
-            List<Topic> temp = topicDao.queryForEq("baseId",t.getBaseId());
+            List<Topic> temp = topicDao.queryForEq("baseId",baseId);
             if (temp.size() == 0){
-                topicDao.create(t);
-                result.add(t);
+                result.add(new Topic(kindCode,baseId));
             }else{
                 result.addAll(temp);
             }
@@ -181,14 +213,6 @@ public class DbHelper {
             int lastIndex = 0;
             String titlePre = "";
 
-            List tempTable = tableDao.queryForEq("datatype",t.datatype);
-            System.out.println("size:"+tempTable.size());
-            if (tempTable.size() == 0){
-                lastIndex = 1;
-            }else{
-                Table lastT = ((Table) tempTable.get(tempTable.size() - 1));
-                lastIndex = Integer.parseInt(lastT.getTitle().substring(t.datatype.equalsIgnoreCase("3")?3:2,lastT.getTitle().length()))+1;
-            }
 
             if (t.datatype.equalsIgnoreCase("0")){
                 titlePre = "字表";
@@ -196,8 +220,18 @@ public class DbHelper {
                 titlePre = "词表";
             }else if(t.datatype.equalsIgnoreCase("2")){
                 titlePre = "句表";
-            }else if(t.datatype.equalsIgnoreCase("3")){
-                titlePre = "话题表";
+            }else if(Integer.parseInt(t.datatype) >= 3){
+                int type = Integer.parseInt(t.datatype);
+                titlePre = ((TopicBean) NewTopicKindSelectController.topicKind.get(type - 3)).getTopic()+"表";
+            }
+
+            List tempTable = tableDao.queryForEq("datatype",t.datatype);
+            System.out.println("size:"+tempTable.size());
+            if (tempTable.size() == 0){
+                lastIndex = 1;
+            }else{
+                Table lastT = ((Table) tempTable.get(tempTable.size() - 1));
+                lastIndex = Integer.parseInt(lastT.getTitle().substring(titlePre.length(),lastT.getTitle().length()))+1;
             }
 
             tableDao.create(t);

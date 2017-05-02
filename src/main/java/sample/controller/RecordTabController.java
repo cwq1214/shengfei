@@ -94,6 +94,7 @@ public class RecordTabController extends BaseController {
 
     public void setRecordDatas(ObservableList<Record> recordDatas) {
         this.recordDatas = recordDatas;
+        System.out.println(recordDatas.size());
     }
 
     @Override

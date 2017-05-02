@@ -48,6 +48,7 @@ public class NewTableView extends BaseController {
     private int newType;
 
     private ContextMenu contextMenu;
+    private ContextMenu headerMenu;
 
     private ObservableList tableDatas;
 
@@ -90,11 +91,57 @@ public class NewTableView extends BaseController {
         return FXCollections.observableArrayList(result);
     }
 
-    @Override
-    public void prepareInit() {
-        super.prepareInit();
+    public void setHeaderMenuItemDisable(boolean sort,boolean change,boolean hide,boolean search,boolean replace){
+        headerMenu.getItems().get(0).setDisable(sort);
+        headerMenu.getItems().get(1).setDisable(change);
+        headerMenu.getItems().get(2).setDisable(hide);
+        headerMenu.getItems().get(3).setDisable(search);
+        headerMenu.getItems().get(4).setDisable(replace);
+    }
 
+    public void setupHeaderMenu(){
+        headerMenu = new ContextMenu();
+        MenuItem sort = new MenuItem("记录排序");
+        MenuItem change = new MenuItem("修改列");
+        MenuItem hide = new MenuItem("隐藏列");
+        MenuItem search = new MenuItem("在当前列查找");
+        MenuItem replace = new MenuItem("在当前列替换");
 
+        sort.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+
+            }
+        });
+        change.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+
+            }
+        });
+        hide.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+
+            }
+        });
+        search.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+
+            }
+        });
+        replace.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+
+            }
+        });
+
+        headerMenu.getItems().addAll(sort,change,hide,search,replace);
+    }
+
+    public void setupRowMenu(){
         //设置contextMenu内容
         contextMenu = new ContextMenu();
         MenuItem addRecord = new MenuItem("新增记录");
@@ -151,6 +198,14 @@ public class NewTableView extends BaseController {
             }
         });
         contextMenu.getItems().addAll(addRecord,delRecord,hideRecord,keepRecord,showYBZF);
+    }
+
+    @Override
+    public void prepareInit() {
+        super.prepareInit();
+
+        setupHeaderMenu();
+        setupRowMenu();
 
         tableView.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
@@ -430,12 +485,18 @@ public class NewTableView extends BaseController {
         TableColumn<YBCCBean,String> doneCol = new TableColumn<>("录音状态");
         TableColumn<YBCCBean,String> codeCol = new TableColumn<>("编码");
         TableColumn<YBCCBean,String> rankCol = new TableColumn<>("分级");
+        TableColumn<YBCCBean,String> contentCol = new TableColumn<>("单字");
         TableColumn<YBCCBean,String> yunCol = new TableColumn<>("音韵");
         TableColumn<YBCCBean,String> IPACol = new TableColumn<>("音标注音");
         TableColumn<YBCCBean,String> spellCol = new TableColumn<>("拼音");
         TableColumn<YBCCBean,String> englishCol = new TableColumn<>("英语");
         TableColumn<YBCCBean,String> noteCol = new TableColumn<>("注释");
         TableColumn<YBCCBean,String> recordDateCol = new TableColumn<>("录音日期");
+        TableColumn<YBCCBean,String> mwfyCol = new TableColumn<>("民族文字或方言字");
+        TableColumn<YBCCBean,String> duiyiCol = new TableColumn<>("普通话词对译");
+
+        //设置表头contextMenu
+        
 
         //设置单元格编辑权限
         hideCol.setEditable(false);
@@ -462,12 +523,15 @@ public class NewTableView extends BaseController {
         doneCol.setCellFactory(callback);
         codeCol.setCellFactory(callback);
         rankCol.setCellFactory(callback);
+        contentCol.setCellFactory(callback);
         yunCol.setCellFactory(callback);
         IPACol.setCellFactory(callback);
         spellCol.setCellFactory(callback);
         englishCol.setCellFactory(callback);
         noteCol.setCellFactory(callback);
         recordDateCol.setCellFactory(callback);
+        mwfyCol.setCellFactory(callback);
+        duiyiCol.setCellFactory(callback);
 
 
         //设置单元格编辑事件
@@ -489,8 +553,15 @@ public class NewTableView extends BaseController {
                 ((YBCCBean) originDatas.get(oIndex)).getRecord().setRank(event.getNewValue());
             }
         });
-        //TODO 增加content提交事件
-
+        contentCol.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<YBCCBean, String>>() {
+            @Override
+            public void handle(TableColumn.CellEditEvent<YBCCBean, String> event) {
+                int nowIndex = event.getTablePosition().getRow();
+                int oIndex = originDatas.indexOf(tableDatas.get(nowIndex));
+                ((YBCCBean) tableDatas.get(nowIndex)).getRecord().setContent(event.getNewValue());
+                ((YBCCBean) originDatas.get(oIndex)).getRecord().setContent(event.getNewValue());
+            }
+        });
         yunCol.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<YBCCBean, String>>() {
             @Override
             public void handle(TableColumn.CellEditEvent<YBCCBean, String> event) {
@@ -536,6 +607,26 @@ public class NewTableView extends BaseController {
                 ((YBCCBean) originDatas.get(oIndex)).getRecord().setNote(event.getNewValue());
             }
         });
+        mwfyCol.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<YBCCBean, String>>() {
+            @Override
+            public void handle(TableColumn.CellEditEvent<YBCCBean, String> event) {
+                int nowIndex = event.getTablePosition().getRow();
+                int oIndex = originDatas.indexOf(tableDatas.get(nowIndex));
+                ((YBCCBean) tableDatas.get(nowIndex)).getRecord().setMWFY(event.getNewValue());
+                ((YBCCBean) originDatas.get(oIndex)).getRecord().setMWFY(event.getNewValue());
+            }
+        });
+        duiyiCol.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<YBCCBean, String>>() {
+            @Override
+            public void handle(TableColumn.CellEditEvent<YBCCBean, String> event) {
+                int nowIndex = event.getTablePosition().getRow();
+                int oIndex = originDatas.indexOf(tableDatas.get(nowIndex));
+                ((YBCCBean) tableDatas.get(nowIndex)).getRecord().setFree_trans(event.getNewValue());
+                ((YBCCBean) originDatas.get(oIndex)).getRecord().setFree_trans(event.getNewValue());
+            }
+        });
+
+
 
         //设置单元格数据
         hideCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<YBCCBean, String>, ObservableValue<String>>() {
@@ -562,6 +653,12 @@ public class NewTableView extends BaseController {
             @Override
             public ObservableValue<String> call(TableColumn.CellDataFeatures<YBCCBean, String> param) {
                 return new SimpleStringProperty(param.getValue().getRecord().getInvestCode());
+            }
+        });
+        contentCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<YBCCBean, String>, ObservableValue<String>>() {
+            @Override
+            public ObservableValue<String> call(TableColumn.CellDataFeatures<YBCCBean, String> param) {
+                return new SimpleStringProperty(param.getValue().getRecord().getContent());
             }
         });
         rankCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<YBCCBean, String>, ObservableValue<String>>() {
@@ -606,123 +703,44 @@ public class NewTableView extends BaseController {
                 return new SimpleStringProperty(param.getValue().getRecord().getCreateDate());
             }
         });
+        mwfyCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<YBCCBean, String>, ObservableValue<String>>() {
+            @Override
+            public ObservableValue<String> call(TableColumn.CellDataFeatures<YBCCBean, String> param) {
+                return new SimpleStringProperty(param.getValue().getRecord().getMWFY());
+            }
+        });
+        duiyiCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<YBCCBean, String>, ObservableValue<String>>() {
+            @Override
+            public ObservableValue<String> call(TableColumn.CellDataFeatures<YBCCBean, String> param) {
+                return new SimpleStringProperty(param.getValue().getRecord().getFree_trans());
+            }
+        });
+
 
         if (newType == NewWordType){
-            TableColumn<YBCCBean,String> wordCol = new TableColumn<>("单字");
-
-//            wordCol.setEditable(false);
-            wordCol.setCellFactory(callback);
-            wordCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<YBCCBean, String>, ObservableValue<String>>() {
-                @Override
-                public ObservableValue<String> call(TableColumn.CellDataFeatures<YBCCBean, String> param) {
-                    return new SimpleStringProperty(param.getValue().getRecord().getContent());
-                }
-            });
+            contentCol.setText("单字");
 
             originDatas = DbHelper.getInstance().searchTempRecord2YBCCBean("0", ((Table) preData).getId());
-            tableDatas = FXCollections.observableArrayList(originDatas);
-            tableTopCtl.setAllCount(tableDatas.size());
-            tableTopCtl.setNowIndex(0);
-
-            tableView.setItems(tableDatas);
-            tableView.getColumns().addAll(hideCol,doneCol,codeCol,rankCol,wordCol,yunCol,IPACol,spellCol,englishCol,noteCol,recordDateCol);
+            tableView.getColumns().addAll(hideCol,doneCol,codeCol,rankCol,contentCol,yunCol,IPACol,spellCol,englishCol,noteCol,recordDateCol);
         }else if (newType == NewCiType){
-            TableColumn<YBCCBean,String> ciCol = new TableColumn<>("词条");
-            TableColumn<YBCCBean,String> mwfyCol = new TableColumn<>("民族文字或方言字");
-
-//            ciCol.setEditable(false);
-            ciCol.setCellFactory(callback);
-            ciCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<YBCCBean, String>, ObservableValue<String>>() {
-                @Override
-                public ObservableValue<String> call(TableColumn.CellDataFeatures<YBCCBean, String> param) {
-                    return new SimpleStringProperty(param.getValue().getRecord().getContent());
-                }
-            });
-
-            mwfyCol.setCellFactory(callback);
-            mwfyCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<YBCCBean, String>, ObservableValue<String>>() {
-                @Override
-                public ObservableValue<String> call(TableColumn.CellDataFeatures<YBCCBean, String> param) {
-                    return new SimpleStringProperty(param.getValue().getRecord().getMWFY());
-                }
-            });
-            mwfyCol.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<YBCCBean, String>>() {
-                @Override
-                public void handle(TableColumn.CellEditEvent<YBCCBean, String> event) {
-                    int nowIndex = event.getTablePosition().getRow();
-                    int oIndex = originDatas.indexOf(tableDatas.get(nowIndex));
-                    ((YBCCBean) tableDatas.get(nowIndex)).getRecord().setMWFY(event.getNewValue());
-                    ((YBCCBean) originDatas.get(oIndex)).getRecord().setMWFY(event.getNewValue());
-                }
-            });
+            contentCol.setText("词条");
 
             originDatas = DbHelper.getInstance().searchTempRecord2YBCCBean("1",((Table) preData).getId());
-            tableDatas = FXCollections.observableArrayList(originDatas);
-            tableTopCtl.setAllCount(tableDatas.size());
-            tableTopCtl.setNowIndex(0);
-
-            tableView.setItems(tableDatas);
-            tableView.getColumns().addAll(hideCol,doneCol,codeCol,rankCol,ciCol,mwfyCol,IPACol,spellCol,englishCol,noteCol,recordDateCol);
+            tableView.getColumns().addAll(hideCol,doneCol,codeCol,rankCol,contentCol,mwfyCol,IPACol,spellCol,englishCol,noteCol,recordDateCol);
         }else if (newType == NewSentenceType){
-            TableColumn<YBCCBean,String> sentenceCol = new TableColumn<>("句子");
-            TableColumn<YBCCBean,String> mwfyCol = new TableColumn<>("民族文字或方言字");
-            TableColumn<YBCCBean,String> duiyiCol = new TableColumn<>("普通话词对译");
-
-//            sentenceCol.setEditable(false);
-
-            sentenceCol.setCellFactory(callback);
-            mwfyCol.setCellFactory(callback);
-            duiyiCol.setCellFactory(callback);
-
-            mwfyCol.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<YBCCBean, String>>() {
-                @Override
-                public void handle(TableColumn.CellEditEvent<YBCCBean, String> event) {
-                    int nowIndex = event.getTablePosition().getRow();
-                    int oIndex = originDatas.indexOf(tableDatas.get(nowIndex));
-                    ((YBCCBean) tableDatas.get(nowIndex)).getRecord().setMWFY(event.getNewValue());
-                    ((YBCCBean) originDatas.get(oIndex)).getRecord().setMWFY(event.getNewValue());
-                }
-            });
-            duiyiCol.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<YBCCBean, String>>() {
-                @Override
-                public void handle(TableColumn.CellEditEvent<YBCCBean, String> event) {
-                    int nowIndex = event.getTablePosition().getRow();
-                    int oIndex = originDatas.indexOf(tableDatas.get(nowIndex));
-                    ((YBCCBean) tableDatas.get(nowIndex)).getRecord().setFree_trans(event.getNewValue());
-                    ((YBCCBean) originDatas.get(oIndex)).getRecord().setFree_trans(event.getNewValue());
-                }
-            });
-
-
-            sentenceCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<YBCCBean, String>, ObservableValue<String>>() {
-                @Override
-                public ObservableValue<String> call(TableColumn.CellDataFeatures<YBCCBean, String> param) {
-                    return new SimpleStringProperty(param.getValue().getRecord().getContent());
-                }
-            });
-            mwfyCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<YBCCBean, String>, ObservableValue<String>>() {
-                @Override
-                public ObservableValue<String> call(TableColumn.CellDataFeatures<YBCCBean, String> param) {
-                    return new SimpleStringProperty(param.getValue().getRecord().getMWFY());
-                }
-            });
-            duiyiCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<YBCCBean, String>, ObservableValue<String>>() {
-                @Override
-                public ObservableValue<String> call(TableColumn.CellDataFeatures<YBCCBean, String> param) {
-                    return new SimpleStringProperty(param.getValue().getRecord().getFree_trans());
-                }
-            });
+            contentCol.setText("句子");
 
             originDatas = DbHelper.getInstance().searchTempRecord2YBCCBean("2",((Table) preData).getId());
-            tableDatas = FXCollections.observableArrayList(originDatas);
-            tableTopCtl.setAllCount(tableDatas.size());
-            tableTopCtl.setNowIndex(0);
-
-            tableView.setItems(tableDatas);
-            tableView.getColumns().addAll(hideCol,doneCol,codeCol,rankCol,sentenceCol,mwfyCol,IPACol,duiyiCol,noteCol,englishCol,recordDateCol);
+            tableView.getColumns().addAll(hideCol,doneCol,codeCol,rankCol,contentCol,mwfyCol,IPACol,duiyiCol,noteCol,englishCol,recordDateCol);
         }else if (newType == NewHuaYuType){
 
         }
+
+        tableDatas = FXCollections.observableArrayList(originDatas);
+        tableTopCtl.setAllCount(tableDatas.size());
+        tableTopCtl.setNowIndex(0);
+
+        tableView.setItems(tableDatas);
     }
 
     @Override

@@ -32,14 +32,17 @@ public class NewTopicKindSelectController extends BaseController {
         this.listener = listener;
     }
 
-    private ObservableList topicKind = FXCollections.observableArrayList(
-            new TopicBean("TA","情景对话","Situational dialogues"),
-            new TopicBean("TB","个人口述","Monologic discourse"),
-            new TopicBean("TC","仪式套话","Ritually formulaic discourse"),
-            new TopicBean("TD","表演歌唱","Dramas and songs"),
-            new TopicBean("TE","童谣游戏","Children rhythm and language plays"),
-            new TopicBean("TF","广播电视","Broadcast and TV"),
-            new TopicBean("TG","行话黑话","Jargon, argot and secret language"));
+    public static ObservableList topicKind = FXCollections.observableArrayList(
+            new TopicBean("3","对话","dialogue"),
+            new TopicBean("4","故事","story"),
+            new TopicBean("5","儿童","child"),
+            new TopicBean("6","音乐","music"),
+            new TopicBean("7","民歌","folk song"),
+            new TopicBean("8","技艺","skill"),
+            new TopicBean("9","娱乐","entertainment"),
+            new TopicBean("10","图像","image"),
+            new TopicBean("11","研究","study"),
+            new TopicBean("12","购物","shopping"));
 
     @FXML
     public void nextStepBtnClick(){

@@ -39,7 +39,7 @@ public class MainController extends BaseController {
         vc.setListener(new NewTopicKindSelectListener() {
             @Override
             public void onClickNextStep(TopicBean bean) {
-                Table t = new Table("","3","","","","","","","","","","","","","","","");
+                Table t = new Table("",bean.getCode(),"","","","","","","","","","","","","","","");
                 DbHelper.getInstance().insertNewTable(t);
 
                 NewTopicEditController editVC = ((NewTopicEditController) ViewUtil.getInstance().showView("view/newTopicEditView.fxml", "话题表", -1, -1, ""));
@@ -120,9 +120,9 @@ public class MainController extends BaseController {
             @Override
             public void onOpenTable(Table t) {
                 //判断是否话题表
-                if (t.datatype.equalsIgnoreCase("3")){
+                if (Integer.parseInt(t.datatype) >= 3){
                     NewTopicEditController editVC = ((NewTopicEditController) ViewUtil.getInstance().showView("view/newTopicEditView.fxml", "话题表", -1, -1, ""));
-                    editVC.setBaseMsg("",t.getId());
+                    editVC.setBaseMsg(t.datatype,t.getId());
 
                     Tab tab = WidgetUtil.createNewTab(t.getTitle(), editVC.getmParent());
                     tab.setOnClosed(new EventHandler<Event>() {

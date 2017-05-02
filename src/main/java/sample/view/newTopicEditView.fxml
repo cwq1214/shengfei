@@ -9,8 +9,8 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<?import sample.diycontrol.TopicSpeakControl?>
 <BorderPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.controller.NewTableView.NewTopicEditController">
    <top>
       <VBox prefHeight="150.0" prefWidth="100.0" BorderPane.alignment="CENTER">
@@ -22,26 +22,32 @@
                         <Insets left="5.0" />
                      </FlowPane.margin>
                   </Label>
-                  <TextField promptText="请输入查找关键字" />
-                  <Button mnemonicParsing="false" text="查找" />
-                  <Button mnemonicParsing="false" text="查找下一个" />
+                  <TextField fx:id="searchKeyWordTF" promptText="请输入查找关键字" />
+                  <Button mnemonicParsing="false" onAction="#searchBtnClick" text="查找" />
+                  <Button mnemonicParsing="false" onAction="#searchNextBtnClick" text="查找下一个" />
                   <Label text="替换:">
                      <FlowPane.margin>
                         <Insets left="20.0" />
                      </FlowPane.margin>
                   </Label>
-                  <TextField promptText="请输入替换前内容" />
-                  <TextField promptText="请输入替换后内容" />
-                  <Button mnemonicParsing="false" text="替换" />
-                  <Button mnemonicParsing="false" text="替换全部" />
+                  <TextField fx:id="replaceKeyWordTF" promptText="请输入替换前内容" />
+                  <TextField fx:id="replaceWordTF" promptText="请输入替换后内容" />
+                  <Button mnemonicParsing="false" onAction="#replaceBtnClick" text="替换" />
+                  <Button mnemonicParsing="false" onAction="#replaceAllBtnClick" text="替换全部" />
+                  <Button mnemonicParsing="false" onAction="#addSpeakerBtnClick" text="增加说话人" />
+                  <Button mnemonicParsing="false" onAction="#saveBtnClick" text="保存" />
                </children>
             </FlowPane>
-            <TextArea prefHeight="200.0" prefWidth="200.0" />
+            <TextArea fx:id="topTextArea" prefHeight="200.0" prefWidth="200.0" wrapText="true">
+               <font>
+                  <Font size="30.0" />
+               </font></TextArea>
          </children></VBox>
    </top>
    <center>
-      <ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" >
-         <TopicSpeakControl />
-      </ScrollPane>
+      <ScrollPane fx:id="scrollView" fitToHeight="true" fitToWidth="true" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+         <content>
+            <VBox fx:id="scrollVBox" prefHeight="200.0" prefWidth="100.0" spacing="10.0" />
+         </content></ScrollPane>
    </center>
 </BorderPane>

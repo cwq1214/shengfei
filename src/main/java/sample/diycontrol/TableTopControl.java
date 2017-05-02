@@ -1,13 +1,14 @@
 package sample.diycontrol;
 
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.FlowPane;
 import sample.Main;
 
+import javax.naming.Context;
 import java.io.IOException;
 
 /**
@@ -47,7 +48,6 @@ public class TableTopControl extends FlowPane{
     @FXML
     private Button showOnlyDisappearBtn;
 
-
     private TableTopCtlListener btnClickListener;
 
     public TableTopControl() {
@@ -60,6 +60,7 @@ public class TableTopControl extends FlowPane{
         } catch (IOException e) {
             e.printStackTrace();
         }
+
     }
 
     /**

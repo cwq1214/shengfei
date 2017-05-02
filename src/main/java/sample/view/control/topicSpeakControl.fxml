@@ -6,37 +6,37 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<fx:root type="javafx.scene.layout.VBox" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1">
+<fx:root minHeight="210.0" type="javafx.scene.layout.VBox" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <HBox alignment="CENTER_LEFT" prefHeight="30.0">
          <children>
-            <Label minWidth="120.0" text="(SPK1)音标注音" >
+            <Label minWidth="120.0" text="(SPK1)音标注音">
                <HBox.margin>
                   <Insets left="5.0" />
                </HBox.margin></Label>
-            <TextField prefWidth="5000.0" fx:id="ipaTF">
+            <TextField fx:id="ipaTF" prefWidth="5000.0">
                <HBox.margin>
                   <Insets right="10.0" />
                </HBox.margin></TextField>
          </children></HBox>
        <HBox alignment="CENTER_LEFT" prefHeight="30.0">
            <children>
-               <Label minWidth="120.0" text="(SPK1)民文或方言" >
+               <Label minWidth="120.0" text="(SPK1)民文或方言">
                    <HBox.margin>
                        <Insets left="5.0" />
                    </HBox.margin></Label>
-               <TextField prefWidth="5000.0" fx:id="mwfyTF">
+               <TextField fx:id="mwfyTF" prefWidth="5000.0">
                <HBox.margin>
                   <Insets right="10.0" />
                </HBox.margin></TextField>
            </children></HBox>
        <HBox alignment="CENTER_LEFT" prefHeight="30.0">
            <children>
-               <Label minWidth="120.0" text="(SPK1)拼音" >
+               <Label minWidth="120.0" text="(SPK1)拼音">
                    <HBox.margin>
                        <Insets left="5.0" />
                    </HBox.margin></Label>
-               <TextField prefWidth="5000.0" fx:id="spellTF">
+               <TextField fx:id="spellTF" prefWidth="5000.0">
                <HBox.margin>
                   <Insets right="10.0" />
                </HBox.margin></TextField>
@@ -47,18 +47,18 @@
                    <HBox.margin>
                        <Insets left="5.0" />
                    </HBox.margin></Label>
-               <TextField prefWidth="5000.0"  fx:id="wordTranTF">
+               <TextField fx:id="wordTranTF" prefWidth="5000.0">
                <HBox.margin>
                   <Insets right="10.0" />
                </HBox.margin></TextField>
            </children></HBox>
        <HBox alignment="CENTER_LEFT" prefHeight="30.0">
            <children>
-               <Label minWidth="120.0" text="(SPK1)普通话意译" >
+               <Label minWidth="120.0" text="(SPK1)普通话意译">
                    <HBox.margin>
                        <Insets left="5.0" />
                    </HBox.margin></Label>
-               <TextField prefWidth="5000.0" fx:id="freeTranTF">
+               <TextField fx:id="freeTranTF" prefWidth="5000.0">
                <HBox.margin>
                   <Insets right="10.0" />
                </HBox.margin></TextField>
@@ -69,7 +69,7 @@
                    <HBox.margin>
                        <Insets left="5.0" />
                    </HBox.margin></Label>
-               <TextField prefWidth="5000.0"  fx:id="noteTF">
+               <TextField fx:id="noteTF" prefWidth="5000.0">
                <HBox.margin>
                   <Insets right="10.0" />
                </HBox.margin></TextField>
@@ -80,7 +80,7 @@
                    <HBox.margin>
                        <Insets left="5.0" />
                    </HBox.margin></Label>
-               <TextField prefWidth="5000.0"  fx:id="englishTF">
+               <TextField fx:id="englishTF" prefWidth="5000.0">
                <HBox.margin>
                   <Insets right="10.0" />
                </HBox.margin></TextField>
