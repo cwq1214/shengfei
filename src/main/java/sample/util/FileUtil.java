@@ -15,10 +15,7 @@ import org.apache.poi.xssf.streaming.SXSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.lang.reflect.Field;
 
 /**
@@ -97,5 +94,23 @@ public class FileUtil {
         return null;
     }
 
+
+    public static String getFullLocation(String dir,String fileName){
+        File dirF = new File(dir);
+        File[] subFiles = dirF.listFiles(new FileFilter() {
+            @Override
+            public boolean accept(File pathname) {
+                if (pathname.getName().contains(fileName)){
+                    return true;
+                }
+                return false;
+            }
+        });
+        if (subFiles == null || subFiles.length == 0){
+            return null;
+        }else {
+            return subFiles[0].getAbsolutePath();
+        }
+    }
 
 }

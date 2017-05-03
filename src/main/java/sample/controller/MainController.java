@@ -135,6 +135,7 @@ public class MainController extends BaseController {
                     WidgetUtil.selectTab(tab);
                 }else {
                     NewTableView vc = ((NewTableView) ViewUtil.getInstance().showView("view/newTableView.fxml", "", -1, -1, t));
+                    vc.getmStage().setUserData(MainController.this);
                     if (t.datatype.equals("0")){
                         vc.setNewType(NewTableView.NewWordType);
                     }else if (t.datatype.equals("1")){
@@ -168,6 +169,7 @@ public class MainController extends BaseController {
         DbHelper.getInstance().insertNewTable(t);
 
         NewTableView vc = ((NewTableView) ViewUtil.getInstance().showView("view/newTableView.fxml", "", -1, -1, t));
+        vc.getmStage().setUserData(MainController.this);
         vc.setNewType(NewTableView.NewWordType);
 
         Tab tab = WidgetUtil.createNewTab(t.getTitle(), vc.getmParent());
@@ -187,6 +189,7 @@ public class MainController extends BaseController {
         DbHelper.getInstance().insertNewTable(t);
 
         NewTableView vc = ((NewTableView) ViewUtil.getInstance().showView("view/newTableView.fxml", "", -1, -1, t));
+        vc.getmStage().setUserData(MainController.this);
         vc.setNewType(NewTableView.NewCiType);
 
         Tab tab = WidgetUtil.createNewTab(t.getTitle(), vc.getmParent());
@@ -207,6 +210,7 @@ public class MainController extends BaseController {
         DbHelper.getInstance().insertNewTable(t);
 
         NewTableView vc = ((NewTableView) ViewUtil.getInstance().showView("view/newTableView.fxml", "", -1, -1, t));
+        vc.getmStage().setUserData(MainController.this);
         vc.setNewType(NewTableView.NewSentenceType);
 
         Tab tab = WidgetUtil.createNewTab(t.getTitle(), vc.getmParent());
