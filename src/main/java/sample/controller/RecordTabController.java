@@ -1,6 +1,7 @@
 package sample.controller;
 
 import javafx.application.Platform;
+import javafx.beans.binding.ObjectBinding;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -13,6 +14,9 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
+import java.io.File;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -20,11 +24,16 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import javafx.scene.layout.Pane;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import javafx.scene.media.MediaView;
 import javafx.util.Callback;
 import org.bytedeco.javacpp.opencv_videoio;
 import org.bytedeco.javacv.*;
 import sample.Main;
 import sample.controller.YBCC.YBCCBean;
+import sample.controller.widget.VideoPlayer;
 import sample.entity.Record;
 import sample.util.AppCache;
 import sample.util.AudioRecorder;
@@ -55,15 +64,17 @@ public class RecordTabController extends BaseController {
     @FXML
     Button btn_recordVideo;
     @FXML
-    Button btn_playRecord;
-    @FXML
-    Button btn_nextLine2;
-    @FXML
     ProgressBar pgb_pg1;
     @FXML
     ProgressBar pgb_pg2;
     @FXML
-    TableView tableView;
+    TableView<Record> tableView;
+    @FXML
+    VideoPlayer videoPlayer;
+    @FXML
+    Button btn_playAudio;
+    @FXML
+    Button btn_playNextAudio;
 
 
     public String tableType;
@@ -87,6 +98,11 @@ public class RecordTabController extends BaseController {
 
     //保存的文件名称
     String fileName;
+
+    Record selRecord;
+
+    //音频播放
+    MediaPlayer mediaPlayer;
 
     public ObservableList<Record> getRecordDatas() {
         return recordDatas;
@@ -204,6 +220,23 @@ public class RecordTabController extends BaseController {
         cb_cameraName.getSelectionModel().select(0);
 
 
+        tableView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Record>() {
+            @Override
+            public void changed(ObservableValue observable, Record oldValue, Record newValue) {
+                selRecord = newValue;
+                System.out.println(selRecord);
+                if (mediaPlayer!=null){
+                    if (mediaPlayer.getStatus()== MediaPlayer.Status.PLAYING){
+                        mediaPlayer.stop();
+                        ((ImageView) btn_playAudio.getGraphic()).setImage(new Image(Main.class.getResourceAsStream("resource/img/b3.png")));
+
+                    }
+                    mediaPlayer = null;
+                }
+                videoPlayer.setMediaPath(getSelItemVideoPath());
+            }
+        });
+
         //分辨率
         cb_resolution.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener() {
             @Override
@@ -248,12 +281,85 @@ public class RecordTabController extends BaseController {
         });
     }
 
+
+
+    //播放音频
+    @FXML
+    private void onPlayAudioClick(){
+        if (mediaPlayer==null){
+            playAudio(btn_playAudio,false);
+        }else {
+            if (mediaPlayer.getStatus()== MediaPlayer.Status.PLAYING){
+                mediaPlayer.pause();
+            }else if (mediaPlayer.getStatus()== MediaPlayer.Status.PAUSED
+                    ||mediaPlayer.getStatus()==MediaPlayer.Status.STOPPED
+                    ){
+                mediaPlayer.play();
+            }
+        }
+    }
+
+    //播放下一条音频
+    @FXML
+    private void onPlayNextAudioClick(){
+        if(mediaPlayer==null){
+            int index = tableView.getSelectionModel().getSelectedIndex();
+            if(index<tableView.getItems().size()-1){
+                tableView.getSelectionModel().select(index+1);
+                playAudio(btn_playNextAudio,true);
+            }
+        }else {
+            if (mediaPlayer.getStatus()== MediaPlayer.Status.PLAYING){
+                mediaPlayer.pause();
+            }else if (mediaPlayer.getStatus()== MediaPlayer.Status.PAUSED
+                    ||mediaPlayer.getStatus()==MediaPlayer.Status.STOPPED
+                    ){
+                mediaPlayer.play();
+            }
+        }
+    }
+
+    private void playAudio(Button btn,boolean playAfterRelease){
+        File audioFile = new File(getSelItemAudioPath());
+        if (audioFile.exists()){
+            mediaPlayer = new MediaPlayer(new Media(audioFile.toURI().toString()));
+
+            mediaPlayer.setOnEndOfMedia(new Runnable() {
+                @Override
+                public void run() {
+                    mediaPlayer.stop();
+                    ((ImageView) btn.getGraphic()).setImage(new Image(Main.class.getResourceAsStream("resource/img/b3.png")));
+                    if (playAfterRelease){
+                        mediaPlayer = null;
+                    }
+                }
+            });
+
+            mediaPlayer.setOnPaused(new Runnable() {
+                @Override
+                public void run() {
+                    ((ImageView) btn.getGraphic()).setImage(new Image(Main.class.getResourceAsStream("resource/img/b3.png")));
+                }
+            });
+            mediaPlayer.setOnPlaying(new Runnable() {
+                @Override
+                public void run() {
+                    ((ImageView) btn.getGraphic()).setImage(new Image(Main.class.getResourceAsStream("resource/img/b2.png")));
+
+                }
+            });
+            mediaPlayer.play();
+
+        }
+    }
+
+    //录音
     @FXML
     private void onAudioClick(Event event){
         Image image;
         if (!recordingAudio){
             recordingAudio = true;
-            recordAudioThread.startRecordAudio("11");
+            recordAudioThread.startRecordAudio(selRecord.baseId+"/"+selRecord.uuid);
             image = new Image(Main.class.getResourceAsStream("/sample/resource/img/b5.png"));
             setBtnDisable((Button) event.getSource(),false,true);
 
@@ -275,12 +381,13 @@ public class RecordTabController extends BaseController {
         btn_recordAudio.graphicProperty().setValue(imageView);
 
     }
+    //录像
     @FXML
     private void onVideoClick(Event event){
         Image image;
         if (!recordingVideo){
             recordingVideo = true;
-            recordVideoThread.startRecord("11");
+            recordVideoThread.startRecord(selRecord.baseId+"/"+selRecord.uuid);
             image = new Image(Main.class.getResourceAsStream("/sample/resource/img/b5.png"));
             setBtnDisable((Button) event.getSource(),false,true);
         }else {
@@ -308,8 +415,8 @@ public class RecordTabController extends BaseController {
 
         btn_recordVideo.setDisable(allDisable);
         btn_recordAudio.setDisable(allDisable);
-        btn_nextLine2.setDisable(allDisable);
-        btn_playRecord.setDisable(allDisable);
+        btn_playAudio.setDisable(allDisable);
+        btn_playNextAudio.setDisable(allDisable);
         enableBtn.setDisable(sourceDisable);
     }
 
@@ -363,6 +470,15 @@ public class RecordTabController extends BaseController {
             public void run() {
                 label_recordTime.setText(simpleDateFormat.format(time));
             }
-        });    }
+        });
+    }
 
+
+    private String getSelItemAudioPath(){
+        return Constant.ROOT_FILE_DIR+"/audio/"+selRecord.baseId+"/"+selRecord.uuid+".wav";
+    }
+
+    private String getSelItemVideoPath(){
+        return Constant.ROOT_FILE_DIR+"/video/"+selRecord.baseId+"/"+selRecord.uuid+".mp4";
+    }
 }

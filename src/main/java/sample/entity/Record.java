@@ -192,4 +192,26 @@ public class Record {
     public void setCreateDate(String createDate) {
         this.createDate = createDate;
     }
+
+    @Override
+    public String toString() {
+        return "Record{" +
+                "uuid='" + uuid + '\'' +
+                ", baseId=" + baseId +
+                ", investCode='" + investCode + '\'' +
+                ", baseCode='" + baseCode + '\'' +
+                ", hide='" + hide + '\'' +
+                ", done='" + done + '\'' +
+                ", IPA='" + IPA + '\'' +
+                ", note='" + note + '\'' +
+                ", spell='" + spell + '\'' +
+                ", english='" + english + '\'' +
+                ", MWFY='" + MWFY + '\'' +
+                ", free_trans='" + free_trans + '\'' +
+                ", content='" + content + '\'' +
+                ", rank='" + rank + '\'' +
+                ", yun='" + yun + '\'' +
+                ", createDate='" + createDate + '\'' +
+                '}';
+    }
 }

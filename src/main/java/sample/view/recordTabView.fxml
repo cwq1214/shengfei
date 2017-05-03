@@ -23,6 +23,8 @@
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.Tab?>
 <?import java.lang.Integer?>
+<?import javafx.scene.media.MediaView?>
+<?import sample.controller.widget.VideoPlayer?>
 <AnchorPane prefHeight="600" prefWidth="800" stylesheets="@css/sf.css,@css/recordTabView.css" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.controller.RecordTabController">
     <VBox AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0">
         <!---->
@@ -197,14 +199,14 @@
             </GridPane>
 
             <HBox alignment="CENTER" styleClass="showBorder">
-                <Button fx:id="btn_playRecord" >
+                <Button fx:id="btn_playAudio" onAction="#onPlayAudioClick">
                     <graphic>
                         <ImageView fitHeight="24" fitWidth="24">
                             <Image url="@../resource/img/b3.png" />
                         </ImageView>
                     </graphic>
                 </Button>
-                <Button fx:id="btn_nextLine2">
+                <Button fx:id="btn_playNextAudio" onAction="#onPlayNextAudioClick">
                     <graphic>
                         <ImageView fitHeight="24" fitWidth="24">
                             <Image url="@../resource/img/b4.png" />
@@ -296,7 +298,9 @@
             <TabPane>
                 <Tab closable="false" text="演示图片" />
                 <Tab closable="false" text="演示视频" />
-                <Tab closable="false" text="发音视频" />
+                <Tab closable="false" text="发音视频" >
+                    <VideoPlayer fx:id="videoPlayer" ></VideoPlayer>
+                </Tab>
                 <Tab fx:id="tab_recordVideo" closable="false" text="视频录制">
                     <ImageView fx:id="img" fitHeight="300" fitWidth="400" preserveRatio="true" />
                 </Tab>

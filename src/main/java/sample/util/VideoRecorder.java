@@ -4,6 +4,7 @@ import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
+import org.bytedeco.javacpp.avutil;
 import org.bytedeco.javacpp.opencv_core;
 import org.bytedeco.javacv.*;
 import sample.util.AppCache;
@@ -17,9 +18,11 @@ import java.io.File;
  */
 public class VideoRecorder extends Thread {
     //分辨率 宽
-    private int imageWidth = 1280;
+//    private int imageWidth = 1280;
+    private int imageWidth = 800;
     //分辨率 高
-    private int imageHeight = 720;
+//    private int imageHeight = 720;
+    private int imageHeight = 600;
 
     //是否预览摄像头视频
     private boolean showVideo;
@@ -81,7 +84,7 @@ public class VideoRecorder extends Thread {
                 //是否录制
                 if (recordingVideo){
                     if (startRecordVideo){
-                        recorder = initRecorder(Constant.ROOT_FILE_DIR+"/video/"+fileName+"_"+System.currentTimeMillis()+".flv",imageWidth,imageHeight);
+                        recorder = initRecorder(Constant.ROOT_FILE_DIR+"/video/"+fileName+".mp4",imageWidth,imageHeight);
                         recorder.start();
                         startRecordVideo = false;
                         startRecordTimes = System.currentTimeMillis();
@@ -171,7 +174,7 @@ public class VideoRecorder extends Thread {
         if (!parentFile.exists()){
             parentFile.mkdirs();
         }
-        recorder= new FFmpegFrameRecorder(fileName,captureWidth,captureHeight,0);
+        recorder= new FFmpegFrameRecorder(fileName,grabber.getImageWidth(),grabber.getImageHeight(),0);
         /**
          * 该参数用于降低延迟 参考FFMPEG官方文档：https://trac.ffmpeg.org/wiki/StreamingGuide
          * 官方原文参考：ffmpeg -f dshow -i video="Virtual-Camera" -vcodec libx264
@@ -194,6 +197,8 @@ public class VideoRecorder extends Thread {
         recorder.setFrameRate(grabber.getFrameRate());
         recorder.setVideoOption("preset", "ultrafast");
         recorder.setInterleaved(true);
+
+//        recorder.setVideoBitrate(10*1024*1024);
         return recorder;
 
     }

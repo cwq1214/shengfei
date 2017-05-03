@@ -35,6 +35,8 @@ public class WidgetUtil {
             for (int i = tabs.size() - 1; i >= 0; i--) {
                 if (tabs.get(i).getText().equals(tab.getText())) {
                     tabs.remove(i);
+                    if (tabs.get(i).getOnClosed()!=null)
+                        tabs.get(i).getOnClosed().handle(null);
                 }
             }
         }

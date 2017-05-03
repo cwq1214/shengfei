@@ -104,8 +104,6 @@ public class AudioRecorder extends Thread {
 
                 // 非阻塞方式读取
                 int len = line.available();
-//                if (len>0)
-//                    System.out.println("len "+len);
                 if (len>audioBytes.length){
                     len = audioBytes.length;
                 }
@@ -116,16 +114,9 @@ public class AudioRecorder extends Thread {
                     volumeCallback.callback(calculateRMSLevel(audioBytes));
                 }
 
-//                if (line.isControlSupported(FloatControl.Type.VOLUME)){
-//                    FloatControl floatControl = (FloatControl) line.getControl(FloatControl.Type.VOLUME);
-//                    System.out.println(floatControl.getValue());
-//                }else {
-//                    System.out.println(Arrays.toString(line.getControls()));
-//                    System.out.println("not support");
-//                }
                 if (recordingAudio){
                     if (startRecordAudio){
-                        String filePath = Constant.ROOT_FILE_DIR+"/audio/"+fileName+"_"+System.currentTimeMillis()+".wav";
+                        String filePath = Constant.ROOT_FILE_DIR+"/audio/"+fileName+".wav";
                         recorder = initRecorder(filePath);
                         recorder.start();
                         startRecordAudio = false;
