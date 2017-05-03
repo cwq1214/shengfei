@@ -2,31 +2,41 @@ package sample.controller.NewTableView;
 
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.stage.FileChooser;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
 import javafx.util.converter.DefaultStringConverter;
 import sample.controller.BaseController;
+import sample.controller.MainController;
+import sample.controller.ReplaceViewController;
+import sample.controller.SearchViewController;
+import sample.controller.UnionCode.UnionCodeController;
 import sample.controller.YBCC.YBCCBean;
 import sample.controller.ybzf.YBZFController;
 import sample.controller.ybzf.YBZFListener;
-import sample.diycontrol.ClickType;
-import sample.diycontrol.TableTopControl;
-import sample.diycontrol.TableTopCtlListener;
+import sample.diycontrol.TableTopCtl.ClickType;
+import sample.diycontrol.TableTopCtl.TableTopControl;
+import sample.diycontrol.TableTopCtl.TableTopCtlListener;
 import sample.entity.Record;
 import sample.entity.Table;
+import sample.util.Constant;
 import sample.util.DbHelper;
 import sample.util.ViewUtil;
+import sample.util.WidgetUtil;
 
+import java.io.*;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
@@ -48,7 +58,6 @@ public class NewTableView extends BaseController {
     private int newType;
 
     private ContextMenu contextMenu;
-    private ContextMenu headerMenu;
 
     private ObservableList tableDatas;
 
@@ -91,54 +100,156 @@ public class NewTableView extends BaseController {
         return FXCollections.observableArrayList(result);
     }
 
-    public void setHeaderMenuItemDisable(boolean sort,boolean change,boolean hide,boolean search,boolean replace){
-        headerMenu.getItems().get(0).setDisable(sort);
-        headerMenu.getItems().get(1).setDisable(change);
-        headerMenu.getItems().get(2).setDisable(hide);
-        headerMenu.getItems().get(3).setDisable(search);
-        headerMenu.getItems().get(4).setDisable(replace);
+    public TableColumn searchColumn(ContextMenu menu){
+        for (int i = 0; i < tableView.getColumns().size(); i++) {
+            if (((TableColumn) tableView.getColumns().get(i)).contextMenuProperty().get().equals(menu)){
+                return ((TableColumn) tableView.getColumns().get(i));
+            }
+        }
+        return null;
     }
 
-    public void setupHeaderMenu(){
-        headerMenu = new ContextMenu();
-        MenuItem sort = new MenuItem("记录排序");
-        MenuItem change = new MenuItem("修改列");
-        MenuItem hide = new MenuItem("隐藏列");
-        MenuItem search = new MenuItem("在当前列查找");
-        MenuItem replace = new MenuItem("在当前列替换");
+    public ContextMenu setupHeaderMenu(boolean sort,boolean change,boolean hide,boolean search,boolean replace){
+        ContextMenu headerMenu = new ContextMenu();
+        MenuItem sortItem = new MenuItem("记录排序");
+        MenuItem changeItem = new MenuItem("修改列");
+        MenuItem hideItem = new MenuItem("隐藏列");
+        MenuItem searchItem = new MenuItem("在当前列查找");
+        MenuItem replaceItem = new MenuItem("在当前列替换");
 
-        sort.setOnAction(new EventHandler<ActionEvent>() {
+        sortItem.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
+                TableColumn c = searchColumn(headerMenu);
+                if (tableView.getSortOrder().size() == 0){
+                    c.setSortType(TableColumn.SortType.ASCENDING);
+                    tableView.getSortOrder().setAll(c);
+                }else{
+                    if (tableView.getSortOrder().get(0).equals(c)){
+                        if (c.getSortType() == TableColumn.SortType.ASCENDING){
+                            c.setSortType(TableColumn.SortType.DESCENDING);
+                            tableView.getSortOrder().setAll(c);
+                        }else {
+                            tableView.getSortOrder().clear();
+                        }
+                    }else{
+                        c.setSortType(TableColumn.SortType.ASCENDING);
+                        tableView.getSortOrder().setAll(c);
+                    }
+                }
+                tableView.sort();
+            }
+        });
+        changeItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                TableColumn c = searchColumn(headerMenu);
+                System.out.println(c.getText());
+            }
+        });
+        hideItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                TableColumn c = searchColumn(headerMenu);
+                tableView.getColumns().remove(c);
+            }
+        });
+        searchItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                try {
+                    SearchViewController searchViewController = (SearchViewController) ViewUtil.getInstance().openSearchDialog();
+                    List columnsName = getTableColumnNameList();
+                    searchViewController.setSearchTableTitleName(columnsName);
+                    searchViewController.setSearchTableTitleShowIndex(tableView.getColumns().indexOf(searchColumn(headerMenu)));
+                    searchViewController.setOnDoneClickCallback(new SearchViewController.OnDoneClickCallback() {
+                        @Override
+                        public void onClick(SearchViewController controller) {
+                            String inputText = controller.getInputText();
+                            boolean isAccurate = controller.isChecked();
+                            int index = controller.getSelTableTitleIndex();
+                            System.out.println(inputText);
+                            System.out.println(isAccurate);
+                            System.out.println(index);
+
+                            TableColumn col = ((TableColumn) tableView.getColumns().get(index));
+
+                            List<YBCCBean> temp = new ArrayList<>();
+
+                            for (int i = 0; i < tableDatas.size(); i++) {
+                                YBCCBean bean = ((YBCCBean) tableDatas.get(i));
+                                String colData = ((StringProperty) col.getCellValueFactory().call(new TableColumn.CellDataFeatures<>(tableView, col, tableDatas.get(i)))).get();
+                                if (isAccurate){
+                                    if (colData.contains(inputText)){
+                                        temp.add(bean);
+                                    }
+                                }else{
+                                    Pattern p = Pattern.compile(getMHSearRegEx(inputText));
+                                    if (p.matcher(colData).find()){
+                                        temp.add(bean);
+                                    }
+                                }
+                            }
+
+                            tableDatas = FXCollections.observableArrayList(temp);
+                            tableView.setItems(tableDatas);
+                            tableView.refresh();
+                            searchViewController.close();
+                        }
+                    });
+                    searchViewController.show();
+                }catch (Exception e){
+
+                }
 
             }
         });
-        change.setOnAction(new EventHandler<ActionEvent>() {
+        replaceItem.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
+                try{
+                    ReplaceViewController controller = (ReplaceViewController) ViewUtil.getInstance().openReplaceDialog();
+                    controller.setChoiceBoxItems(getTableColumnNameList());
+                    controller.setTableNameShowIndex(tableView.getColumns().indexOf(searchColumn(headerMenu)));
+                    controller.setOnDoneClickCallback(new ReplaceViewController.OnDoneClickCallback() {
+                        @Override
+                        public void click(ReplaceViewController controller) {
+                            String replaceContent = controller.getInputReplaceContent();
+                            String searchContent = controller.getInputSearchContent();
+                            boolean isChecked = controller.getIsSelCheckBox();
+                            int index = controller.getChoiceBoxSelItemIndex();
 
+                            TableColumn col = ((TableColumn) tableView.getColumns().get(index));
+
+                            for (int i = 0; i < tableDatas.size(); i++) {
+                                String colData = ((StringProperty) col.getCellValueFactory().call(new TableColumn.CellDataFeatures<>(tableView, col, tableDatas.get(i)))).get();
+                                if (isChecked){
+                                    if (!colData.equalsIgnoreCase(searchContent)){
+                                        continue;
+                                    }
+                                }
+                                col.getOnEditCommit().handle(new TableColumn.CellEditEvent<>(tableView,new TablePosition<>(tableView,i,col),TableColumn.editCommitEvent() ,colData.replaceAll(searchContent,replaceContent)));
+                            }
+
+                            tableView.refresh();
+
+                        }
+                    });
+                    controller.show();
+                }catch (Exception e){
+
+                }
             }
         });
-        hide.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
 
-            }
-        });
-        search.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
+        sortItem.setDisable(!sort);
+        changeItem.setDisable(!change);
+        hideItem.setDisable(!hide);
+        searchItem.setDisable(!search);
+        replaceItem.setDisable(!replace);
 
-            }
-        });
-        replace.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-
-            }
-        });
-
-        headerMenu.getItems().addAll(sort,change,hide,search,replace);
+        headerMenu.getItems().addAll(sortItem,hideItem,searchItem,replaceItem);
+        return headerMenu;
     }
 
     public void setupRowMenu(){
@@ -149,6 +260,10 @@ public class NewTableView extends BaseController {
         MenuItem hideRecord = new MenuItem("隐藏记录");
         MenuItem keepRecord = new MenuItem("保留记录");
         MenuItem showYBZF = new MenuItem("音标字符");
+        MenuItem importDemoVideo = new MenuItem("导入演示视频");
+        MenuItem importDemoPic = new MenuItem("导入演示图片");
+        MenuItem delDemoVideo = new MenuItem("删除演示视频");
+        MenuItem delDemoPic = new MenuItem("删除演示图片");
 
         addRecord.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -197,14 +312,103 @@ public class NewTableView extends BaseController {
                 vc.mStage.show();
             }
         });
-        contextMenu.getItems().addAll(addRecord,delRecord,hideRecord,keepRecord,showYBZF);
+        importDemoPic.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                YBCCBean bean = (YBCCBean) tableDatas.get(tableView.getSelectionModel().getSelectedIndex());
+                int oIndex = originDatas.indexOf(bean);
+
+                FileChooser fc = new FileChooser();
+                fc.getExtensionFilters().addAll(
+                        new FileChooser.ExtensionFilter("All Image","*.*"),
+                        new FileChooser.ExtensionFilter("JPG","*.jpg"),
+                        new FileChooser.ExtensionFilter("PNG","*.png")
+                );
+                File selectFile = fc.showOpenDialog(mStage);
+                File ourFile = copyFile2Path(selectFile, bean.getRecord(),false);
+                if (ourFile != null){
+                    bean.setDemoPicLoc(ourFile.getAbsolutePath());
+                    ((YBCCBean) originDatas.get(oIndex)).setDemoPicLoc(ourFile.getAbsolutePath());
+                }
+            }
+        });
+        importDemoVideo.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                YBCCBean bean = (YBCCBean) tableDatas.get(tableView.getSelectionModel().getSelectedIndex());
+                int oIndex = originDatas.indexOf(bean);
+
+                FileChooser fc = new FileChooser();
+                fc.getExtensionFilters().addAll(
+                        new FileChooser.ExtensionFilter("MP4","*.mp4")
+                );
+                File selectFile = fc.showOpenDialog(mStage);
+                File ourFile = copyFile2Path(selectFile, bean.getRecord(),true);
+                if (ourFile != null){
+                    bean.setDemoVideoLoc(ourFile.getAbsolutePath());
+                    ((YBCCBean) originDatas.get(oIndex)).setDemoVideoLoc(ourFile.getAbsolutePath());
+                }
+            }
+        });
+        delDemoPic.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                YBCCBean bean = (YBCCBean) tableDatas.get(tableView.getSelectionModel().getSelectedIndex());
+                delFile(bean.getDemoPicLoc());
+            }
+        });
+        delDemoVideo.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                YBCCBean bean = (YBCCBean) tableDatas.get(tableView.getSelectionModel().getSelectedIndex());
+                delFile(bean.getDemoVideoLoc());
+            }
+        });
+        contextMenu.getItems().addAll(addRecord,delRecord,hideRecord,keepRecord,showYBZF,importDemoPic,importDemoVideo,delDemoPic,delDemoVideo);
+    }
+
+    private void delFile(String path){
+        File f = new File(path);
+        f.delete();
+    }
+
+    private File copyFile2Path (File f ,Record r,boolean isVideo){
+
+        String fileType = f.getName().substring(f.getName().lastIndexOf("."));
+        String dir = isVideo?Constant.DEMO_Video_DIR:Constant.DEMO_PIC_DIR;
+
+        File dirF = new File(dir);
+        if (!dirF.exists()){
+            dirF.mkdir();
+        }
+
+        String path = dir + "/" + r.getUuid() + fileType;
+
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(f));
+            BufferedWriter bw = new BufferedWriter(new FileWriter(path));
+
+            String read = "";
+            while ((read = br.readLine()) != null){
+                bw.write(read);
+            }
+
+            bw.close();
+            br.close();
+
+            return new File(path);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     @Override
     public void prepareInit() {
         super.prepareInit();
 
-        setupHeaderMenu();
         setupRowMenu();
 
         tableView.setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -338,9 +542,27 @@ public class NewTableView extends BaseController {
                     case SaveBtnClick:
                         saveBtnClick();
                         break;
+                    case UnionBtnClick:
+                        saveBtnClick();
+                        unionBtnClick();
+                        break;
                 }
             }
         });
+    }
+
+    public void unionBtnClick(){
+        MainController mainVC = ((MainController) mStage.getUserData());
+        Table t = ((Table) preData);
+
+        UnionCodeController vc = ((UnionCodeController) ViewUtil.getInstance().showView("view/unionCodeView.fxml", "", -1, -1, ""));
+        vc.setNowTable(t);
+
+        mainVC.contentPane.getTabs().remove(mainVC.contentPane.getSelectionModel().getSelectedIndex());
+
+        Tab tab = WidgetUtil.createNewTab(t.getTitle()+"-统一编码", vc.getmParent());
+        WidgetUtil.addTabToTabPane(mainVC.contentPane, tab,true,vc);
+        WidgetUtil.selectTab(tab);
     }
 
     public void saveBtnClick(){
@@ -473,6 +695,14 @@ public class NewTableView extends BaseController {
         contextMenu.getItems().get(4).setDisable(!isTextField);
         if (tableView.getSelectionModel().getSelectedIndices().size() != 1){
             contextMenu.getItems().get(0).setDisable(true);
+        }else{
+            String demoV = ((YBCCBean) tableDatas.get(tableView.getSelectionModel().getSelectedIndex())).getDemoVideoLoc();
+            String demoP = ((YBCCBean) tableDatas.get(tableView.getSelectionModel().getSelectedIndex())).getDemoPicLoc();
+
+//            contextMenu.getItems().get(5).setDisable(!(demoV == null || demoV.length() == 0));
+//            contextMenu.getItems().get(6).setDisable(!(demoV == null || demoV.length() == 0));
+            contextMenu.getItems().get(7).setDisable(demoP == null || demoP.length() == 0);
+            contextMenu.getItems().get(8).setDisable(demoV == null || demoV.length() == 0);
         }
     }
 
@@ -495,8 +725,21 @@ public class NewTableView extends BaseController {
         TableColumn<YBCCBean,String> mwfyCol = new TableColumn<>("民族文字或方言字");
         TableColumn<YBCCBean,String> duiyiCol = new TableColumn<>("普通话词对译");
 
-        //设置表头contextMenu
-        
+        //设置header contextMenu
+        hideCol.setContextMenu(setupHeaderMenu(true,true,true,true,true));
+        doneCol.setContextMenu(setupHeaderMenu(true,false,true,false,false));
+        codeCol.setContextMenu(setupHeaderMenu(true,true,true,true,true));
+        rankCol.setContextMenu(setupHeaderMenu(true,true,true,true,true));
+        contentCol.setContextMenu(setupHeaderMenu(true,true,true,true,true));
+        yunCol.setContextMenu(setupHeaderMenu(true,true,true,true,true));
+        IPACol.setContextMenu(setupHeaderMenu(true,true,true,true,true));
+        spellCol.setContextMenu(setupHeaderMenu(true,true,true,true,true));
+        englishCol.setContextMenu(setupHeaderMenu(true,true,true,true,true));
+        noteCol.setContextMenu(setupHeaderMenu(true,true,true,true,true));
+        recordDateCol.setContextMenu(setupHeaderMenu(true,true,true,true,true));
+        mwfyCol.setContextMenu(setupHeaderMenu(true,true,true,true,true));
+        duiyiCol.setContextMenu(setupHeaderMenu(true,true,true,true,true));
+
 
         //设置单元格编辑权限
         hideCol.setEditable(false);
@@ -829,5 +1072,24 @@ public class NewTableView extends BaseController {
                 }
             }
         }
+    }
+
+    private List getTableColumnNameList() {
+        ObservableList<TableColumn> tableColumns = tableView.getColumns();
+        List<String> columnsName = new ArrayList<>();
+        for (TableColumn tableColumn :
+                tableColumns) {
+            columnsName.add(tableColumn.getText());
+        }
+        return columnsName;
+    }
+
+    //获取模糊搜索匹配规则
+    private String getMHSearRegEx(String str){
+        StringBuilder sb = new StringBuilder(str);
+        for (int i = str.length() - 1; i > 0; i--) {
+            sb.insert(i,".*");
+        }
+        return sb.toString();
     }
 }

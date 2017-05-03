@@ -739,7 +739,7 @@ public class DbTableController extends BaseController {
                                 tableDatas.remove(i);
                             }
                         } else {
-                            Pattern pattern = Pattern.compile(inputText);
+                            Pattern pattern = Pattern.compile(getMHSearRegEx(inputText));
                             if (pattern.split(content).length == 1) {
                                 tableDatas.remove(i);
                             }
@@ -868,6 +868,15 @@ public class DbTableController extends BaseController {
             columnsName.add(tableColumn.getText());
         }
         return columnsName;
+    }
+
+    //获取模糊搜索匹配规则
+    private String getMHSearRegEx(String str){
+        StringBuilder sb = new StringBuilder(str);
+        for (int i = str.length() - 1; i > 0; i--) {
+            sb.insert(i,".*");
+        }
+        return sb.toString();
     }
 }
 

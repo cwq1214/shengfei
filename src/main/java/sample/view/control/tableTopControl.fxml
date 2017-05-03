@@ -76,5 +76,6 @@
       <Button fx:id="showOnlyKeepBtn" mnemonicParsing="false" onAction="#showOnlyKeepBtnClick" text="显示保留条目" />
       <Button fx:id="showOnlyDisappearBtn" mnemonicParsing="false" onAction="#showOnlyDisappearBtnClick" text="显示隐藏条目" />
       <Button mnemonicParsing="false" onAction="#saveBtnClick" text="保存" />
+      <Button mnemonicParsing="false" onAction="#unionCodeBtnClick" text="统一编码" />
    </children>
 </fx:root>

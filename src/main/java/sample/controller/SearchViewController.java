@@ -49,6 +49,10 @@ public class SearchViewController extends BaseController {
         }
     }
 
+    public void setSearchTableTitleShowIndex(int index){
+        choiceBox.getSelectionModel().select(index);
+    }
+
     public void setOnDoneClickCallback(OnDoneClickCallback onDoneClickCallback) {
         this.onDoneClickCallback = onDoneClickCallback;
     }

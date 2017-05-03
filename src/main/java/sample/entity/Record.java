@@ -46,6 +46,11 @@ public class Record {
     public Record() {
     }
 
+//    public Record(String uuid,int baseId, String investCode, String baseCode, String hide, String done, String IPA, String note, String spell, String english, String MWFY,String free_trans, String content, String rank, String yun, String createDate){
+//        this(baseId,investCode,baseCode,hide,done,IPA,note,spell,english,MWFY,free_trans,content,rank,yun,createDate);
+//        this.uuid = UUID.randomUUID().toString();
+//    }
+
     public Record(int baseId, String investCode, String baseCode, String hide, String done, String IPA, String note, String spell, String english, String MWFY,String free_trans, String content, String rank, String yun, String createDate) {
         this.uuid = UUID.randomUUID().toString();
         this.baseId = baseId;

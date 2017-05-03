@@ -54,6 +54,10 @@ public class ReplaceViewController extends BaseController {
         }
     }
 
+    public void setTableNameShowIndex(int index){
+        choiceBox.getSelectionModel().select(index);
+    }
+
     public int getChoiceBoxSelItemIndex() {
         return choiceBox.getSelectionModel().getSelectedIndex();
     }
