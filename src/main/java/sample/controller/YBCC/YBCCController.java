@@ -23,6 +23,9 @@ import java.util.regex.Pattern;
  * Created by Bee on 2017/4/20.
  */
 public class YBCCController extends BaseController {
+
+    public NewTableView newTableViewVC;
+
     @FXML
     private ProgressBar progressBar;
 
@@ -165,7 +168,7 @@ public class YBCCController extends BaseController {
 
     public boolean checkSDNum(String sd){
         //判断是否0-5
-        if (sd.matches("^[0-5]+$")){
+        if (sd.matches("^[0-5]{2,3}$")){
             //判断是否必错声调
             if (wrongSD.contains(" "+sd+" ")){
                 return false;
@@ -303,6 +306,10 @@ public class YBCCController extends BaseController {
                     return false;
                 }
             }
+
+            bean.addSm(sm);
+            bean.addYm(ym);
+            bean.addSd(sd);
         }
         return true;
     }
@@ -369,6 +376,11 @@ public class YBCCController extends BaseController {
 
                     //分析得出有可能错误
                     if (hasWrong(bean)){
+                        //错误出现声母变为空 声调变为空  韵母为IPA
+                        bean.addSm("无");
+                        bean.addYm(bean.getRecord().getIPA());
+                        bean.addSd("无");
+
                         int result = wrongTipAlert("",bean.getRecord().getInvestCode()+":"+bean.getWrongReason()+"\n"+"条目音标:"+bean.getRecord().getIPA()+"\n\n");
                         if (result == 0){
                             showDatas.add(bean);
@@ -391,6 +403,7 @@ public class YBCCController extends BaseController {
                     progressBar.setProgress(( i + 1 )*1.0/analyDatas.size());
                 }
                 tbVC.refreshTableView();
+                newTableViewVC.setAfterAnalyDatas(analyDatas);
             }
         });
     }

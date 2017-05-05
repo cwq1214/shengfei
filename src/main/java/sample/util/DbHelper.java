@@ -4,6 +4,7 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.stmt.DeleteBuilder;
+import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.UpdateBuilder;
 import com.j256.ormlite.stmt.Where;
 import com.j256.ormlite.support.ConnectionSource;
@@ -13,6 +14,7 @@ import javafx.scene.control.Tab;
 import sample.controller.NewTableView.NewTopicKindSelectController;
 import sample.controller.NewTableView.NewTopicKindSelectListener;
 import sample.controller.NewTableView.TopicBean;
+import sample.controller.UnionCode.UnionCodeBean;
 import sample.controller.YBCC.YBCCBean;
 import sample.entity.*;
 
@@ -37,8 +39,59 @@ public class DbHelper {
     Dao<CodeLangHanYu, String> hanyuDao;
     Dao<CodeIPABase, String> codeIPADao;
 
+    /**
+     * 更新编码替换的Record
+     * @param records
+     */
+    public void updateReplaceCode(List<Record> records){
+        try {
+            Dao<Record,String> recordDao = DaoManager.createDao(connectionSource,Record.class);
+            recordDao.callBatchTasks(new Callable<Void>() {
+                @Override
+                public Void call() throws Exception {
+                    for (Record r : records) {
+                        recordDao.update(r);
+                    }
+                    return null;
+                }
+            });
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
+    /**
+     * 分析获取编码不统一的数据
+     * @param t
+     * @return
+     */
+    public ObservableList<UnionCodeBean> getHasDifferentUnionCodeBean(Table t){
+        //TODO
+        List<UnionCodeBean> resultList = new ArrayList<>();
+        try {
+            Dao<Record,String> recordDao = DaoManager.createDao(connectionSource,Record.class);
+            Dao<CodeBase,String> baseDao = DaoManager.createDao(connectionSource,CodeBase.class);
 
+            List<Record> rList = recordDao.queryForEq("baseId",t.getId());
+            for (Record r : rList) {
+                //codeType相同 content相同 code不同的
+                List<CodeBase> bList = baseDao.queryBuilder().where().eq("codeType",t.getDatatype()).and().eq("content",r.content).and().ne("code",r.getBaseCode()).query();
+                if (bList.size()!=0){
+                    resultList.add(new UnionCodeBean(r,bList.get(0)));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return FXCollections.observableArrayList(resultList);
+    }
+
+    /**
+     * 保存话题表内容
+     * @param topics
+     */
     public void saveTopics(ObservableList<Topic> topics){
         try {
             Dao<Topic,String> topicDao = DaoManager.createDao(connectionSource,Topic.class);
@@ -71,13 +124,23 @@ public class DbHelper {
 
     /**
      * 删除某条record
-     * @param r
+     * @param list
      */
-    public void delRecord(Record r){
+    public void delRecord(List<YBCCBean> list){
         try {
             Dao<Record,String> recordDao = DaoManager.createDao(connectionSource,Record.class);
-            recordDao.delete(r);
+            recordDao.callBatchTasks(new Callable<Void>() {
+                @Override
+                public Void call() throws Exception {
+                    for (YBCCBean b : list) {
+                        recordDao.delete(b.getRecord());
+                    }
+                    return null;
+                }
+            });
         } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

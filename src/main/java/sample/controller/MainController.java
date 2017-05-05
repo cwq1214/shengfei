@@ -1,5 +1,6 @@
 package sample.controller;
 
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.event.EventHandler;
@@ -10,6 +11,7 @@ import javafx.stage.Modality;
 import sample.controller.NewTableView.*;
 import sample.controller.YBCC.YBCCBean;
 import sample.controller.YBCC.YBCCController;
+import sample.controller.ZlyydView.ZlyydViewController;
 import sample.controller.openTable.OpenTableController;
 import sample.controller.openTable.OpenTableListener;
 import sample.entity.Record;
@@ -17,6 +19,7 @@ import sample.entity.Table;
 import sample.entity.Topic;
 import sample.util.*;
 
+import javax.swing.text.View;
 import java.io.*;
 import java.net.URL;
 import java.util.Collections;
@@ -74,10 +77,14 @@ public class MainController extends BaseController {
                 //已经进行过音标差错
                 if (vc.isCanZlyyd()){
                     System.out.println("can zlyyd");
+                    ZlyydViewController zVc = ((ZlyydViewController) ViewUtil.getInstance().showView("view/zlyydView.fxml", "整理音韵调", -1, -1, vc.preData));
+                    zVc.setOriginDatas(vc.getAfterAnalyDatas());
+                    zVc.mStage.initModality(Modality.APPLICATION_MODAL);
+                    zVc.mStage.setResizable(false);
+                    zVc.mStage.show();
                 }else{
-
+                    DialogUtil.showDialog("请先执行音标差错！");
                 }
-
             }
         }
     }
@@ -89,9 +96,11 @@ public class MainController extends BaseController {
             Tab t = contentPane.getTabs().get(tabIndex);
             if (t.getUserData() !=  null && (t.getUserData() instanceof NewTableView)){
                 NewTableView vc = ((NewTableView) t.getUserData());
+                vc.saveBtnClick();
                 vc.setCanZlyyd(true);
 
                 YBCCController yvc = ((YBCCController) ViewUtil.getInstance().showView("view/YBCCView.fxml", "音标查错", -1, -1, ""));
+                yvc.newTableViewVC = vc;
                 yvc.setTbVC(vc);
                 yvc.setAnalyDatas(vc.getOriginDatas());
                 yvc.mStage.setResizable(false);

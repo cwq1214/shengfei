@@ -6,10 +6,13 @@ import javafx.fxml.JavaFXBuilderFactory;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import javafx.stage.WindowEvent;
 import sample.Main;
 import sample.controller.*;
+import sample.diycontrol.ProgressView.ProgressViewController;
 
 import java.io.IOException;
 import java.util.Locale;
@@ -48,7 +51,20 @@ public class ViewUtil {
         showView("view/main.fxml", "首页", 800, 600, true);
     }
 
-
+    /**
+     * 打开进度界面
+     * @return
+     */
+    public ProgressViewController showProgressView(String tip){
+        ProgressViewController vc = ((ProgressViewController) showView("view/progressView.fxml", "进度查询", -1, -1, ""));
+        vc.setTip(tip);
+        vc.mStage.initStyle(StageStyle.UNDECORATED);
+        vc.mStage.initModality(Modality.APPLICATION_MODAL);
+        vc.mStage.setResizable(false);
+        vc.mStage.show();
+        return vc;
+    }
+    
     /**
      *
      * @param resourcePath

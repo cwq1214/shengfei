@@ -1,5 +1,7 @@
 package sample.controller.NewTableView;
 
+import com.sun.javafx.scene.control.skin.TableViewSkin;
+import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -12,6 +14,8 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.FileChooser;
@@ -65,6 +69,8 @@ public class NewTableView extends BaseController {
 
     private boolean canZlyyd = false;
 
+    private ObservableList afterAnalyDatas;
+
     private MyTFCell nowEditCell;
 
     @FXML
@@ -87,6 +93,14 @@ public class NewTableView extends BaseController {
 
     public void setCanZlyyd(boolean canZlyyd) {
         this.canZlyyd = canZlyyd;
+    }
+
+    public ObservableList getAfterAnalyDatas() {
+        return afterAnalyDatas;
+    }
+
+    public void setAfterAnalyDatas(ObservableList afterAnalyDatas) {
+        this.afterAnalyDatas = afterAnalyDatas;
     }
 
     public ObservableList<Record> getKeepAndHaveIPAOriginDatas(){
@@ -354,14 +368,24 @@ public class NewTableView extends BaseController {
             @Override
             public void handle(ActionEvent event) {
                 YBCCBean bean = (YBCCBean) tableDatas.get(tableView.getSelectionModel().getSelectedIndex());
+                int oIndex = originDatas.indexOf(bean);
+
                 delFile(bean.getDemoPicLoc());
+
+                bean.setDemoPicLoc("");
+                ((YBCCBean) originDatas.get(oIndex)).setDemoPicLoc("");
             }
         });
         delDemoVideo.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 YBCCBean bean = (YBCCBean) tableDatas.get(tableView.getSelectionModel().getSelectedIndex());
+                int oIndex = originDatas.indexOf(bean);
+
                 delFile(bean.getDemoVideoLoc());
+
+                bean.setDemoVideoLoc("");
+                ((YBCCBean) originDatas.get(oIndex)).setDemoVideoLoc("");
             }
         });
         contextMenu.getItems().addAll(addRecord,delRecord,hideRecord,keepRecord,showYBZF,importDemoPic,importDemoVideo,delDemoPic,delDemoVideo);
@@ -647,17 +671,8 @@ public class NewTableView extends BaseController {
     }
 
     public void delBtnClick(){
-        ObservableList postions = tableView.getSelectionModel().getSelectedIndices();
-        for (int i = 0 ;i<postions.size();i++) {
-            int nowIndex = ((Integer) postions.get(i));
-            if (nowIndex != -1) {
-                DbHelper.getInstance().delRecord(((YBCCBean) tableDatas.get(nowIndex)).getRecord());
-
-                int oIndex = originDatas.indexOf(tableDatas.get(nowIndex));
-                tableDatas.remove(nowIndex);
-                originDatas.remove(oIndex);
-            }
-        }
+        DbHelper.getInstance().delRecord(tableView.getSelectionModel().getSelectedItems());
+        tableView.getItems().removeAll(tableView.getSelectionModel().getSelectedItems());
         tableView.refresh();
     }
 
@@ -785,8 +800,11 @@ public class NewTableView extends BaseController {
                 int oIndex = originDatas.indexOf(tableDatas.get(nowIndex));
                 ((YBCCBean) tableDatas.get(nowIndex)).getRecord().setInvestCode(event.getNewValue());
                 ((YBCCBean) originDatas.get(oIndex)).getRecord().setInvestCode(event.getNewValue());
+
+                editNext(event.getTableColumn(),nowIndex + 1);
             }
         });
+
         rankCol.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<YBCCBean, String>>() {
             @Override
             public void handle(TableColumn.CellEditEvent<YBCCBean, String> event) {
@@ -794,6 +812,8 @@ public class NewTableView extends BaseController {
                 int oIndex = originDatas.indexOf(tableDatas.get(nowIndex));
                 ((YBCCBean) tableDatas.get(nowIndex)).getRecord().setRank(event.getNewValue());
                 ((YBCCBean) originDatas.get(oIndex)).getRecord().setRank(event.getNewValue());
+
+                editNext(event.getTableColumn(),nowIndex + 1);
             }
         });
         contentCol.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<YBCCBean, String>>() {
@@ -803,6 +823,8 @@ public class NewTableView extends BaseController {
                 int oIndex = originDatas.indexOf(tableDatas.get(nowIndex));
                 ((YBCCBean) tableDatas.get(nowIndex)).getRecord().setContent(event.getNewValue());
                 ((YBCCBean) originDatas.get(oIndex)).getRecord().setContent(event.getNewValue());
+
+                editNext(event.getTableColumn(),nowIndex + 1);
             }
         });
         yunCol.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<YBCCBean, String>>() {
@@ -812,6 +834,8 @@ public class NewTableView extends BaseController {
                 int oIndex = originDatas.indexOf(tableDatas.get(nowIndex));
                 ((YBCCBean) tableDatas.get(nowIndex)).getRecord().setYun(event.getNewValue());
                 ((YBCCBean) originDatas.get(oIndex)).getRecord().setYun(event.getNewValue());
+
+                editNext(event.getTableColumn(),nowIndex + 1);
             }
         });
         IPACol.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<YBCCBean, String>>() {
@@ -821,6 +845,8 @@ public class NewTableView extends BaseController {
                 int oIndex = originDatas.indexOf(tableDatas.get(nowIndex));
                 ((YBCCBean) tableDatas.get(nowIndex)).getRecord().setIPA(event.getNewValue());
                 ((YBCCBean) originDatas.get(oIndex)).getRecord().setIPA(event.getNewValue());
+
+                editNext(event.getTableColumn(),nowIndex + 1);
             }
         });
         spellCol.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<YBCCBean, String>>() {
@@ -830,6 +856,8 @@ public class NewTableView extends BaseController {
                 int oIndex = originDatas.indexOf(tableDatas.get(nowIndex));
                 ((YBCCBean) tableDatas.get(nowIndex)).getRecord().setSpell(event.getNewValue());
                 ((YBCCBean) originDatas.get(oIndex)).getRecord().setSpell(event.getNewValue());
+
+                editNext(event.getTableColumn(),nowIndex + 1);
             }
         });
         englishCol.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<YBCCBean, String>>() {
@@ -839,6 +867,8 @@ public class NewTableView extends BaseController {
                 int oIndex = originDatas.indexOf(tableDatas.get(nowIndex));
                 ((YBCCBean) tableDatas.get(nowIndex)).getRecord().setEnglish(event.getNewValue());
                 ((YBCCBean) originDatas.get(oIndex)).getRecord().setEnglish(event.getNewValue());
+
+                editNext(event.getTableColumn(),nowIndex + 1);
             }
         });
         noteCol.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<YBCCBean, String>>() {
@@ -848,6 +878,8 @@ public class NewTableView extends BaseController {
                 int oIndex = originDatas.indexOf(tableDatas.get(nowIndex));
                 ((YBCCBean) tableDatas.get(nowIndex)).getRecord().setNote(event.getNewValue());
                 ((YBCCBean) originDatas.get(oIndex)).getRecord().setNote(event.getNewValue());
+
+                editNext(event.getTableColumn(),nowIndex + 1);
             }
         });
         mwfyCol.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<YBCCBean, String>>() {
@@ -857,6 +889,8 @@ public class NewTableView extends BaseController {
                 int oIndex = originDatas.indexOf(tableDatas.get(nowIndex));
                 ((YBCCBean) tableDatas.get(nowIndex)).getRecord().setMWFY(event.getNewValue());
                 ((YBCCBean) originDatas.get(oIndex)).getRecord().setMWFY(event.getNewValue());
+
+                editNext(event.getTableColumn(),nowIndex + 1);
             }
         });
         duiyiCol.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<YBCCBean, String>>() {
@@ -866,6 +900,8 @@ public class NewTableView extends BaseController {
                 int oIndex = originDatas.indexOf(tableDatas.get(nowIndex));
                 ((YBCCBean) tableDatas.get(nowIndex)).getRecord().setFree_trans(event.getNewValue());
                 ((YBCCBean) originDatas.get(oIndex)).getRecord().setFree_trans(event.getNewValue());
+
+                editNext(event.getTableColumn(),nowIndex + 1);
             }
         });
 
@@ -991,6 +1027,18 @@ public class NewTableView extends BaseController {
 
     }
 
+    private void editNext(TableColumn column,int rowIndex){
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                if (rowIndex  <= tableDatas.size() - 1){
+                    tableView.scrollTo(rowIndex);
+                    tableView.edit(rowIndex, column);
+                }
+            }
+        });
+    }
+    
 
     class MyTFCell extends TextFieldTableCell{
         private TextField textField;
@@ -1002,6 +1050,7 @@ public class NewTableView extends BaseController {
         public TextField getTextField() {
             return textField;
         }
+
 
         @Override
         public void startEdit() {
@@ -1026,6 +1075,7 @@ public class NewTableView extends BaseController {
         @Override
         public void updateItem(Object item, boolean empty) {
             super.updateItem(item, empty);
+
             if (empty && getIndex()<0){
 
             }else {

@@ -49,11 +49,11 @@
                 <RadioMenuItem selected="true" text="%menu_option_zbms"><toggleGroup><ToggleGroup fx:id="mode" /></toggleGroup></RadioMenuItem>
                 <RadioMenuItem text="%menu_option_lyms" toggleGroup="$mode" onAction="#onRecordModeClick"/>
                 <RadioMenuItem text="%menu_option_zxms" toggleGroup="$mode" />
-                <SeparatorMenuItem />
-                <MenuItem mnemonicParsing="false" text="%menu_option_zbtybh" />
-                <MenuItem mnemonicParsing="false" text="%menu_option_cbtybh" />
-                <MenuItem mnemonicParsing="false" text="%menu_option_jbtybh" />
-                <MenuItem mnemonicParsing="false" text="%menu_option_httybh" />
+                <!--<SeparatorMenuItem />-->
+                <!--<MenuItem mnemonicParsing="false" text="%menu_option_zbtybh" />-->
+                <!--<MenuItem mnemonicParsing="false" text="%menu_option_cbtybh" />-->
+                <!--<MenuItem mnemonicParsing="false" text="%menu_option_jbtybh" />-->
+                <!--<MenuItem mnemonicParsing="false" text="%menu_option_httybh" />-->
 
             </items>
           </Menu>
