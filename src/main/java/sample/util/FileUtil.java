@@ -114,6 +114,26 @@ public class FileUtil {
         }
     }
 
+    public static void deleteFile(String path){
+        File file = new File(path);
+        if (!file.exists()){
+            return;
+        }
+        file.delete();
+
+    }
+
+    public static void copyFile(File from,File to){
+        if (!from.exists()){
+            return;
+        }
+        try {
+            Files.copy(from.toPath(),to.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     public static void copy(String src, String des) {
         File file1=new File(src);
