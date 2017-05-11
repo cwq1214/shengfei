@@ -18,17 +18,23 @@ import javafx.util.Callback;
 import javafx.util.StringConverter;
 import sample.controller.BaseController;
 import sample.controller.YBCC.YBCCBean;
+import sample.entity.Record;
+import sample.entity.Table;
 import sample.util.ExportUtil;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.Predicate;
 
 /**
  * Created by Bee on 2017/5/4.
  */
 public class ZlyydViewController extends BaseController {
+
+    //整理音韵调
+    public boolean isZLYYD;
 
     private ObservableList<YBCCBean> originDatas;
     private ObservableList<CollectBean> smDatas;
@@ -123,29 +129,124 @@ public class ZlyydViewController extends BaseController {
         lineSdCount.setDisable(vBtn.isSelected());
     }
 
-    @FXML
-    public void okBtnClick(){
-        List<CollectBean> tempBean = new ArrayList<>();
-        tempBean.addAll(smDatas);
-        tempBean.addAll(ymDatas);
-        tempBean.addAll(sdDatas);
+    public List<SameIPABean> analySameIpa(){
+        List<CollectBean> temp = new ArrayList<>();
+        temp.addAll(smDatas.filtered(new Predicate<CollectBean>() {
+            @Override
+            public boolean test(CollectBean collectBean) {
+                return collectBean.isIsChecked();
+            }
+        }));
+        temp.addAll(ymDatas.filtered(new Predicate<CollectBean>() {
+            @Override
+            public boolean test(CollectBean collectBean) {
+                return collectBean.isIsChecked();
+            }
+        }));
+        temp.addAll(sdDatas.filtered(new Predicate<CollectBean>() {
+            @Override
+            public boolean test(CollectBean collectBean) {
+                return collectBean.isIsChecked();
+            }
+        }));
 
-        for (int i = tempBean.size() - 1 ;i>=0;i--){
-            CollectBean b = tempBean.get(i);
-            if (!b.isIsChecked()){
-                tempBean.remove(i);
+        List<SameIPABean> result = new ArrayList<>();
+
+        for (CollectBean c : temp) {
+            for (Record r : c.getDemoRecordList()) {
+                int i = 0;
+                for (i = 0;i<result.size();i++){
+                    SameIPABean s = result.get(i);
+                    if (s.getIpa().equals(r.getIPA())){
+                        if (!s.getBaseCode().equals(r.getBaseCode())){
+                            s.addSameRecords(r);
+                            s.setCount(s.getCount() + 1);
+                        }
+                        break;
+                    }
+                }
+                if (i == result.size()){
+                    SameIPABean sameIPABean = new SameIPABean(r.getIPA(),1,r.getBaseCode());
+                    sameIPABean.addSameRecords(r);
+                    result.add(sameIPABean);
+                }
             }
         }
 
-        ExportUtil.exportYYD(mStage,
-                hBtn.isSelected(),
-                Integer.parseInt(demoWordCount.getSelectionModel().getSelectedItem().toString()),
-                Integer.parseInt(lineSmCount.getSelectionModel().getSelectedItem().toString()),
-                Integer.parseInt(lineYmCount.getSelectionModel().getSelectedItem().toString()),
-                Integer.parseInt(lineSdCount.getSelectionModel().getSelectedItem().toString()),
-                fileFormat.getSelectionModel().getSelectedIndex() == 0,
-                sortType.getSelectionModel().getSelectedIndex() == 0,
-                tempBean);
+        return result;
+    }
+
+    @FXML
+    public void okBtnClick(){
+        if (!isZLYYD){
+            if (fileFormat.getSelectionModel().getSelectedIndex() == 0){
+                ExportUtil.exportTYZHCHExcel(mStage,
+                        analySameIpa(),
+                        fileFormat.getSelectionModel().getSelectedIndex());
+            }else{
+                ExportUtil.exportTYZHCHHtml(mStage,
+                        analySameIpa(),
+                        fileFormat.getSelectionModel().getSelectedIndex(),
+                        ((Table) preData));
+            }
+        }else {
+            if (fileFormat.getSelectionModel().getSelectedIndex() == 0){
+                ExportUtil.exportYYDExcel(mStage,
+                        hBtn.isSelected(),
+                        Integer.parseInt(demoWordCount.getSelectionModel().getSelectedItem().toString()),
+                        Integer.parseInt(lineSmCount.getSelectionModel().getSelectedItem().toString()),
+                        Integer.parseInt(lineYmCount.getSelectionModel().getSelectedItem().toString()),
+                        Integer.parseInt(lineSdCount.getSelectionModel().getSelectedItem().toString()),
+                        fileFormat.getSelectionModel().getSelectedIndex(),
+                        sortType.getSelectionModel().getSelectedIndex() == 0,
+                        smDatas.filtered(new Predicate<CollectBean>() {
+                            @Override
+                            public boolean test(CollectBean collectBean) {
+                                return collectBean.isIsChecked();
+                            }
+                        }),
+                        ymDatas.filtered(new Predicate<CollectBean>() {
+                            @Override
+                            public boolean test(CollectBean collectBean) {
+                                return collectBean.isIsChecked();
+                            }
+                        }),
+                        sdDatas.filtered(new Predicate<CollectBean>() {
+                            @Override
+                            public boolean test(CollectBean collectBean) {
+                                return collectBean.isIsChecked();
+                            }
+                        }));
+            }else{
+                ExportUtil.exportYYD(mStage,
+                        hBtn.isSelected(),
+                        Integer.parseInt(demoWordCount.getSelectionModel().getSelectedItem().toString()),
+                        Integer.parseInt(lineSmCount.getSelectionModel().getSelectedItem().toString()),
+                        Integer.parseInt(lineYmCount.getSelectionModel().getSelectedItem().toString()),
+                        Integer.parseInt(lineSdCount.getSelectionModel().getSelectedItem().toString()),
+                        fileFormat.getSelectionModel().getSelectedIndex(),
+                        sortType.getSelectionModel().getSelectedIndex() == 0,
+                        smDatas.filtered(new Predicate<CollectBean>() {
+                            @Override
+                            public boolean test(CollectBean collectBean) {
+                                return collectBean.isIsChecked();
+                            }
+                        }),
+                        ymDatas.filtered(new Predicate<CollectBean>() {
+                            @Override
+                            public boolean test(CollectBean collectBean) {
+                                return collectBean.isIsChecked();
+                            }
+                        }),
+                        sdDatas.filtered(new Predicate<CollectBean>() {
+                            @Override
+                            public boolean test(CollectBean collectBean) {
+                                return collectBean.isIsChecked();
+                            }
+                        }),
+                        ((Table) preData));
+            }
+        }
     }
 
     @FXML
@@ -158,6 +259,14 @@ public class ZlyydViewController extends BaseController {
         super.prepareInit();
         setupBtnAction();
         setupChoiceBoxContent();
+        setSomethingDisable();
+    }
+
+    public void setSomethingDisable(){
+        vBtn.setDisable(!isZLYYD);
+        hBtn.setDisable(!isZLYYD);
+        demoWordCount.setDisable(!isZLYYD);
+        sortType.setDisable(!isZLYYD);
     }
 
     public void setupBtnAction(){
@@ -488,7 +597,7 @@ public class ZlyydViewController extends BaseController {
                     }
                 }
                 if (i == temp.size()){
-                    CollectBean bean = new CollectBean(keyWord,1);
+                    CollectBean bean = new CollectBean(keyWord,1,type);
                     bean.addDemoReocrd(cBean.getRecord());
                     temp.add(bean);
                 }
@@ -511,5 +620,4 @@ public class ZlyydViewController extends BaseController {
         sortType.getSelectionModel().select(0);
         fileFormat.getSelectionModel().select(0);
     }
-
 }

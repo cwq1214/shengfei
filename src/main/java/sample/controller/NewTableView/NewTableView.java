@@ -103,6 +103,10 @@ public class NewTableView extends BaseController {
         this.afterAnalyDatas = afterAnalyDatas;
     }
 
+    public TableView getTableView() {
+        return tableView;
+    }
+
     public ObservableList<Record> getKeepAndHaveIPAOriginDatas(){
         List<Record> result = new ArrayList<>();
         for (int i = 0; i < originDatas.size(); i++) {
@@ -719,6 +723,10 @@ public class NewTableView extends BaseController {
             contextMenu.getItems().get(7).setDisable(demoP == null || demoP.length() == 0);
             contextMenu.getItems().get(8).setDisable(demoV == null || demoV.length() == 0);
         }
+    }
+
+    public int getNewType() {
+        return newType;
     }
 
     public void setNewType(int newType){

@@ -15,11 +15,22 @@ public class CollectBean {
     private int count;
     private BooleanProperty isChecked;
     private List<Record> demoRecordList;
+    private int type;
 
-    public CollectBean(String key, int count) {
+    public CollectBean(String key, int count,int type) {
         this.key = key;
         this.count = count;
+        this.type = type;
         this.isChecked = new SimpleBooleanProperty(false);
+    }
+
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
     }
 
     public String getKey() {

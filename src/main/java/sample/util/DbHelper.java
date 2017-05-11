@@ -68,7 +68,6 @@ public class DbHelper {
      * @return
      */
     public ObservableList<UnionCodeBean> getHasDifferentUnionCodeBean(Table t){
-        //TODO
         List<UnionCodeBean> resultList = new ArrayList<>();
         try {
             Dao<Record,String> recordDao = DaoManager.createDao(connectionSource,Record.class);
@@ -77,7 +76,13 @@ public class DbHelper {
             List<Record> rList = recordDao.queryForEq("baseId",t.getId());
             for (Record r : rList) {
                 //codeType相同 content相同 code不同的
-                List<CodeBase> bList = baseDao.queryBuilder().where().eq("codeType",t.getDatatype()).and().eq("content",r.content).and().ne("code",r.getBaseCode()).query();
+                Where w = baseDao.queryBuilder().where().eq("codeType",t.getDatatype()).and().eq("content",r.content).and().ne("code",r.getBaseCode());
+
+                if (t.datatype.equals("0")){
+                    w = w.and().ne("yun",r.getYun());
+                }
+
+                List<CodeBase> bList = w.query();
                 if (bList.size()!=0){
                     resultList.add(new UnionCodeBean(r,bList.get(0)));
                 }

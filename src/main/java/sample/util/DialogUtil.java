@@ -1,6 +1,7 @@
 package sample.util;
 
 import javafx.scene.control.Alert;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -45,6 +46,41 @@ public class DialogUtil {
         return fileChooser.showOpenDialog(stage);
     }
 
+    public static File dirChooses(Stage stage){
+        DirectoryChooser dc = new DirectoryChooser();
+        File choiceDir = dc.showDialog(stage);
+        if (!choiceDir.exists()){
+            choiceDir.mkdirs();
+        }
+        return choiceDir;
+    }
+
+    public static File exportFileDialog(){
+        FileChooser chooser = new FileChooser();
+        chooser.setTitle("请选择文件");
+        chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("2003Excel文件", "*.xls"));
+        chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("2007Excel文件", "*.xlsx"));
+        chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("网页", "*.html"));
+        chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("带音视频网页", "*.htmla"));
+        chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("手机版网页", "*.htm"));
+        chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("手机版带音视频网页", "*.htma"));
+        chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("exmaralda", "*.exb"));
+        chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("ELAN", "*.eaf"));
+        chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("声飞xml", "*.xml"));
+        chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Audacity label", "*.txt"));
+        chooser.setInitialDirectory(
+                new File(System.getProperty("user.home"))
+        );
+        Stage stage = new Stage();
+        File saveFile = chooser.showSaveDialog(stage);
+        if (saveFile == null) {
+            throw new RuntimeException("save File can not be null");
+        }
+        if (!saveFile.exists()) {
+            saveFile.getParentFile().mkdirs();
+        }
+        return saveFile;
+    }
 
     public static File saveFileDialog(String title) {
         FileChooser chooser = new FileChooser();
@@ -55,6 +91,13 @@ public class DialogUtil {
                 new File(System.getProperty("user.home"))
         );
         Stage stage = new Stage();
-        return chooser.showSaveDialog(stage);
+        File saveFile = chooser.showSaveDialog(stage);
+        if (saveFile == null) {
+            throw new RuntimeException("save File can not be null");
+        }
+        if (!saveFile.exists()) {
+            saveFile.getParentFile().mkdirs();
+        }
+        return saveFile;
     }
 }

@@ -28,7 +28,7 @@
                 <MenuItem accelerator="CTRL+D" mnemonicParsing="false" text="%menu_file_delete" onAction="#delTableClick" />
                 <SeparatorMenuItem />
                 <MenuItem mnemonicParsing="false" text="%menu_file_import" />
-                <MenuItem mnemonicParsing="false" text="%menu_file_export" />
+                <MenuItem mnemonicParsing="false" text="%menu_file_export" onAction="#fileExportClick"/>
             </items>
           </Menu>
 
@@ -38,9 +38,9 @@
               <!--<MenuItem mnemonicParsing="false" text="%menu_data_ybhy" />-->
                 <MenuItem mnemonicParsing="false" text="%menu_data_zlyyd" onAction="#zlyydClick"/>
                 <SeparatorMenuItem />
-              <MenuItem mnemonicParsing="false" text="%menu_data_tyzhch" />
+              <MenuItem mnemonicParsing="false" text="%menu_data_tyzhch" onAction="#tyzhchClick"/>
                 <SeparatorMenuItem />
-              <MenuItem mnemonicParsing="false" text="%menu_data_dbdz" />
+              <MenuItem mnemonicParsing="false" text="%menu_data_dbdz" onAction="#dbdzClick"/>
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="%menu_option">

@@ -8,6 +8,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.web.WebView;
 import javafx.stage.Modality;
+import sample.controller.MutiAnaly.MutiAnalySelectFileController;
 import sample.controller.NewTableView.*;
 import sample.controller.YBCC.YBCCBean;
 import sample.controller.YBCC.YBCCController;
@@ -35,6 +36,31 @@ public class MainController extends BaseController {
     @FXML
     public Label changeLanguage;
 
+    @FXML
+    public void dbdzClick(){
+        MutiAnalySelectFileController vc = ((MutiAnalySelectFileController) ViewUtil.getInstance().showView("view/mutiTableAnaly.fxml", "多表对照", -1, -1, ""));
+        vc.mStage.initModality(Modality.APPLICATION_MODAL);
+        vc.mStage.setResizable(false);
+        vc.mStage.show();
+    }
+
+    @FXML
+    public void fileExportClick(){
+        int tabIndex = contentPane.getSelectionModel().getSelectedIndex();
+        if (tabIndex != -1) {
+            Tab t = contentPane.getTabs().get(tabIndex);
+            if (t.getUserData() != null && (t.getUserData() instanceof NewTableView)) {
+                NewTableView vc = ((NewTableView) t.getUserData());
+                if (vc.getNewType() == NewTableView.NewHuaYuType) {
+                    return;
+                }
+
+                ExportUtil.exportTable(mStage,
+                        vc.getTableView(),
+                        ((Table) vc.preData));
+            }
+        }
+    }
 
     @FXML
     public void newDiscourceClick(){
@@ -67,6 +93,33 @@ public class MainController extends BaseController {
     }
 
     @FXML
+    public void tyzhchClick(){
+        int tabIndex = contentPane.getSelectionModel().getSelectedIndex();
+        if (tabIndex != -1){
+            Tab t = contentPane.getTabs().get(tabIndex);
+            if (t.getUserData() !=  null && (t.getUserData() instanceof NewTableView)){
+                NewTableView vc = ((NewTableView) t.getUserData());
+                if (vc.getNewType() == NewTableView.NewSentenceType || vc.getNewType()== NewTableView.NewHuaYuType){
+                    return;
+                }
+
+                //已经进行过音标差错
+                if (vc.isCanZlyyd()){
+                    System.out.println("can zlyyd");
+                    ZlyydViewController zVc = ((ZlyydViewController) ViewUtil.getInstance().showView("view/zlyydView.fxml", "整理音韵调", -1, -1, vc.preData));
+                    zVc.isZLYYD = false;
+                    zVc.setOriginDatas(vc.getAfterAnalyDatas());
+                    zVc.mStage.initModality(Modality.APPLICATION_MODAL);
+                    zVc.mStage.setResizable(false);
+                    zVc.mStage.show();
+                }else{
+                    DialogUtil.showDialog("请先执行音标差错！");
+                }
+            }
+        }
+    }
+
+    @FXML
     public void zlyydClick(){
         int tabIndex = contentPane.getSelectionModel().getSelectedIndex();
         if (tabIndex != -1){
@@ -78,6 +131,7 @@ public class MainController extends BaseController {
                 if (vc.isCanZlyyd()){
                     System.out.println("can zlyyd");
                     ZlyydViewController zVc = ((ZlyydViewController) ViewUtil.getInstance().showView("view/zlyydView.fxml", "整理音韵调", -1, -1, vc.preData));
+                    zVc.isZLYYD = true;
                     zVc.setOriginDatas(vc.getAfterAnalyDatas());
                     zVc.mStage.initModality(Modality.APPLICATION_MODAL);
                     zVc.mStage.setResizable(false);

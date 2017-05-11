@@ -71,7 +71,7 @@ public class Record {
     }
 
     public String getFree_trans() {
-        return free_trans;
+        return free_trans == null?"":free_trans;
     }
 
     public void setFree_trans(String free_trans) {
@@ -127,7 +127,7 @@ public class Record {
     }
 
     public String getIPA() {
-        return IPA;
+        return IPA == null?"":IPA;
     }
 
     public void setIPA(String IPA) {
@@ -135,7 +135,7 @@ public class Record {
     }
 
     public String getNote() {
-        return note;
+        return note == null?"":note;
     }
 
     public void setNote(String note) {
@@ -143,7 +143,7 @@ public class Record {
     }
 
     public String getSpell() {
-        return spell;
+        return spell == null?"":spell;
     }
 
     public void setSpell(String spell) {
@@ -151,7 +151,7 @@ public class Record {
     }
 
     public String getEnglish() {
-        return english;
+        return english==null?"":english;
     }
 
     public void setEnglish(String english) {
@@ -159,7 +159,7 @@ public class Record {
     }
 
     public String getMWFY() {
-        return MWFY;
+        return MWFY == null?"":MWFY;
     }
 
     public void setMWFY(String MWFY) {
@@ -183,7 +183,7 @@ public class Record {
     }
 
     public String getYun() {
-        return yun;
+        return yun==null?"":yun;
     }
 
     public void setYun(String yun) {
