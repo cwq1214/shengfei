@@ -25,6 +25,7 @@
 <?import java.lang.Integer?>
 <?import javafx.scene.media.MediaView?>
 <?import sample.controller.widget.VideoPlayer?>
+<?import javafx.scene.control.ToggleGroup?>
 <AnchorPane prefHeight="600" prefWidth="800" stylesheets="@css/sf.css,@css/recordTabView.css" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.controller.RecordTabController">
     <VBox AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0">
         <!---->
@@ -34,24 +35,8 @@
                <HBox.margin>
                   <Insets right="4.0" />
                </HBox.margin></Label>
-                <Button>
-                    <graphic>
-                        <ImageView fx:id="btn_beforePage" fitHeight="16.0" fitWidth="16.0" rotate="180">
-                            <image>
-                                <Image url="@../resource/img/media-next.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </Button>
-                <Button>
-                    <graphic>
-                        <ImageView fx:id="btn_beforeLine" fitHeight="16.0" fitWidth="16.0" rotate="180">
-                            <image>
-                                <Image url="@../resource/img/media-play.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </Button>
+                <Button onAction="#toFirstLine"><graphic><ImageView  fitHeight="16.0" fitWidth="16.0" rotate="180"><image><Image url="@../resource/img/media-next.png" /></image></ImageView></graphic></Button>
+                <Button onAction="#toPreviousLine"><graphic><ImageView  fitHeight="16.0" fitWidth="16.0" rotate="180"><image><Image url="@../resource/img/media-play.png" /></image></ImageView></graphic></Button>
                 <TextField fx:id="input_number" prefWidth="50.0" style="-fx-font-size: 13px;" text="0">
                <HBox.margin>
                   <Insets left="4.0" />
@@ -61,33 +46,17 @@
                <HBox.margin>
                   <Insets right="4.0" />
                </HBox.margin></Label>
-                <Button>
-                    <graphic>
-                        <ImageView fx:id="btn_nextLine" fitHeight="16.0" fitWidth="16.0">
-                            <image>
-                                <Image url="@../resource/img/media-play.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </Button>
-                <Button>
-                    <graphic>
-                        <ImageView fx:id="btn_nextPage" fitHeight="16.0" fitWidth="16.0">
-                            <image>
-                                <Image url="@../resource/img/media-next.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </Button>
+                <Button onAction="#toNextLine"><graphic><ImageView  fitHeight="16.0" fitWidth="16.0"><image><Image url="@../resource/img/media-play.png" /></image></ImageView></graphic></Button>
+                <Button onAction="#toLastLine"><graphic><ImageView  fitHeight="16.0" fitWidth="16.0"><image><Image url="@../resource/img/media-next.png" /></image></ImageView></graphic></Button>
             </HBox>
 
             <GridPane hgap="8" styleClass="showBorder" vgap="8">
-                <ChoiceBox GridPane.columnIndex="0" GridPane.rowIndex="0">
+                <ChoiceBox GridPane.columnIndex="0" GridPane.rowIndex="0" fx:id="cb_importAudio">
                     <String fx:value="导入单个音频" />
                     <String fx:value="按编号批量导入" />
                     <String fx:value="按条目批量导入" />
                 </ChoiceBox>
-                <ChoiceBox GridPane.columnIndex="1" GridPane.rowIndex="0">
+                <ChoiceBox GridPane.columnIndex="1" GridPane.rowIndex="0" fx:id="cb_exportAudio">
                     <String fx:value="以编码导出选中条目" />
                     <String fx:value="以中文导出选中条目" />
                     <String fx:value="以英文导出选中条目" />
@@ -97,21 +66,21 @@
                     <String fx:value="以英文导出全部条目" />
                     <String fx:value="以编码+中文导出全部条目" />
                 </ChoiceBox>
-                <ChoiceBox GridPane.columnIndex="2" GridPane.rowIndex="0">
+                <ChoiceBox GridPane.columnIndex="2" GridPane.rowIndex="0" fx:id="cb_delAudio">
                     <String fx:value="删除选中条目录音" />
                     <String fx:value="删除全部条目录音" />
                 </ChoiceBox>
-                <ChoiceBox GridPane.columnIndex="3" GridPane.rowIndex="0">
+                <ChoiceBox GridPane.columnIndex="3" GridPane.rowIndex="0" fx:id="cb_tableShowMode" value="显示全部">
                     <String fx:value="显示全部" />
                     <String fx:value="显示已录" />
                     <String fx:value="显示未录" />
                 </ChoiceBox>
-                <ChoiceBox GridPane.columnIndex="0" GridPane.rowIndex="1">
+                <ChoiceBox GridPane.columnIndex="0" GridPane.rowIndex="1" fx:id="cb_importVideo">
                     <String fx:value="导入单个视频" />
                     <String fx:value="按编号批量导入视频" />
                     <String fx:value="按条目批量导入视频" />
                 </ChoiceBox>
-                <ChoiceBox GridPane.columnIndex="1" GridPane.rowIndex="1">
+                <ChoiceBox GridPane.columnIndex="1" GridPane.rowIndex="1" fx:id="cb_exportVideo">
                     <String fx:value="以编码导出选中条目" />
                     <String fx:value="以中文导出选中条目" />
                     <String fx:value="以英文导出选中条目" />
@@ -119,7 +88,7 @@
                     <String fx:value="以中文导出选中条目" />
                     <String fx:value="以英文导出选中条目" />
                 </ChoiceBox>
-                <ChoiceBox GridPane.columnIndex="2" GridPane.rowIndex="1">
+                <ChoiceBox GridPane.columnIndex="2" GridPane.rowIndex="1" fx:id="cb_delVideo">
                     <String fx:value="删除选中条目视频" />
                     <String fx:value="删除全部条目视频" />
                 </ChoiceBox>
@@ -179,13 +148,19 @@
                     </ChoiceBox>
                 </HBox>
 
-                <RadioButton text="手动录音" GridPane.columnIndex="1" GridPane.rowIndex="0" />
-                <RadioButton text="自动录音" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                <RadioButton fx:id="rbtn_manualRecordAudio" text="手动录音" GridPane.columnIndex="1" GridPane.rowIndex="0" toggleGroup="$recordMode" selected="true">
+                    <toggleGroup><ToggleGroup fx:id="recordMode"></ToggleGroup></toggleGroup>
+                </RadioButton>
+                <RadioButton fx:id="rbtn_automaticRecordAudio" text="自动录音" GridPane.columnIndex="1" GridPane.rowIndex="1" toggleGroup="$recordMode" />
 
 
                 <HBox alignment="CENTER" GridPane.columnIndex="2" GridPane.rowIndex="1">
                     <Label text="条目时长" />
-                    <ChoiceBox />
+                    <ChoiceBox fx:id="cb_recordSpace" value="2">
+                        <String fx:value="2"></String>
+                        <String fx:value="4"></String>
+                        <String fx:value="6"></String>
+                    </ChoiceBox>
                 </HBox>
             <columnConstraints>
                <ColumnConstraints />
@@ -245,7 +220,7 @@
 
                 <Label fx:id="label_recordTime" text="0:00:00" GridPane.columnIndex="1" GridPane.rowIndex="0" GridPane.rowSpan="2" style="-fx-font-size: 25px"/>
 
-                <CheckBox text="覆盖已有录音" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                <CheckBox text="覆盖已有录音" GridPane.columnIndex="2" GridPane.rowIndex="1" fx:id="cb_cover" />
                 <columnConstraints>
                     <ColumnConstraints />
                     <ColumnConstraints />

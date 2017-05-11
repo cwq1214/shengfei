@@ -3,6 +3,7 @@ package sample.util;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
+import com.j256.ormlite.misc.TransactionManager;
 import com.j256.ormlite.stmt.DeleteBuilder;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.UpdateBuilder;
@@ -566,6 +567,31 @@ public class DbHelper {
         return null;
     }
 
+    public void updateRecord(Record record){
+        try {
+            getRecordDao().update(record);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void updateRecord(List<Record> records){
+        Dao<Record,String> recordDao = getRecordDao();
+        try {
+            recordDao.callBatchTasks(new Callable<Void>() {
+                @Override
+                public Void call() throws Exception {
+                    for (int i = 0; i < records.size(); i++) {
+                        recordDao.update(records.get(i));
+                    }
+                    return null;
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public int addOrUpdateTable(Table table){
         try {
             return getTableDao().createOrUpdate(table).getNumLinesChanged();
@@ -587,6 +613,15 @@ public class DbHelper {
     private Dao<Table,Integer> getTableDao(){
         try {
             return DaoManager.createDao(connectionSource,Table.class);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private Dao<Record,String> getRecordDao(){
+        try {
+            return DaoManager.createDao(connectionSource,Record.class);
         } catch (SQLException e) {
             e.printStackTrace();
         }

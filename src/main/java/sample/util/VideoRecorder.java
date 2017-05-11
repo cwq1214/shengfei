@@ -45,6 +45,8 @@ public class VideoRecorder extends Thread {
     ImageView img;
     //保存路径
     String fileName;
+    //是否覆盖
+    boolean cover=false;
 
     long startRecordTimes=0;
 
@@ -84,7 +86,7 @@ public class VideoRecorder extends Thread {
                 //是否录制
                 if (recordingVideo){
                     if (startRecordVideo){
-                        recorder = initRecorder(Constant.ROOT_FILE_DIR+"/video/"+fileName+".mp4",imageWidth,imageHeight);
+                        recorder = initRecorder(fileName,imageWidth,imageHeight);
                         recorder.start();
                         startRecordVideo = false;
                         startRecordTimes = System.currentTimeMillis();
@@ -144,8 +146,9 @@ public class VideoRecorder extends Thread {
     }
 
     //开始录像
-    public void startRecord(String fileName){
+    public void startRecord(String fileName,boolean cover){
         this.fileName = fileName;
+        this.cover = cover;
         startRecordVideo = true;
         recordingVideo = true;
 
@@ -173,6 +176,9 @@ public class VideoRecorder extends Thread {
         File parentFile =new File(fileName).getParentFile();
         if (!parentFile.exists()){
             parentFile.mkdirs();
+        }else if (!cover){
+            System.out.println("文件已存在");
+
         }
         recorder= new FFmpegFrameRecorder(fileName,grabber.getImageWidth(),grabber.getImageHeight(),0);
         /**
