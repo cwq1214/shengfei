@@ -17,6 +17,8 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.*;
 import java.lang.reflect.Field;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 
 /**
  * Created by chenweiqi on 2017/4/14.
@@ -112,4 +114,32 @@ public class FileUtil {
         }
     }
 
+
+    public static void copy(String src, String des) {
+        File file1=new File(src);
+        File[] fs=file1.listFiles();
+        File file2=new File(des);
+        if(!file2.exists()){
+            file2.mkdirs();
+        }
+        for (File f : fs) {
+            if(f.isFile()){
+                fileCopy(f.getPath(),des+"\\"+f.getName()); //调用文件拷贝的方法
+            }else if(f.isDirectory()){
+                copy(f.getPath(),des+"\\"+f.getName());
+            }
+        }
+
+    }
+
+    /**
+     * 文件拷贝的方法
+     */
+    public static void fileCopy(String src, String des) {
+        try {
+            Files.copy(new File(src).toPath(),new File(des).toPath(), StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }
