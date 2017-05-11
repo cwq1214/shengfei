@@ -77,6 +77,6 @@ public class PoiExcel2k7Helper extends PoiExcelHelper {
             e.printStackTrace();
         }
         return null;
-//        return Main.class.getResourceAsStream(filePath);
+//        return Main.class.getResourceAsStream(fileName);
     }
 }

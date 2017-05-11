@@ -93,8 +93,8 @@ public class VideoPlayer extends VBox implements Initializable {
         if (mediaPlayer!=null){
             if (mediaPlayer.getStatus()== MediaPlayer.Status.PLAYING){
                 mediaPlayer.stop();
-                btn_play.setGraphic(new ImageView(new Image(Main.class.getResourceAsStream("/sample/resource/img/播放.png"))));
             }
+            btn_play.setGraphic(new ImageView(new Image(Main.class.getResourceAsStream("/sample/resource/img/播放.png"))));
 
             mediaPlayer=null;
             mv_mediaView.setMediaPlayer(null);
