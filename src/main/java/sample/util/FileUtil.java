@@ -17,11 +17,14 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.*;
 import java.lang.reflect.Field;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 
 /**
  * Created by chenweiqi on 2017/4/14.
  */
 public class FileUtil {
+
     public static void TableViewDataToExcel(TableView tableView, File saveFile) throws NoSuchFieldException, IllegalAccessException, IOException {
         if (saveFile == null) {
             throw new RuntimeException("save File can not be null");
@@ -109,6 +112,26 @@ public class FileUtil {
             return null;
         }else {
             return subFiles[0].getAbsolutePath();
+        }
+    }
+
+    public static void deleteFile(String path){
+        File file = new File(path);
+        if (!file.exists()){
+            return;
+        }
+        file.delete();
+
+    }
+
+    public static void copyFile(File from,File to){
+        if (!from.exists()){
+            return;
+        }
+        try {
+            Files.copy(from.toPath(),to.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
