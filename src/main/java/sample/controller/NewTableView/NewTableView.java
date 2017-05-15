@@ -676,6 +676,7 @@ public class NewTableView extends BaseController {
 
     public void delBtnClick(){
         DbHelper.getInstance().delRecord(tableView.getSelectionModel().getSelectedItems());
+        originDatas.removeAll(tableView.getSelectionModel().getSelectedItems());
         tableView.getItems().removeAll(tableView.getSelectionModel().getSelectedItems());
         tableView.refresh();
     }

@@ -152,8 +152,8 @@ public class ExportUtil {
         }else if (saveType.equals("htma")){
             exportTableHtml(saveFile,true,tableView,t);
         }else if (saveType.equals("exb")){
-
         }else if (saveType.equals("eaf")){
+            exportTableEAF(saveFile.getAbsolutePath(),tableView,t);
 
         }else if (saveType.equals("xml")){
 
@@ -502,6 +502,13 @@ public class ExportUtil {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+
+
+    public static void exportTableEAF(String savePath,TableView tableView,Table t){
+
+        EAFHelper.getInstance().writeToEaf(savePath,tableView,t);
     }
 
 }
