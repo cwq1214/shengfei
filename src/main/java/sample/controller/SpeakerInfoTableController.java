@@ -179,6 +179,12 @@ public class SpeakerInfoTableController extends BaseController {
 
         setSpeakerInfo(selSpeaker);
         DbHelper.getInstance().addOrUpdate(selSpeaker);
+
+        List<Table> tables = lv_table.getItems();
+        for (int i=0,max = tables.size();i<max;i++){
+            DbHelper.getInstance().addSpeakerToTable(tables.get(i),selSpeaker);
+        }
+
         getSpeakerListAndShow();
         clearInput();
 

@@ -12,11 +12,13 @@ import org.dom4j.io.SAXWriter;
 import org.dom4j.io.XMLWriter;
 import sample.controller.YBCC.YBCCBean;
 import sample.entity.Record;
+import sample.entity.Speaker;
 import sample.entity.Table;
 
 import java.io.*;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import org.bytedeco.javacpp.*;
 /**
@@ -39,8 +41,12 @@ public class EAFHelper {
 
 
     public void writeToEaf(String filePath, TableView tableView, Table t){
-        File eafFilePath = new File(filePath);
-
+        Speaker speaker = null;
+        if (!TextUtil.isEmpty(t.speaker)) {
+            speaker = DbHelper.getInstance().getSpeakerById(Integer.valueOf(t.speaker));
+        }else {
+            speaker = new Speaker();
+        }
         int tableType = Integer.parseInt(t.getDatatype());
 
         List content = tableView.getItems();
@@ -80,20 +86,14 @@ public class EAFHelper {
             records.add(((YBCCBean) bean).getRecord());
         }
 
-        createXML(filePath,filePath.replace(".eaf",Constant.AUDIO_SUFFIX),records);
+        createXML(speaker,filePath,filePath.replace(".eaf",Constant.AUDIO_SUFFIX),records,tableType);
 
-        if (tableType == 0){//字表
 
-        }else if (tableType == 1){//词
-
-        }else if (tableType == 2){//句
-
-        }
     }
 
 
 
-    private void createXML(String savePath,String media_url,List<Record> records){
+    private void createXML(Speaker speaker, String savePath, String media_url, List<Record> records, int tableType){
         Document doc = DocumentHelper.createDocument();
         Element rootElement = doc.addElement("ANNOTATION_DOCUMENT");
         rootElement.addAttribute("DATE","");
@@ -122,13 +122,23 @@ public class EAFHelper {
             timeLine += WAVUtil.getInstance().getAudioTimeLine(path);
         }
 
-        String[] tierRefType = {"SN","CH","IPA","MWFY","EN","Pinyin","Note"};
-        String[] annotation_value_key = {"baseCode","content","IPA","MWFY","english","spell","note"};
+        String[] tierRefType =null;
+        String[] annotation_value_key =null;
+        if (tableType == 0//字
+            ||tableType == 1){//词
+            tierRefType = new String[]{"SN", "CH", "IPA", "MWFY", "EN", "Pinyin", "Note"};
+            annotation_value_key = new String[]{"baseCode", "content", "IPA", "MWFY", "english", "spell", "note"};
+        }else if (tableType == 2){//句
+            tierRefType = new String[]{"IPA","PTHtrans","WORD"};
+            annotation_value_key = new String[]{"IPA", "free_trans", "content"};
+        }
+
+
 
         for (int i=0,max1 = tierRefType.length;i<max1;i++){
             Element tier = rootElement.addElement("TIER");
             tier.addAttribute("TIER_ID","X[SN] (TIE"+i+")");
-            tier.addAttribute("PARTICIPANT","SPK0");
+            tier.addAttribute("PARTICIPANT",speaker.ID+"");
             tier.addAttribute("LINGUISTIC_TYPE_REF",tierRefType[i]);
             tier.addAttribute("DEFAULT_LOCALE","en");
             if (i!=0){

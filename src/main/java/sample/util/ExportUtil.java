@@ -152,11 +152,11 @@ public class ExportUtil {
         }else if (saveType.equals("htma")){
             exportTableHtml(saveFile,true,tableView,t);
         }else if (saveType.equals("exb")){
+            exportTableEXB(saveFile.getAbsolutePath(),tableView,t);
         }else if (saveType.equals("eaf")){
             exportTableEAF(saveFile.getAbsolutePath(),tableView,t);
-
         }else if (saveType.equals("xml")){
-
+            exportTableXML(saveFile.getAbsolutePath(),tableView,t);
         }else if (saveType.equals("txt")){
 
         }
@@ -505,10 +505,16 @@ public class ExportUtil {
     }
 
 
+    public static void exportTableEXB(String savePath,TableView tableView,Table t){
 
+        EXBHelper.getInstance().writeToExb(savePath,tableView,t);
+    }
     public static void exportTableEAF(String savePath,TableView tableView,Table t){
 
         EAFHelper.getInstance().writeToEaf(savePath,tableView,t);
     }
+    public static void exportTableXML(String savePath,TableView tableView,Table t){
 
+        XMLHelper.getInstance().writeToXml(savePath,tableView,t);
+    }
 }

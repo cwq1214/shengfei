@@ -110,6 +110,7 @@ public class WAVUtil {
 
     }
 
+    //返回时长 单位:毫秒
     public double getAudioTimeLine(String filePath) {
         File file = new File(filePath);
         if (file.exists()){

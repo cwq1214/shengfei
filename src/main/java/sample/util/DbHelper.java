@@ -575,6 +575,15 @@ public class DbHelper {
         }
     }
 
+    public void addSpeakerToTable(Table table,Speaker speaker){
+        table.speaker = speaker.ID+"";
+        try {
+            getTableDao().update(table);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void updateRecord(List<Record> records){
         Dao<Record,String> recordDao = getRecordDao();
         try {
@@ -627,5 +636,6 @@ public class DbHelper {
         }
         return null;
     }
+
 
 }
