@@ -66,6 +66,7 @@ public class UnionCodeController extends BaseController {
             for (int i = tableDatas.size() - 1 ; i >= 0 ; i--) {
                 UnionCodeBean bean = tableDatas.get(i);
                 bean.getUnionRecord().setBaseCode(bean.getCodeBase().getCode());
+                bean.getUnionRecord().setInvestCode(bean.getCodeBase().getCode());
                 result.add(bean.getUnionRecord());
             }
         }else{
@@ -74,6 +75,7 @@ public class UnionCodeController extends BaseController {
                 int i = selects.get(j);
                 UnionCodeBean bean = tableDatas.get(i);
                 bean.getUnionRecord().setBaseCode(bean.getCodeBase().getCode());
+                bean.getUnionRecord().setInvestCode(bean.getCodeBase().getCode());
                 result.add(bean.getUnionRecord());
             }
         }

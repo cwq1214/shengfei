@@ -8,6 +8,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.web.WebView;
 import javafx.stage.Modality;
+import sample.controller.ImportExcel.ImportExcelBindViewController;
 import sample.controller.MutiAnaly.MutiAnalySelectFileController;
 import sample.controller.NewTableView.*;
 import sample.controller.YBCC.YBCCBean;
@@ -35,6 +36,91 @@ public class MainController extends BaseController {
     public TabPane contentPane;
     @FXML
     public Label changeLanguage;
+
+    public void openImpExcelBindWithType(int type){
+        ImportExcelBindViewController vc = ((ImportExcelBindViewController) ViewUtil.getInstance().showView("view/impExcelBindView.fxml", "导入数据绑定", -1, -1, this));
+        vc.setExcelType(type);
+        vc.mStage.initModality(Modality.APPLICATION_MODAL);
+        vc.mStage.setResizable(false);
+        vc.mStage.show();
+    }
+
+    @FXML
+    public void impExlWordClick(){
+        openImpExcelBindWithType(0);
+    }
+
+    @FXML
+    public void impExlCiClick(){
+        openImpExcelBindWithType(1);
+    }
+
+    @FXML
+    public void impSentenceClick(){
+        openImpExcelBindWithType(2);
+    }
+
+    public void openTable(Table t){
+        NewTableView vc = ((NewTableView) ViewUtil.getInstance().showView("view/newTableView.fxml", "", -1, -1, t));
+        vc.getmStage().setUserData(MainController.this);
+        if (t.datatype.equals("0")){
+            vc.setNewType(NewTableView.NewWordType);
+        }else if (t.datatype.equals("1")){
+            vc.setNewType(NewTableView.NewCiType);
+        }else if (t.datatype.equals("2")){
+            vc.setNewType(NewTableView.NewSentenceType);
+        }
+
+        Tab tab = WidgetUtil.createNewTab(t.getTitle(), vc.getmParent());
+        tab.setOnClosed(new EventHandler<Event>() {
+            @Override
+            public void handle(Event event) {
+                vc.onTabClosed();
+            }
+        });
+        WidgetUtil.addTabToTabPane(contentPane, tab,true,vc);
+        WidgetUtil.selectTab(tab);
+    }
+
+    @FXML
+    public void impYbCi(){
+        ImportUtil.importYbWithType(1,this);
+    }
+
+    @FXML
+    public void impYbWord(){
+        ImportUtil.importYbWithType(0,this);
+    }
+
+    @FXML
+    public void impYbSentence(){
+        ImportUtil.importYbWithType(2,this);
+    }
+
+    @FXML
+    public void impExma(){
+
+    }
+
+    @FXML
+    public void impElan(){
+
+    }
+
+    @FXML
+    public void impAudacity(){
+
+    }
+
+    @FXML
+    public void impSfXml(){
+
+    }
+
+    @FXML
+    public void impTalkTxt(){
+
+    }
 
     @FXML
     public void dbdzClick(){

@@ -3,11 +3,13 @@ package sample;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import sample.controller.RecordTabController;
+import sample.entity.Record;
 import sample.util.DbHelper;
 import sample.util.ViewUtil;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Method;
 
 public class Main extends Application {
 
@@ -20,8 +22,6 @@ public class Main extends Application {
 
         ViewUtil.getInstance().openMainView();
         DbHelper.getInstance();
-
-
 
     }
 

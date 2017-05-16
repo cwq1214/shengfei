@@ -7,6 +7,12 @@
 <?import javafx.scene.layout.VBox?>
 <?import sample.diycontrol.TableTopCtl.*?>
 
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.media.MediaView?>
+<?import javafx.scene.image.ImageView?>
+<?import sample.controller.widget.VideoPlayer?>
+<?import javafx.scene.control.Label?>
 <BorderPane prefHeight="800" prefWidth="600" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.controller.NewTableView.NewTableView">
    <center>
       <TableView fx:id="tableView" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
@@ -18,9 +24,6 @@
          </BorderPane.margin>
       </TableView>
    </center>
-   <right>
-      <AnchorPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
-   </right>
    <top>
       <VBox BorderPane.alignment="CENTER">
          <children>
@@ -31,4 +34,20 @@
          </BorderPane.margin>
       </VBox>
    </top>
+    <right>
+        <VBox alignment="BOTTOM_CENTER">
+            <TabPane>
+                <Tab text="图片" closable="false">
+                    <VBox alignment="CENTER">
+                        <ImageView fitWidth="300" fitHeight="300" fx:id="imgView" />
+                    </VBox>
+                </Tab>
+                <Tab text="视频" closable="false">
+                    <AnchorPane>
+                        <VideoPlayer prefWidth="300" prefHeight="300" fx:id="mediaView" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" />
+                    </AnchorPane>
+                </Tab>
+            </TabPane>
+        </VBox>
+    </right>
 </BorderPane>
