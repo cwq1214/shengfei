@@ -153,7 +153,6 @@ public class VideoPlayer extends VBox implements Initializable {
                 @Override
                 public void run() {
                     btn_play.setGraphic(new ImageView(new Image(Main.class.getResourceAsStream("/sample/resource/img/播放.png"))));
-
                 }
             });
             mv_mediaView.setMediaPlayer(mediaPlayer);

@@ -19,35 +19,51 @@
         <menus>
           <Menu mnemonicParsing="false" text="%menu_file">
             <items>
-              <MenuItem accelerator="CTRL+N" mnemonicParsing="false" text="%menu_file_newWord"  onAction="#newWordTableClick"/>
-              <MenuItem mnemonicParsing="false" text="%menu_file_newWords"  onAction="#newCiTableClick"/>
-              <MenuItem mnemonicParsing="false" text="%menu_file_newSentence"  onAction="#newSentenceTableClick"/>
-              <MenuItem mnemonicParsing="false" text="%menu_file_newDiscource"  onAction="#newDiscourceClick"/>
+              <MenuItem accelerator="CTRL+N" mnemonicParsing="false" onAction="#newWordTableClick" text="%menu_file_newWord" />
+              <MenuItem mnemonicParsing="false" onAction="#newCiTableClick" text="%menu_file_newWords" />
+              <MenuItem mnemonicParsing="false" onAction="#newSentenceTableClick" text="%menu_file_newSentence" />
+              <MenuItem mnemonicParsing="false" onAction="#newDiscourceClick" text="%menu_file_newDiscource" />
                 <SeparatorMenuItem />
-                <MenuItem accelerator="CTRL+O" mnemonicParsing="false" text="%menu_file_open" onAction="#openTableClick"/>
-                <MenuItem accelerator="CTRL+D" mnemonicParsing="false" text="%menu_file_delete" onAction="#delTableClick" />
+                <MenuItem accelerator="CTRL+O" mnemonicParsing="false" onAction="#openTableClick" text="%menu_file_open" />
+                <MenuItem accelerator="CTRL+D" mnemonicParsing="false" onAction="#delTableClick" text="%menu_file_delete" />
                 <SeparatorMenuItem />
-                <MenuItem mnemonicParsing="false" text="%menu_file_import" />
-                <MenuItem mnemonicParsing="false" text="%menu_file_export" onAction="#fileExportClick"/>
+                     <Menu mnemonicParsing="false" text="%menu_file_import">
+                       <items>
+                           <MenuItem mnemonicParsing="false" text="%menu_file_import_excelWord" onAction="#impExlWordClick"/>
+                           <MenuItem mnemonicParsing="false" text="%menu_file_import_excelCi" onAction="#impExlCiClick"/>
+                           <MenuItem mnemonicParsing="false" text="%menu_file_import_excelSentence" onAction="#impSentenceClick"/>
+                           <SeparatorMenuItem mnemonicParsing="false" />
+                           <MenuItem mnemonicParsing="false" text="%menu_file_import_ybWord" onAction="#impYbWord"/>
+                           <MenuItem mnemonicParsing="false" text="%menu_file_import_ybCi" onAction="#impYbCi"/>
+                           <MenuItem mnemonicParsing="false" text="%menu_file_import_ybSentence" onAction="#impYbSentence"/>
+                           <SeparatorMenuItem mnemonicParsing="false" />
+                           <MenuItem mnemonicParsing="false" text="%menu_file_import_exma" onAction="#impExma"/>
+                           <MenuItem mnemonicParsing="false" text="%menu_file_import_elan" onAction="#impElan"/>
+                           <MenuItem mnemonicParsing="false" text="%menu_file_import_audacity" onAction="#impAudacity"/>
+                           <MenuItem mnemonicParsing="false" text="%menu_file_import_sfxml" onAction="#impSfXml"/>
+                           <MenuItem mnemonicParsing="false" text="%menu_file_import_talkTxt" onAction="#impTalkTxt"/>
+                       </items>
+                     </Menu>
+                <MenuItem mnemonicParsing="false" onAction="#fileExportClick" text="%menu_file_export" />
             </items>
           </Menu>
 
           <Menu mnemonicParsing="false" text="%menu_data">
             <items>
-              <MenuItem mnemonicParsing="false" text="%menu_data_ybcc" onAction="#ybccClick"/>
+              <MenuItem mnemonicParsing="false" onAction="#ybccClick" text="%menu_data_ybcc" />
               <!--<MenuItem mnemonicParsing="false" text="%menu_data_ybhy" />-->
-                <MenuItem mnemonicParsing="false" text="%menu_data_zlyyd" onAction="#zlyydClick"/>
+                <MenuItem mnemonicParsing="false" onAction="#zlyydClick" text="%menu_data_zlyyd" />
                 <SeparatorMenuItem />
-              <MenuItem mnemonicParsing="false" text="%menu_data_tyzhch" onAction="#tyzhchClick"/>
+              <MenuItem mnemonicParsing="false" onAction="#tyzhchClick" text="%menu_data_tyzhch" />
                 <SeparatorMenuItem />
-              <MenuItem mnemonicParsing="false" text="%menu_data_dbdz" onAction="#dbdzClick"/>
+              <MenuItem mnemonicParsing="false" onAction="#dbdzClick" text="%menu_data_dbdz" />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="%menu_option">
             <items>
 
                 <RadioMenuItem selected="true" text="%menu_option_zbms"><toggleGroup><ToggleGroup fx:id="mode" /></toggleGroup></RadioMenuItem>
-                <RadioMenuItem text="%menu_option_lyms" toggleGroup="$mode" onAction="#onRecordModeClick"/>
+                <RadioMenuItem onAction="#onRecordModeClick" text="%menu_option_lyms" toggleGroup="$mode" />
                 <RadioMenuItem text="%menu_option_zxms" toggleGroup="$mode" />
                 <!--<SeparatorMenuItem />-->
                 <!--<MenuItem mnemonicParsing="false" text="%menu_option_zbtybh" />-->
@@ -59,22 +75,22 @@
           </Menu>
             <Menu mnemonicParsing="false" text="%menu_yudang">
                 <items>
-                    <MenuItem mnemonicParsing="false" text="%menu_archives_shrxxb" onAction="#onSpeakerInfoTableClick"/>
-                    <MenuItem mnemonicParsing="false" text="%menu_archives_dcys" onAction="#onTableMetadataInfoClick"/>
-                    <MenuItem mnemonicParsing="false" text="%menu_archives_cjydwy" onAction="#onCreateHTMLFileClick"/>
+                    <MenuItem mnemonicParsing="false" onAction="#onSpeakerInfoTableClick" text="%menu_archives_shrxxb" />
+                    <MenuItem mnemonicParsing="false" onAction="#onTableMetadataInfoClick" text="%menu_archives_dcys" />
+                    <MenuItem mnemonicParsing="false" onAction="#onCreateHTMLFileClick" text="%menu_archives_cjydwy" />
                 </items>
             </Menu>
             <Menu mnemonicParsing="false" text="%menu_system">
                 <items>
-                    <MenuItem mnemonicParsing="false" text="%menu_system_fydczb" fx:id="menu_system_fydczb" onAction="#onFYDCZBClick"/>
-                    <MenuItem mnemonicParsing="false" text="%menu_system_chdczb" fx:id="menu_system_chdczb" onAction="#onCHDCBClick"/>
-                    <MenuItem mnemonicParsing="false" text="%menu_system_jzdczb" fx:id="menu_system_jzdczb" onAction="#onJZDCBClick"/>
+                    <MenuItem fx:id="menu_system_fydczb" mnemonicParsing="false" onAction="#onFYDCZBClick" text="%menu_system_fydczb" />
+                    <MenuItem fx:id="menu_system_chdczb" mnemonicParsing="false" onAction="#onCHDCBClick" text="%menu_system_chdczb" />
+                    <MenuItem fx:id="menu_system_jzdczb" mnemonicParsing="false" onAction="#onJZDCBClick" text="%menu_system_jzdczb" />
                     <SeparatorMenuItem />
-                    <MenuItem mnemonicParsing="false" text="%menu_system_zgyydm" fx:id="menu_system_zgyydm" onAction="#onZGYYDMClick"/>
-                    <MenuItem mnemonicParsing="false" text="%menu_system_yyybzf" fx:id="menu_system_yyybzf" onAction="#onYYYBZFClick"/>
+                    <MenuItem fx:id="menu_system_zgyydm" mnemonicParsing="false" onAction="#onZGYYDMClick" text="%menu_system_zgyydm" />
+                    <MenuItem fx:id="menu_system_yyybzf" mnemonicParsing="false" onAction="#onYYYBZFClick" text="%menu_system_yyybzf" />
                     <SeparatorMenuItem />
-                    <MenuItem mnemonicParsing="false" text="%menu_system_cdmlyhdz" fx:id="menu_system_cdmlyhdz" onAction="#onEnglish2ChineseClick"/>
-                    <MenuItem mnemonicParsing="false" text="%menu_system_mmyz" fx:id="menu_system_mmyz" onAction="#onPasswordAnalyClick"/>
+                    <MenuItem fx:id="menu_system_cdmlyhdz" mnemonicParsing="false" onAction="#onEnglish2ChineseClick" text="%menu_system_cdmlyhdz" />
+                    <MenuItem fx:id="menu_system_mmyz" mnemonicParsing="false" onAction="#onPasswordAnalyClick" text="%menu_system_mmyz" />
 
 
                 </items>

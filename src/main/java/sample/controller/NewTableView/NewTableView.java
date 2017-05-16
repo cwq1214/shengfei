@@ -14,20 +14,27 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import javafx.scene.media.MediaView;
 import javafx.stage.FileChooser;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
 import javafx.util.converter.DefaultStringConverter;
+import sample.Main;
 import sample.controller.BaseController;
 import sample.controller.MainController;
 import sample.controller.ReplaceViewController;
 import sample.controller.SearchViewController;
 import sample.controller.UnionCode.UnionCodeController;
 import sample.controller.YBCC.YBCCBean;
+import sample.controller.widget.VideoPlayer;
 import sample.controller.ybzf.YBZFController;
 import sample.controller.ybzf.YBZFListener;
 import sample.diycontrol.TableTopCtl.ClickType;
@@ -35,13 +42,11 @@ import sample.diycontrol.TableTopCtl.TableTopControl;
 import sample.diycontrol.TableTopCtl.TableTopCtlListener;
 import sample.entity.Record;
 import sample.entity.Table;
-import sample.util.Constant;
-import sample.util.DbHelper;
-import sample.util.ViewUtil;
-import sample.util.WidgetUtil;
+import sample.util.*;
 
 import java.io.*;
 import java.lang.reflect.Field;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
@@ -72,6 +77,12 @@ public class NewTableView extends BaseController {
     private ObservableList afterAnalyDatas;
 
     private MyTFCell nowEditCell;
+
+    @FXML
+    private VideoPlayer mediaView;
+
+    @FXML
+    private ImageView imgView;
 
     @FXML
     private TableTopControl tableTopCtl;
@@ -411,25 +422,7 @@ public class NewTableView extends BaseController {
         }
 
         String path = dir + "/" + r.getUuid() + fileType;
-
-        try {
-            BufferedReader br = new BufferedReader(new FileReader(f));
-            BufferedWriter bw = new BufferedWriter(new FileWriter(path));
-
-            String read = "";
-            while ((read = br.readLine()) != null){
-                bw.write(read);
-            }
-
-            bw.close();
-            br.close();
-
-            return new File(path);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        FileUtil.fileCopy(f.getAbsolutePath(),path);
         return null;
     }
 
@@ -445,6 +438,24 @@ public class NewTableView extends BaseController {
                 int nowIndex = tableView.getSelectionModel().getSelectedIndex();
                 if (nowIndex != -1){
                     tableTopCtl.setNowIndex(nowIndex);
+
+                    String demoP = ((YBCCBean) tableView.getItems().get(nowIndex)).getDemoPicLoc();
+                    String demoV = ((YBCCBean) tableView.getItems().get(nowIndex)).getDemoVideoLoc();
+
+                    if (demoP != null && demoP.length() != 0){
+                        try {
+                            Image img = new Image(new FileInputStream(demoP));
+                            imgView.setImage(img);
+                        } catch (FileNotFoundException e) {
+                            e.printStackTrace();
+                        }
+                    }else {
+                        imgView.setImage(null);
+                    }
+                    if (demoV != null && demoV.length() != 0){
+                        mediaView.setMediaPath(demoV);
+                    }
+
                 }
                 if (event.getButton() == MouseButton.SECONDARY){
                     setContextMenuContent(false);

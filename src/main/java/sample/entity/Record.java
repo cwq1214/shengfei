@@ -2,7 +2,11 @@ package sample.entity;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import sample.controller.ImportExcel.ImpTitleBean;
 
+import java.util.HashMap;
 import java.util.UUID;
 
 /**
@@ -43,6 +47,32 @@ public class Record {
     @DatabaseField
     public String createDate;
 
+    public static ObservableList wordTilteData = FXCollections.observableArrayList(new ImpTitleBean("编码","setBaseCode"),
+            new ImpTitleBean("分级","setRank"),
+            new ImpTitleBean("单字","setContent"),
+            new ImpTitleBean("音韵","setYun"),
+            new ImpTitleBean("音标注音","setIPA"),
+            new ImpTitleBean("拼音","setSpell"),
+            new ImpTitleBean("英语","setEnglish"),
+            new ImpTitleBean("注释","setNote"));
+
+    public static ObservableList ciTilteData = FXCollections.observableArrayList(new ImpTitleBean("编码","setBaseCode"),
+            new ImpTitleBean("分级","setRank"),
+            new ImpTitleBean("词条","setContent"),
+            new ImpTitleBean("民族文字或方言字","setMWFY"),
+            new ImpTitleBean("音标注音","setIPA"),
+            new ImpTitleBean("拼音","setSpell"),
+            new ImpTitleBean("英语","setEnglish"),
+            new ImpTitleBean("注释","setNote"));
+
+    public static ObservableList sentenceTilteData = FXCollections.observableArrayList(new ImpTitleBean("编码","setBaseCode"),
+            new ImpTitleBean("分级","setRank"),
+            new ImpTitleBean("句子","setContent"),
+            new ImpTitleBean("民族文字或方言字","setMWFY"),
+            new ImpTitleBean("音标注音","setIPA"),
+            new ImpTitleBean("普通话对译","setFree_trans"),
+            new ImpTitleBean("注释","setNote"),
+            new ImpTitleBean("英语","setEnglish"));
     public Record() {
     }
 

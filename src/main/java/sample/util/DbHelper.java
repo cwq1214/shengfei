@@ -12,6 +12,7 @@ import com.j256.ormlite.support.ConnectionSource;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Tab;
+import sample.controller.ImportExcel.ImportExcelBindViewController;
 import sample.controller.NewTableView.NewTopicKindSelectController;
 import sample.controller.NewTableView.NewTopicKindSelectListener;
 import sample.controller.NewTableView.TopicBean;
@@ -223,6 +224,32 @@ public class DbHelper {
         }
     }
 
+    /**
+     * 把Record数据插入到数据库中
+     * @param list
+     */
+    public void insertRecordReal(List<Record> list , ImportExcelBindViewController.InsertSuccessCallBack callBack){
+        try {
+            System.out.println("insert record in");
+            Dao<Record,String> recordDao = DaoManager.createDao(connectionSource,Record.class);
+            recordDao.callBatchTasks(new Callable<Void>() {
+                @Override
+                public Void call() throws Exception {
+                    for (int i = 0; i < list.size(); i++) {
+                        recordDao.createOrUpdate(list.get(i));
+                    }
+                    callBack.insertSuccess();
+                    return null;
+                }
+            });
+
+//            recordDao.create(list);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
     /**
      * 根据codeBase获取相应分类的数据，并转换成相应的Record类，组装成ObservableList
      * @param dataType 数据分类：字表，词表，句表

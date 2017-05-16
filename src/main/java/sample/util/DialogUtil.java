@@ -15,6 +15,7 @@ public class DialogUtil {
     public static final int FILE_CHOOSE_TYPE_IMAGE = 0;
     public static final int FILE_CHOOSE_TYPE_VIDEO = 1;
     public static final int FILE_CHOOSE_TYPE_AUDIO = 2;
+    public static final int FILE_CHOOSE_TYPE_EXCEL = 3;
 
     public static Alert showDialog(String content) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION, null);
@@ -40,6 +41,12 @@ public class DialogUtil {
 //                    new FileChooser.ExtensionFilter("All Video", "*.*"),
                     new FileChooser.ExtensionFilter("AVI", "*.avi"),
                     new FileChooser.ExtensionFilter("WMV", "*.wmv")
+            );
+        }else if (fileType == FILE_CHOOSE_TYPE_EXCEL){
+            fileChooser.getExtensionFilters().addAll(
+//                    new FileChooser.ExtensionFilter("All Video", "*.*"),
+                    new FileChooser.ExtensionFilter("2003Excel", "*.xls"),
+                    new FileChooser.ExtensionFilter("2007Excel", "*.xlsx")
             );
         }
         Stage stage = new Stage();
