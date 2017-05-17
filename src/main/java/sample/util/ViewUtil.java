@@ -240,9 +240,18 @@ public class ViewUtil {
     //添加元数据对话框
     public AddMetadataController openAddMetaDataView() throws IOException {
         return (AddMetadataController) showView("view/addMetadataView.fxml", "添加元数据", -1, -1, false);
+    }
+
+    //打开导入对话框
+    public ImportXmlDialog openImpotXmlDialog(String title) throws IOException {
+        return (ImportXmlDialog) showView("view/importXmlDialog.fxml", title, -1, -1, false);
 
     }
 
+    public ImportXmlDialog2 openImportXmlDialog2() throws IOException {
+        return (ImportXmlDialog2) showView("view/importXmlDialog2.fxml", "导入xml", -1, -1, false);
+
+    }
 
 
     private Object showView(String resourcePath) throws IOException {

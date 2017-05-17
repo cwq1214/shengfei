@@ -48,6 +48,10 @@ public class Table {
     public Table() {
     }
 
+    public Table(String datatype) {
+        this.datatype = datatype;
+    }
+
     public Table(String title, String datatype, String projectname, String creator, String speaker, String contributor, String recordingdate, String recordingplace, String language, String languagecode, String languageplace, String datades, String equipment, String software, String rightl, String snote, String custom) {
         this.title = title;
         this.datatype = datatype;

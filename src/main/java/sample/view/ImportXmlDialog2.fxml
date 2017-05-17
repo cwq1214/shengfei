@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<TabPane xmlns="http://javafx.com/javafx"
+         xmlns:fx="http://javafx.com/fxml"
+         fx:controller="sample.controller.ImportXmlDialog2"
+         fx:id="tp_tabPane">
+    <Tab text="第一步" closable="false">
+        <GridPane
+                    prefHeight="200.0" prefWidth="600.0" vgap="8" hgap="8" alignment="CENTER">
+
+            <RadioButton fx:id="rb_toZB" text="导入到字表" toggleGroup="$tg_type" GridPane.rowIndex="0" GridPane.columnIndex="1">
+                <toggleGroup>
+                    <ToggleGroup fx:id="tg_type"></ToggleGroup>
+                </toggleGroup>
+            </RadioButton>
+            <RadioButton fx:id="rb_toCB" text="导入到词表" toggleGroup="$tg_type" GridPane.rowIndex="0" GridPane.columnIndex="2"></RadioButton>
+            <RadioButton fx:id="rb_toJB" text="导入到句表" toggleGroup="$tg_type" GridPane.rowIndex="1" GridPane.columnIndex="1"></RadioButton>
+            <RadioButton fx:id="rb_toHYB" text="导入到话语表" toggleGroup="$tg_type" GridPane.rowIndex="1" GridPane.columnIndex="2"></RadioButton>
+
+            <Button onAction="#onNextClick" fx:id="btn_next" text="下一步" GridPane.rowIndex="2" GridPane.columnIndex="1" GridPane.halignment="CENTER"></Button>
+            <Button onAction="#onCancelClick" fx:id="btn_cancel" text="取消" GridPane.rowIndex="2" GridPane.columnIndex="2" GridPane.halignment="CENTER"></Button>
+
+            <columnConstraints>
+                <ColumnConstraints hgrow="ALWAYS" prefWidth="20"></ColumnConstraints>
+                <ColumnConstraints hgrow="ALWAYS" prefWidth="30"></ColumnConstraints>
+                <ColumnConstraints hgrow="ALWAYS" prefWidth="30"></ColumnConstraints>
+                <ColumnConstraints hgrow="ALWAYS" prefWidth="20"></ColumnConstraints>
+            </columnConstraints>
+        </GridPane>
+    </Tab>
+
+    <Tab text="第二步" closable="false">
+        <GridPane hgap="8" prefHeight="200.0" prefWidth="600.0" vgap="8">
+            <HBox alignment="CENTER" style="-fx-background-color: yellow" GridPane.columnIndex="0" GridPane.columnSpan="4" GridPane.rowIndex="0">
+                <Label style="-fx-text-fill: blue" text="选择一个xml文件" />
+            </HBox>
+            <Label text="xml  file" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+            <Button onAction="#onFileChoseClick" fx:id="btn_fileChose" text="浏览" GridPane.columnIndex="3" GridPane.halignment="RIGHT" GridPane.rowIndex="1" />
+            <TextField fx:id="input_filePath" GridPane.columnIndex="0" GridPane.columnSpan="4" GridPane.rowIndex="2" />
+
+            <Button onAction="#onDoneClick" fx:id="btn_done" text="确定" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="3" />
+            <Button onAction="#onCancel2Click" fx:id="btn_cancel2" text="取消" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="3" />
+            <columnConstraints>
+                <ColumnConstraints hgrow="ALWAYS" prefWidth="25" />
+                <ColumnConstraints hgrow="ALWAYS" prefWidth="25" />
+                <ColumnConstraints hgrow="ALWAYS" prefWidth="25" />
+                <ColumnConstraints hgrow="ALWAYS" prefWidth="25" />
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints />
+                <RowConstraints />
+                <RowConstraints />
+                <RowConstraints />
+            </rowConstraints>
+        </GridPane>
+    </Tab>
+</TabPane>

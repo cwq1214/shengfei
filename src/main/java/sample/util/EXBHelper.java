@@ -9,16 +9,21 @@ import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.io.OutputFormat;
+import org.dom4j.io.SAXReader;
 import org.dom4j.io.XMLWriter;
 import sample.controller.YBCC.YBCCBean;
+import sample.entity.BindResult;
 import sample.entity.Record;
 import sample.entity.Speaker;
 import sample.entity.Table;
 
 import java.io.*;
 import java.lang.reflect.Field;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Created by chenweiqi on 2017/5/16.
@@ -148,7 +153,7 @@ public class EXBHelper {
 
             category = new String[]{"SN","CH","IPA","MWFY","EN","Pinyin","Note"};
             type = new String[]{"t","a","a","a","a","a","a"};
-            field_key = new String[]{"baseCode","content","IPA","MWFY","english","spell","note"};
+            field_key = new String[]{"investCode","content","IPA","MWFY","english","spell","note"};
         }else if (tableType==2){
             category = new String[]{"IPA","WORD","PTHtrans"};
             type = new String[]{"t","a","a"};
@@ -371,5 +376,111 @@ public class EXBHelper {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+
+    public void deco(String xmlPath, String audioPath, List<BindResult> bindResults, int tableType){
+        SAXReader reader = new SAXReader();
+
+        List<WAVUtil.AudioAttr> audioAttrs = new ArrayList<>();
+        List<Record> records = new ArrayList<>();
+        try {
+            Document document = reader.read(new File(xmlPath));
+            Element rootElement = document.getRootElement();
+            Element basic_body = rootElement.element("basic-body");
+
+            Element timeLine = basic_body.element("common-timeline");
+
+            List<Element> timeLines = timeLine.elements();
+            for (int i=0,max = timeLines.size();i<max;i++){
+                String value = timeLines.get(i).attribute("time").getValue();
+                WAVUtil.AudioAttr audioAttr = new WAVUtil.AudioAttr();
+
+                audioAttr.start = (long)(Double.valueOf(value)*1000)+"";
+                audioAttrs.add(audioAttr);
+            }
+            List<Element> tiers = basic_body.elements("tier");
+            for (int i=0,max1 = tiers.size(); i < max1;i++){
+                Element tier = tiers.get(i);
+                String category = tier.attribute("category").getValue();
+                String fieldName = BindResult.getKey2ByKey1(bindResults,category);
+                if (TextUtil.isEmpty(fieldName)){
+                    continue;
+                }
+
+                List<Element> events = tier.elements();
+                for (int j=0,max2 = events.size(); j <max2;j++){
+                    String value = events.get(j).getText();
+                    if (i==0){
+                        records.add(new Record());
+                    }
+                    Record record = records.get(j);
+                    try {
+                        Field field = Record.class.getDeclaredField(fieldName);
+                        field.setAccessible(true);
+                        field.set(record,value);
+                    } catch (NoSuchFieldException e) {
+                        e.printStackTrace();
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    }
+
+
+                }
+            }
+
+
+            Table table = new Table(tableType+"");
+            DbHelper.getInstance().insertNewTable(table);
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            for (int i=0,max = records.size(); i<max;i++){
+                records.get(i).uuid = UUID.randomUUID().toString();
+                records.get(i).baseId = table.id;
+                if (!TextUtil.isEmpty(records.get(i).investCode)){
+                    records.get(i).baseCode = records.get(i).investCode;
+
+                }else if (!TextUtil.isEmpty(records.get(i).baseCode)){
+                    records.get(i).investCode = records.get(i).baseCode;
+
+                }else {
+                    records.get(i).investCode = "A"+String.format("%0" + 5 + "d", i + 1);
+                    records.get(i).baseCode = records.get(i).investCode;
+                }
+
+                records.get(i).createDate =simpleDateFormat.format(new Date());
+                records.get(i).done = "1";
+
+
+                audioAttrs.get(i).path = Constant.getAudioPath(records.get(i).baseId+"",records.get(i).uuid);
+            }
+
+            DbHelper.getInstance().insertOrUpdateRecord(records);
+
+            WAVUtil.getInstance().deco(audioAttrs,audioPath);
+
+
+        } catch (DocumentException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public List<String> readXmlAttrTitle(String path) {
+        List<String> strings = new ArrayList<>();
+
+        SAXReader saxReader = new SAXReader();
+        try {
+            Document document = saxReader.read(new File(path));
+            Element rootElement = document.getRootElement();
+            List<Element> tiers = rootElement.element("basic-body").elements("tier");
+            for (Element element :
+                 tiers) {
+                String value = element.attribute("category").getValue();
+                strings.add(value);
+            }
+        } catch (DocumentException e) {
+            e.printStackTrace();
+        }
+
+        return strings;
     }
 }

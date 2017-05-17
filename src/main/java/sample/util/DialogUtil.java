@@ -16,6 +16,11 @@ public class DialogUtil {
     public static final int FILE_CHOOSE_TYPE_VIDEO = 1;
     public static final int FILE_CHOOSE_TYPE_AUDIO = 2;
     public static final int FILE_CHOOSE_TYPE_EXCEL = 3;
+    public static final int FILE_CHOOSE_TYPE_XML = 4;
+    public static final int FILE_CHOOSE_TYPE_EAF = 5;
+    public static final int FILE_CHOOSE_TYPE_EXB = 6;
+    public static final int FILE_CHOOSE_TYPE_AC = 7;
+    public static final int FILE_CHOOSE_TYPE_WAV = 8;
 
     public static Alert showDialog(String content) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION, null);
@@ -47,6 +52,26 @@ public class DialogUtil {
 //                    new FileChooser.ExtensionFilter("All Video", "*.*"),
                     new FileChooser.ExtensionFilter("2003Excel", "*.xls"),
                     new FileChooser.ExtensionFilter("2007Excel", "*.xlsx")
+            );
+        }else if (fileType == FILE_CHOOSE_TYPE_XML){
+            fileChooser.getExtensionFilters().addAll(
+                    new FileChooser.ExtensionFilter("xml", "*.xml")
+            );
+        }else if (fileType == FILE_CHOOSE_TYPE_EXB){
+            fileChooser.getExtensionFilters().addAll(
+                    new FileChooser.ExtensionFilter("Exma", "*.exb")
+            );
+        }else if (fileType == FILE_CHOOSE_TYPE_EAF){
+            fileChooser.getExtensionFilters().addAll(
+                    new FileChooser.ExtensionFilter("Elan", "*.eaf")
+            );
+        }else if (fileType == FILE_CHOOSE_TYPE_AC){
+            fileChooser.getExtensionFilters().addAll(
+                    new FileChooser.ExtensionFilter("Audacity", "*.ac")
+            );
+        }else if (fileType == FILE_CHOOSE_TYPE_WAV){
+            fileChooser.getExtensionFilters().addAll(
+                    new FileChooser.ExtensionFilter("wav", "*.wav")
             );
         }
         Stage stage = new Stage();

@@ -70,6 +70,8 @@ public class SpeakerInfoTableController extends BaseController {
     //说话人列表
     private List<Speaker> speakerList;
 
+    HashMap<String,Table> tableHashMap = new HashMap<>();
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         super.initialize(location, resources);
@@ -161,7 +163,10 @@ public class SpeakerInfoTableController extends BaseController {
     @FXML
     private void onDelSelTableClick(){
         if (lv_table.getSelectionModel().getSelectedItems().size()!=0){
-            lv_table.getItems().removeAll(lv_table.getSelectionModel().getSelectedItems());
+            Table table = (Table) lv_table.getSelectionModel().getSelectedItem();
+            tableHashMap.put(table.id+"",table);
+
+            lv_table.getItems().remove(table);
         }
     }
 
@@ -185,6 +190,16 @@ public class SpeakerInfoTableController extends BaseController {
             DbHelper.getInstance().addSpeakerToTable(tables.get(i),selSpeaker);
         }
 
+        if (!tableHashMap.isEmpty()){
+            Set<String> keySet = tableHashMap.keySet();
+            Iterator<String> iterator = keySet.iterator();
+            while (iterator.hasNext()){
+                String key = iterator.next();
+                Table table = tableHashMap.get(key);
+                table.speaker=null;
+                DbHelper.getInstance().addOrUpdateTable(table);
+            }
+        }
         getSpeakerListAndShow();
         clearInput();
 

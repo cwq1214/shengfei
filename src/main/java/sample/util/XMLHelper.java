@@ -2,9 +2,11 @@ package sample.util;
 
 import javafx.scene.control.TableView;
 import org.dom4j.Document;
+import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.io.OutputFormat;
+import org.dom4j.io.SAXReader;
 import org.dom4j.io.XMLWriter;
 import sample.controller.YBCC.YBCCBean;
 import sample.entity.Record;
@@ -14,6 +16,7 @@ import java.io.*;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Created by chenweiqi on 2017/5/16.
@@ -60,18 +63,18 @@ public class XMLHelper {
                 ||tableType==1){
             tb_type.addText("ZB");
             category = new String[]{"SN","CH","IPA","YYUN","EN","PYIN","NOTE"};
-            field_name = new String[]{"baseCode","content","IPA","yun","english","spell","note"};
+            field_name = new String[]{"investCode","content","IPA","yun","english","spell","note"};
 
         }else if (tableType==2){
             tb_type.addText("JB");
             category = new String[]{"SN","CH","IPA","MWFY","EN","NOTE","PTHWORD"};
-            field_name = new String[]{"baseCode","content","IPA","MWFY","english","note","free_trans"};
+            field_name = new String[]{"investCode","content","IPA","MWFY","english","note","free_trans"};
         }
 
 
         for (int i=0,max = category.length; i<max ;i++){
             Element tier = basic_body.addElement("tier");
-
+            tier.addAttribute("category",category[i]);
             for (int j=0,max2 = records.size(); j < max2;j++){
                 Element event =tier.addElement("event");
                 try {
@@ -99,6 +102,63 @@ public class XMLHelper {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+
+    public List<Record> readXml(String path,int tableType){
+        SAXReader saxReader = new SAXReader();
+
+        try {
+            Document doc = saxReader.read(new File(path));
+            Element root = doc.getRootElement();
+            String type = root.element("tb-type").getText();
+
+
+            String[] category = null;
+            String[] field_name = null;
+            if (tableType==0
+                    ||tableType==1){
+                category = new String[]{"SN","CH","IPA","YYUN","EN","PYIN","NOTE"};
+                field_name = new String[]{"investCode","content","IPA","yun","english","spell","note"};
+
+            }else if (tableType==2){
+                category = new String[]{"SN","CH","IPA","MWFY","EN","NOTE","PTHWORD"};
+                field_name = new String[]{"investCode","content","IPA","MWFY","english","note","free_trans"};
+            }
+
+            List<Record> records = new ArrayList<>();
+            for (int i=0,max = category.length;i<max;i++){
+                for (int j=0,max2 = ((Element) root.elements("tier").get(i)).elements().size();j<max2;j++){
+                    String value = ((Element) ((Element) root.elements("tier").get(i)).elements().get(j)).getText();
+                    if (i==0){
+                        records.add(new Record());
+                    }
+                    Record record = records.get(j);
+                    Field field = Record.class.getField(field_name[i]);
+                    field.set(record,value);
+
+                }
+            }
+            Table  table = new Table(tableType+"");
+            DbHelper.getInstance().insertNewTable(table);
+
+            for (int i=0,max = records.size(); i < max;i++){
+                records.get(i).baseId = table.id;
+//                records.get(i).baseCode = "A"+String.format("%0" + 5 + "d", i + 1);
+                records.get(i).baseCode =records.get(i).investCode;
+                records.get(i).uuid = UUID.randomUUID().toString();
+            }
+
+            return records;
+        } catch (DocumentException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        }
+        return null;
+
     }
 
 }

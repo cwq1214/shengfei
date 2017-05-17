@@ -23,9 +23,9 @@ public class Record {
     @DatabaseField
     public String baseCode;
     @DatabaseField
-    public String hide;
+    public String hide = "0";
     @DatabaseField
-    public String done;
+    public String done = "0";
     @DatabaseField
     public String IPA;
     @DatabaseField

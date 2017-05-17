@@ -97,23 +97,50 @@ public class MainController extends BaseController {
         ImportUtil.importYbWithType(2,this);
     }
 
+    //.exb
     @FXML
     public void impExma(){
-
+        try {
+            ImportXmlDialog dialog = ViewUtil.getInstance().openImpotXmlDialog("exma");
+            dialog.setImportType(1);
+            dialog.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
+    //.eaf
     @FXML
     public void impElan(){
-
+        try {
+            ImportXmlDialog dialog = ViewUtil.getInstance().openImpotXmlDialog("elan");
+            dialog.setImportType(0);
+            dialog.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
     public void impAudacity(){
-
+        try {
+            ImportXmlDialog dialog = ViewUtil.getInstance().openImpotXmlDialog("Audacity");
+            dialog.setImportType(3);
+            dialog.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
-
+    //.xml
     @FXML
     public void impSfXml(){
+        try {
+            ImportXmlDialog2 dialog = ViewUtil.getInstance().openImportXmlDialog2();
+            dialog.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
 
     }
 

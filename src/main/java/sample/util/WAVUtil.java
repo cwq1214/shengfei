@@ -132,6 +132,92 @@ public class WAVUtil {
     }
 
 
+    public void deco(List<AudioAttr> audioAttrs,String sourcePath){
+        FFmpegFrameGrabber grabber = new FFmpegFrameGrabber(sourcePath);
+        Frame sample;
+        FFmpegFrameRecorder recorder = null;
+        int i=0;
+        AudioAttr audioAttr = null;
+        AudioAttr nextAudioAttr = null;
+        try {
+            grabber.start();
+            while ((sample = grabber.grabSamples())!=null){
+                long ms = grabber.getTimestamp()/1000;
 
+                if(i<audioAttrs.size()){
+                    if (recorder!=null) {
+                        if (nextAudioAttr != null) {
+                            if (ms + 50 >= Long.valueOf(nextAudioAttr.start)) {
+                                System.out.println("close "+i);
+                                if (recorder != null) {
+                                    recorder.close();
+                                    recorder = null;
+                                }
+                                i++;
+
+                                try {
+                                    Thread.sleep(1000);
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                    }
+                    if (recorder==null){
+
+                        if (i < audioAttrs.size() - 1) {
+                            nextAudioAttr = audioAttrs.get(i + 1);
+                        } else {
+                            nextAudioAttr = null;
+                        }
+
+                        audioAttr = audioAttrs.get(i);
+                        File file = new File(audioAttr.path);
+                        if (!file.exists()) {
+                            file.getParentFile().mkdirs();
+                        }
+                        recorder = new FFmpegFrameRecorder(file, 2);
+                        System.out.println("create "+i);
+                        recorder.start();
+                    }
+                }
+
+                if (recorder!=null){
+                    recorder.record(sample);
+                }
+
+
+
+
+
+
+            }
+            if (recorder!=null){
+                System.out.println("?????");
+                recorder.close();
+                recorder = null;
+            }
+
+        } catch (FrameGrabber.Exception e) {
+            e.printStackTrace();
+        } catch (FrameRecorder.Exception e) {
+            e.printStackTrace();
+        }
+
+        try {
+            grabber.close();
+            grabber = null;
+        } catch (FrameGrabber.Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
+    public static class AudioAttr {
+        public String start;//开始时间 单位： 毫秒
+        public String eng;
+        public String path;
+    }
 
 }

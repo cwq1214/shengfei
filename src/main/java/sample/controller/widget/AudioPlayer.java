@@ -77,6 +77,7 @@ public class AudioPlayer extends VBox {
                 }
             });
 
+
             mediaPlayer.setOnEndOfMedia(new Runnable() {
                 @Override
                 public void run() {

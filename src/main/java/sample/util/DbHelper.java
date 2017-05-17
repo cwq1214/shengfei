@@ -611,6 +611,23 @@ public class DbHelper {
         }
     }
 
+    public void insertOrUpdateRecord(List<Record> records){
+        Dao<Record,String> recordDao = getRecordDao();
+        try {
+            recordDao.callBatchTasks(new Callable<Void>() {
+                @Override
+                public Void call() throws Exception {
+                    for (int i = 0; i < records.size(); i++) {
+                        recordDao.createOrUpdate(records.get(i));
+                    }
+                    return null;
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public void updateRecord(List<Record> records){
         Dao<Record,String> recordDao = getRecordDao();
         try {
