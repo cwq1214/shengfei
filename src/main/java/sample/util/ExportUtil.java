@@ -13,6 +13,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.bytedeco.javacpp.annotation.Const;
 import sample.controller.YBCC.YBCCBean;
 import sample.controller.ZlyydView.CollectBean;
 import sample.controller.ZlyydView.SameIPABean;
@@ -169,6 +170,8 @@ public class ExportUtil {
         StringBuilder thDatas = new StringBuilder();
         int tableType = Integer.parseInt(t.getDatatype());
 
+        FileUtil.copy(Constant.ROOT_FILE_DIR + "/HtmlData/voice", saveFile.getParentFile().getAbsolutePath() + "/voice");
+
         for (int i = 0; i < tableView.getItems().size() + 1; i++) {
             if (i == 0){
                 if (tableType == 0){
@@ -182,11 +185,16 @@ public class ExportUtil {
                 YBCCBean bean = ((YBCCBean) tableView.getItems().get(i - 1));
                 Record r = bean.getRecord();
                 if (tableType == 0){
-                    allTrDatas.append("<tr>"+String.format(tableWordTrTd,Integer.toString(i),hasAudio?String.format(yydDemoWordTd,r.getBaseCode(),r.getContent()):r.getContent(),r.getIPA(),r.getYun(),r.getNote())+"</tr>");
+                    allTrDatas.append("<tr>"+String.format(tableWordTrTd,Integer.toString(i),hasAudio?String.format(yydDemoWordTd,r.getUuid(),r.getContent()):r.getContent(),r.getIPA(),r.getYun(),r.getNote())+"</tr>");
                 }else if (tableType == 1){
-                    allTrDatas.append("<tr>"+String.format(tableCiTrTd,Integer.toString(i),hasAudio?String.format(yydDemoWordTd,r.getBaseCode(),r.getContent()):r.getContent(),r.getIPA(),r.getMWFY(),r.getSpell(),r.getEnglish(),r.getNote())+"</tr>");
+                    allTrDatas.append("<tr>"+String.format(tableCiTrTd,Integer.toString(i),hasAudio?String.format(yydDemoWordTd,r.getUuid(),r.getContent()):r.getContent(),r.getIPA(),r.getMWFY(),r.getSpell(),r.getEnglish(),r.getNote())+"</tr>");
                 }else if (tableType == 2){
-                    allTrDatas.append("<tr>"+String.format(tableSentenceTrTd,Integer.toString(i),hasAudio?String.format(yydDemoWordTd,r.getBaseCode(),r.getContent()):r.getContent(),r.getIPA(),r.getMWFY(),r.getFree_trans(),r.getEnglish(),r.getNote())+"</tr>");
+                    allTrDatas.append("<tr>"+String.format(tableSentenceTrTd,Integer.toString(i),hasAudio?String.format(yydDemoWordTd,r.getUuid(),r.getContent()):r.getContent(),r.getIPA(),r.getMWFY(),r.getFree_trans(),r.getEnglish(),r.getNote())+"</tr>");
+                }
+
+                File vFile = new File(Constant.ROOT_FILE_DIR + "/audio/" + t.getId() + "/" + r.getUuid()+".wav");
+                if (vFile.exists()){
+                    FileUtil.fileCopy(vFile.getAbsolutePath(),saveFile.getParentFile().getAbsolutePath() + "/voice/" + r.getUuid() + ".wav");
                 }
             }
         }
@@ -196,7 +204,6 @@ public class ExportUtil {
         saveFile = new File(saveFile.getAbsolutePath().substring(0,saveFile.getAbsolutePath().lastIndexOf("."))+".html");
 
         saveContentToFile(saveFile.getAbsolutePath(), allSb.toString());
-        FileUtil.copy(Constant.ROOT_FILE_DIR + "/HtmlData/voice", saveFile.getParentFile().getAbsolutePath() + "/voice");
 
     }
 
@@ -239,28 +246,35 @@ public class ExportUtil {
         StringBuilder allSb = new StringBuilder();
 
         if (choiceDir != null) {
-            StringBuilder allTrDatas = new StringBuilder();
-            for (SameIPABean bean: beans){
-                allTrDatas.append("<tr>"+String.format(yydTrTd,bean.getIpa(),bean.getCount(),demoWordTYZHCH(bean,fileFormat))+"</tr>");
-            }
-            allSb.append(String.format(yydHtml, "同音字汇词汇", "同音字汇词汇", tbHeader, String.format(yydtr,horTh), allTrDatas));
-
             File outDir = new File(choiceDir.getAbsolutePath() + "/" + t.getTitle());
             if (!outDir.exists()) {
                 outDir.mkdir();
             }
-            saveContentToFile(outDir.getAbsolutePath() + "/同音字汇词汇" + ".html", allSb.toString());
+
             FileUtil.copy(Constant.ROOT_FILE_DIR + "/HtmlData/voice", outDir.getAbsolutePath() + "/voice");
+
+            StringBuilder allTrDatas = new StringBuilder();
+            for (SameIPABean bean: beans){
+                allTrDatas.append("<tr>"+String.format(yydTrTd,bean.getIpa(),bean.getCount(),demoWordTYZHCH(bean,fileFormat,outDir.getAbsolutePath() + "/voice"))+"</tr>");
+            }
+            allSb.append(String.format(yydHtml, "同音字汇词汇", "同音字汇词汇", tbHeader, String.format(yydtr,horTh), allTrDatas));
+
+            saveContentToFile(outDir.getAbsolutePath() + "/同音字汇词汇" + ".html", allSb.toString());
         }
     }
 
-    private static String demoWordTYZHCH(SameIPABean bean,int fileFormat){
+    private static String demoWordTYZHCH(SameIPABean bean,int fileFormat,String voiceUrl){
         StringBuilder sb = new StringBuilder();
         for (Record r:bean.getSameRecords()){
             if (fileFormat == 1){
                 sb.append(r.getContent()+";");
             }else{
-                sb.append(String.format(yydDemoWordTd,r.getBaseCode(),r.getContent())+ ";");
+                sb.append(String.format(yydDemoWordTd,r.getUuid(),r.getContent())+ ";");
+            }
+
+            File vFile = new File(Constant.ROOT_FILE_DIR + "/audio/" + r.getBaseId() + "/" + r.getUuid()+".wav");
+            if (vFile.exists()){
+                FileUtil.fileCopy(vFile.getAbsolutePath(),voiceUrl + "/" + r.getUuid() + ".wav");
             }
         }
         if (sb.length()!=0){
@@ -347,7 +361,7 @@ public class ExportUtil {
                     CollectBean bean = data.get(i - 1);
                     r.createCell(0).setCellValue(bean.getKey());
                     r.createCell(1).setCellValue(bean.getCount());
-                    r.createCell(2).setCellValue(demoWordStr(bean,demoWordCount,ipaFirst,fileFormat));
+                    r.createCell(2).setCellValue(demoWordStr(bean,demoWordCount,ipaFirst,fileFormat,""));
                 }
             }
         }else {
@@ -390,7 +404,7 @@ public class ExportUtil {
             CollectBean bean = datas.get(i);
             tempRow.createCell(lineNowItemCount * 3).setCellValue(bean.getKey());
             tempRow.createCell(lineNowItemCount * 3 + 1).setCellValue(bean.getCount());
-            tempRow.createCell(lineNowItemCount * 3 + 2).setCellValue(demoWordStr(bean,demoWordCount,ipaFirst,fileFormat));
+            tempRow.createCell(lineNowItemCount * 3 + 2).setCellValue(demoWordStr(bean,demoWordCount,ipaFirst,fileFormat,""));
             lineNowItemCount++;
         }
         return nowRowIndex;
@@ -403,6 +417,13 @@ public class ExportUtil {
         StringBuilder allSb = new StringBuilder();
 
         if (choiceDir != null) {
+            File outDir = new File(choiceDir.getAbsolutePath() + "/" + t.getTitle());
+            if (!outDir.exists()) {
+                outDir.mkdir();
+            }
+            FileUtil.copy(Constant.ROOT_FILE_DIR + "/HtmlData/voice", outDir.getAbsolutePath() + "/voice");
+
+
             if (!isHor) {
                 StringBuilder yydAllTr = new StringBuilder();
 
@@ -413,7 +434,7 @@ public class ExportUtil {
 
                 for (int i = 0; i < data.size(); i++) {
                     CollectBean tempBean = data.get(i);
-                    yydAllTr.append(String.format(new String( "<tr>"+yydTrTd+"</tr>"), tempBean.getKey(), tempBean.getCount(), demoWordStr(tempBean, demoWordCount, ipaFirst, fileFormat)));
+                    yydAllTr.append(String.format(new String( "<tr>"+yydTrTd+"</tr>"), tempBean.getKey(), tempBean.getCount(), demoWordStr(tempBean, demoWordCount, ipaFirst, fileFormat,outDir.getAbsolutePath() + "/voice")));
                 }
                 allSb.append(String.format(yydHtml, "声韵调", "声韵调", tbHeader, String.format(yydtr,horTh), yydAllTr));
             } else {
@@ -427,31 +448,24 @@ public class ExportUtil {
                 }
                 
                 StringBuilder allTrData = new StringBuilder();
-                putDataToTd(lineSmCount,maxCount,smDatas,allTrData,demoWordCount,ipaFirst,fileFormat);
-                allTrData.append(insertNullTd(allTrData,maxCount));
-                putDataToTd(lineYmCount,maxCount,ymDatas,allTrData,demoWordCount,ipaFirst,fileFormat);
-                allTrData.append(insertNullTd(allTrData,maxCount));
-                putDataToTd(lineSdCount,maxCount,sdDatas,allTrData,demoWordCount,ipaFirst,fileFormat);
-                allTrData.append(insertNullTd(allTrData,maxCount));
+                putDataToTd(outDir.getAbsolutePath() + "/voice",lineSmCount,maxCount,smDatas,allTrData,demoWordCount,ipaFirst,fileFormat);
+                allTrData.append(insertNullTd(new StringBuilder(),maxCount));
+                putDataToTd(outDir.getAbsolutePath() + "/voice",lineYmCount,maxCount,ymDatas,allTrData,demoWordCount,ipaFirst,fileFormat);
+                allTrData.append(insertNullTd(new StringBuilder(),maxCount));
+                putDataToTd(outDir.getAbsolutePath() + "/voice",lineSdCount,maxCount,sdDatas,allTrData,demoWordCount,ipaFirst,fileFormat);
 
                 allSb.append(String.format(yydHtml, "声韵调", "声韵调", tbHeader, String.format(yydtr,th), allTrData));
             }
-
-            File outDir = new File(choiceDir.getAbsolutePath() + "/" + t.getTitle());
-            if (!outDir.exists()) {
-                outDir.mkdir();
-            }
             saveContentToFile(outDir.getAbsolutePath() + "/声韵调" + ".html", allSb.toString());
-            FileUtil.copy(Constant.ROOT_FILE_DIR + "/HtmlData/voice", outDir.getAbsolutePath() + "/voice");
         }
     }
 
-    private static void putDataToTd(int lineMaxItemCount,int maxCount,List<CollectBean> datas,StringBuilder allTrData,int demoWordCount,boolean ipaFirst,int fileFormat){
+    private static void putDataToTd(String vPath,int lineMaxItemCount,int maxCount,List<CollectBean> datas,StringBuilder allTrData,int demoWordCount,boolean ipaFirst,int fileFormat){
         int lineNowItemCount = 0;
         StringBuilder tempTrData = new StringBuilder();
         for (int i = 0;i<datas.size();i++){
             CollectBean bean = datas.get(i);
-            tempTrData.append(String.format(yydTrTd,bean.getKey(),bean.getCount(),demoWordStr(bean,demoWordCount,ipaFirst,fileFormat)));
+            tempTrData.append(String.format(yydTrTd,bean.getKey(),bean.getCount(),demoWordStr(bean,demoWordCount,ipaFirst,fileFormat,vPath)));
             lineNowItemCount++;
 
             if (lineNowItemCount==lineMaxItemCount){
@@ -465,7 +479,7 @@ public class ExportUtil {
         }
     }
 
-    public static String demoWordStr (CollectBean tempBean,int demoWordCount,boolean ipaFirst,int fileFormat){
+    public static String demoWordStr (CollectBean tempBean,int demoWordCount,boolean ipaFirst,int fileFormat,String vPath){
         StringBuilder yyDemoWordAllTd = new StringBuilder();
 
         int realDemoSize = tempBean.getDemoRecordList().size();
@@ -477,7 +491,11 @@ public class ExportUtil {
             } else if (fileFormat == 1) {
                 yyDemoWordAllTd.append(String.format(yyDemoWordWithVoiceTd, tempDw));
             } else if (fileFormat == 2) {
-                yyDemoWordAllTd.append(String.format(yydDemoWordTd, r.getBaseCode(), tempDw));
+                yyDemoWordAllTd.append(String.format(yydDemoWordTd, r.getUuid(), tempDw));
+                File vFile = new File(Constant.ROOT_FILE_DIR + "/audio/" + r.getBaseId() + "/" + r.getUuid()+".wav");
+                if (vFile.exists()){
+                    FileUtil.fileCopy(vFile.getAbsolutePath(),vPath + "/" + r.getUuid() + ".wav");
+                }
             }
         }
         yyDemoWordAllTd.deleteCharAt(yyDemoWordAllTd.length() - 1);

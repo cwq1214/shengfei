@@ -21,13 +21,15 @@ public class YBCCBean {
     private List ymList;
     private List sdList;
 
+    public YBCCBean() {
+    }
+
     public YBCCBean(Record record) {
         this.record = record;
         this.wrongReason = "";
 
-        //TODO 根据record里的uuid查询获得demoVideoLoc和demoPicLoc
-        demoVideoLoc = FileUtil.getFullLocation(Constant.DEMO_Video_DIR,record.getUuid());
-        demoPicLoc = FileUtil.getFullLocation(Constant.DEMO_PIC_DIR,record.getUuid());
+        this.demoVideoLoc = FileUtil.getFullLocation(Constant.DEMO_Video_DIR,record.getUuid());
+        this.demoPicLoc = FileUtil.getFullLocation(Constant.DEMO_PIC_DIR,record.getUuid());
     }
 
     public Record getRecord() {

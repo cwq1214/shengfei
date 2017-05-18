@@ -35,7 +35,7 @@
       </VBox>
    </top>
     <right>
-        <VBox alignment="BOTTOM_CENTER">
+        <VBox alignment="TOP_CENTER">
             <TabPane>
                 <Tab text="图片" closable="false">
                     <VBox alignment="CENTER">
@@ -48,6 +48,9 @@
                     </AnchorPane>
                 </Tab>
             </TabPane>
+            <BorderPane.margin>
+                <Insets top="10"/>
+            </BorderPane.margin>
         </VBox>
     </right>
 </BorderPane>

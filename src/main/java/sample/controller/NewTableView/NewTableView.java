@@ -64,6 +64,20 @@ public class NewTableView extends BaseController {
     public static final int NewHuaYuType = 3;
 
 
+    TableColumn<YBCCBean,String> hideCol = new TableColumn<>("条目筛选");
+    TableColumn<YBCCBean,String> doneCol = new TableColumn<>("录音状态");
+    TableColumn<YBCCBean,String> codeCol = new TableColumn<>("编码");
+    TableColumn<YBCCBean,String> rankCol = new TableColumn<>("分级");
+    TableColumn<YBCCBean,String> contentCol = new TableColumn<>("单字");
+    TableColumn<YBCCBean,String> yunCol = new TableColumn<>("音韵");
+    TableColumn<YBCCBean,String> IPACol = new TableColumn<>("音标注音");
+    TableColumn<YBCCBean,String> spellCol = new TableColumn<>("拼音");
+    TableColumn<YBCCBean,String> englishCol = new TableColumn<>("英语");
+    TableColumn<YBCCBean,String> noteCol = new TableColumn<>("注释");
+    TableColumn<YBCCBean,String> recordDateCol = new TableColumn<>("录音日期");
+    TableColumn<YBCCBean,String> mwfyCol = new TableColumn<>("民族文字或方言字");
+    TableColumn<YBCCBean,String> duiyiCol = new TableColumn<>("普通话词对译");
+
     private int newType;
 
     private ContextMenu contextMenu;
@@ -111,23 +125,24 @@ public class NewTableView extends BaseController {
     }
 
     public void setAfterAnalyDatas(ObservableList afterAnalyDatas) {
-        this.afterAnalyDatas = afterAnalyDatas;
+        System.out.println("aaaa:"+afterAnalyDatas.size());
+        this.afterAnalyDatas = FXCollections.observableArrayList(afterAnalyDatas);
     }
 
     public TableView getTableView() {
         return tableView;
     }
 
-    public ObservableList<Record> getKeepAndHaveIPAOriginDatas(){
-        List<Record> result = new ArrayList<>();
-        for (int i = 0; i < originDatas.size(); i++) {
-            YBCCBean bean = ((YBCCBean) originDatas.get(i));
-            if (bean.getRecord().getHide().equals("0") && !(bean.getRecord().getIPA() == null || bean.getRecord().getIPA().equals(""))){
-                result.add(bean.getRecord());
-            }
-        }
-        return FXCollections.observableArrayList(result);
-    }
+//    public ObservableList<Record> getKeepAndHaveIPAOriginDatas(){
+//        List<Record> result = new ArrayList<>();
+//        for (int i = 0; i < originDatas.size(); i++) {
+//            YBCCBean bean = ((YBCCBean) originDatas.get(i));
+//            if (bean.getRecord().getHide().equals("0") && !(bean.getRecord().getIPA() == null || bean.getRecord().getIPA().equals(""))){
+//                result.add(bean.getRecord());
+//            }
+//        }
+//        return FXCollections.observableArrayList(result);
+//    }
 
     public TableColumn searchColumn(ContextMenu menu){
         for (int i = 0; i < tableView.getColumns().size(); i++) {
@@ -145,6 +160,7 @@ public class NewTableView extends BaseController {
         MenuItem hideItem = new MenuItem("隐藏列");
         MenuItem searchItem = new MenuItem("在当前列查找");
         MenuItem replaceItem = new MenuItem("在当前列替换");
+        MenuItem showHideItem = new MenuItem("显示隐藏列");
 
         sortItem.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -270,14 +286,21 @@ public class NewTableView extends BaseController {
                 }
             }
         });
+        showHideItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                setupAllColumn();
+            }
+        });
 
         sortItem.setDisable(!sort);
         changeItem.setDisable(!change);
         hideItem.setDisable(!hide);
+        showHideItem.setDisable(!hide);
         searchItem.setDisable(!search);
         replaceItem.setDisable(!replace);
 
-        headerMenu.getItems().addAll(sortItem,hideItem,searchItem,replaceItem);
+        headerMenu.getItems().addAll(sortItem,hideItem,searchItem,replaceItem,showHideItem);
         return headerMenu;
     }
 
@@ -385,6 +408,7 @@ public class NewTableView extends BaseController {
                 YBCCBean bean = (YBCCBean) tableDatas.get(tableView.getSelectionModel().getSelectedIndex());
                 int oIndex = originDatas.indexOf(bean);
 
+                imgView.setImage(null);
                 delFile(bean.getDemoPicLoc());
 
                 bean.setDemoPicLoc("");
@@ -397,6 +421,7 @@ public class NewTableView extends BaseController {
                 YBCCBean bean = (YBCCBean) tableDatas.get(tableView.getSelectionModel().getSelectedIndex());
                 int oIndex = originDatas.indexOf(bean);
 
+                mediaView.reset();
                 delFile(bean.getDemoVideoLoc());
 
                 bean.setDemoVideoLoc("");
@@ -408,7 +433,7 @@ public class NewTableView extends BaseController {
 
     private void delFile(String path){
         File f = new File(path);
-        f.delete();
+        System.out.println(f.delete());
     }
 
     private File copyFile2Path (File f ,Record r,boolean isVideo){
@@ -423,7 +448,7 @@ public class NewTableView extends BaseController {
 
         String path = dir + "/" + r.getUuid() + fileType;
         FileUtil.fileCopy(f.getAbsolutePath(),path);
-        return null;
+        return new File(path);
     }
 
     @Override
@@ -444,9 +469,13 @@ public class NewTableView extends BaseController {
 
                     if (demoP != null && demoP.length() != 0){
                         try {
-                            Image img = new Image(new FileInputStream(demoP));
+                            FileInputStream fip = new FileInputStream(demoP);
+                            Image img = new Image(fip);
                             imgView.setImage(img);
+                            fip.close();
                         } catch (FileNotFoundException e) {
+                            e.printStackTrace();
+                        } catch (IOException e) {
                             e.printStackTrace();
                         }
                     }else {
@@ -454,6 +483,8 @@ public class NewTableView extends BaseController {
                     }
                     if (demoV != null && demoV.length() != 0){
                         mediaView.setMediaPath(demoV);
+                    }else {
+                        mediaView.setMediaPath("");
                     }
 
                 }
@@ -746,19 +777,6 @@ public class NewTableView extends BaseController {
 
         Callback<TableColumn<YBCCBean,String>,TableCell<YBCCBean,String>> callback = (TableColumn<YBCCBean,String> col) -> new MyTFCell(new DefaultStringConverter());
 
-        TableColumn<YBCCBean,String> hideCol = new TableColumn<>("条目筛选");
-        TableColumn<YBCCBean,String> doneCol = new TableColumn<>("录音状态");
-        TableColumn<YBCCBean,String> codeCol = new TableColumn<>("编码");
-        TableColumn<YBCCBean,String> rankCol = new TableColumn<>("分级");
-        TableColumn<YBCCBean,String> contentCol = new TableColumn<>("单字");
-        TableColumn<YBCCBean,String> yunCol = new TableColumn<>("音韵");
-        TableColumn<YBCCBean,String> IPACol = new TableColumn<>("音标注音");
-        TableColumn<YBCCBean,String> spellCol = new TableColumn<>("拼音");
-        TableColumn<YBCCBean,String> englishCol = new TableColumn<>("英语");
-        TableColumn<YBCCBean,String> noteCol = new TableColumn<>("注释");
-        TableColumn<YBCCBean,String> recordDateCol = new TableColumn<>("录音日期");
-        TableColumn<YBCCBean,String> mwfyCol = new TableColumn<>("民族文字或方言字");
-        TableColumn<YBCCBean,String> duiyiCol = new TableColumn<>("普通话词对译");
 
         //设置header contextMenu
         hideCol.setContextMenu(setupHeaderMenu(true,true,true,true,true));
@@ -1015,31 +1033,31 @@ public class NewTableView extends BaseController {
             }
         });
 
+        originDatas = DbHelper.getInstance().searchTempRecord2YBCCBean(((Table) preData).getDatatype(), ((Table) preData).getId());
 
-        if (newType == NewWordType){
-            contentCol.setText("单字");
-
-            originDatas = DbHelper.getInstance().searchTempRecord2YBCCBean("0", ((Table) preData).getId());
-            tableView.getColumns().addAll(hideCol,doneCol,codeCol,rankCol,contentCol,yunCol,IPACol,spellCol,englishCol,noteCol,recordDateCol);
-        }else if (newType == NewCiType){
-            contentCol.setText("词条");
-
-            originDatas = DbHelper.getInstance().searchTempRecord2YBCCBean("1",((Table) preData).getId());
-            tableView.getColumns().addAll(hideCol,doneCol,codeCol,rankCol,contentCol,mwfyCol,IPACol,spellCol,englishCol,noteCol,recordDateCol);
-        }else if (newType == NewSentenceType){
-            contentCol.setText("句子");
-
-            originDatas = DbHelper.getInstance().searchTempRecord2YBCCBean("2",((Table) preData).getId());
-            tableView.getColumns().addAll(hideCol,doneCol,codeCol,rankCol,contentCol,mwfyCol,IPACol,duiyiCol,noteCol,englishCol,recordDateCol);
-        }else if (newType == NewHuaYuType){
-
-        }
+        setupAllColumn();
 
         tableDatas = FXCollections.observableArrayList(originDatas);
         tableTopCtl.setAllCount(tableDatas.size());
         tableTopCtl.setNowIndex(0);
 
         tableView.setItems(tableDatas);
+    }
+
+    public void setupAllColumn(){
+        tableView.getColumns().clear();
+        if (newType == NewWordType){
+            contentCol.setText("单字");
+            tableView.getColumns().addAll(hideCol,doneCol,codeCol,rankCol,contentCol,yunCol,IPACol,spellCol,englishCol,noteCol,recordDateCol);
+        }else if (newType == NewCiType){
+            contentCol.setText("词条");
+            tableView.getColumns().addAll(hideCol,doneCol,codeCol,rankCol,contentCol,mwfyCol,IPACol,spellCol,englishCol,noteCol,recordDateCol);
+        }else if (newType == NewSentenceType){
+            contentCol.setText("句子");
+            tableView.getColumns().addAll(hideCol,doneCol,codeCol,rankCol,contentCol,mwfyCol,IPACol,duiyiCol,noteCol,englishCol,recordDateCol);
+        }else if (newType == NewHuaYuType){
+
+        }
     }
 
     @Override

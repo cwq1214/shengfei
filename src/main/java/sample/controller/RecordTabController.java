@@ -31,12 +31,15 @@ import org.apache.poi.xwpf.usermodel.TOC;
 import sample.Main;
 import sample.controller.widget.VideoPlayer;
 import sample.entity.Record;
+import sample.entity.Table;
 import sample.util.*;
 
 /**
  * Created by chenweiqi on 2017/4/18.
  */
 public class RecordTabController extends BaseController {
+
+    public Table t;
 
     @FXML
     Tab tab_recordVideo;
@@ -198,6 +201,8 @@ public class RecordTabController extends BaseController {
         }else if (tableType.equals("2")){
             tableView.getColumns().addAll(doneCol, codeCol, rankCol, contentCol, mwfyCol, IPACol, freeTran, noteCol, englishCol, recordDateCol);
         }
+
+        recordDatas = DbHelper.getInstance().searchTempRecordKeep(tableType,t.getId());
 
         tableView.setItems(recordDatas);
     }

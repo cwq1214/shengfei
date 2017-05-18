@@ -22,6 +22,7 @@ import javafx.scene.media.MediaView;
 import javafx.util.Duration;
 import sample.Main;
 import sample.controller.BaseController;
+import sample.util.FileUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -89,7 +90,7 @@ public class VideoPlayer extends VBox implements Initializable {
 
 
     public void setMediaPath(String path){
-        this.path = path;
+        this.path = FileUtil.mp4Copy2Temp(path);
         if (mediaPlayer!=null){
             if (mediaPlayer.getStatus()== MediaPlayer.Status.PLAYING){
                 mediaPlayer.stop();
@@ -104,13 +105,20 @@ public class VideoPlayer extends VBox implements Initializable {
         File file = new File(path);
         if (file.exists()){
             bCanPlay = true;
-
             init = true;
+            onPlayClick();
+            mediaPlayer.pause();
         }else {
             bCanPlay = false;
             init = false;
             return;
         }
+    }
+
+    public void reset(){
+        mediaPlayer.dispose();
+        media = null;
+        setMediaPath("");
     }
 
     @FXML
@@ -168,12 +176,12 @@ public class VideoPlayer extends VBox implements Initializable {
         if (mediaPlayer.getStatus()== MediaPlayer.Status.PLAYING){
             mediaPlayer.pause();
         }else if (mediaPlayer.getStatus() == MediaPlayer.Status.STOPPED
-                ||mediaPlayer.getStatus() == MediaPlayer.Status.PAUSED){
+                ||mediaPlayer.getStatus() == MediaPlayer.Status.PAUSED || mediaPlayer.getStatus() == MediaPlayer.Status.READY){
 
             if (mediaPlayer.getStatus()== MediaPlayer.Status.STOPPED){
                 sl_progress.setValue(0);
-
             }
+
             mediaPlayer.play();
         }
     }

@@ -2,6 +2,7 @@ package sample.controller.MutiAnaly;
 
 import sample.entity.Record;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -9,6 +10,25 @@ import java.util.List;
  */
 public class MutiAnalyBean {
     private Record baseRecord;
-    private List<String> otherIPA;
+    private List<Record> otherIPA;
 
+    public MutiAnalyBean() {
+        otherIPA = new ArrayList<>();
+    }
+
+    public Record getBaseRecord() {
+        return baseRecord;
+    }
+
+    public void setBaseRecord(Record baseRecord) {
+        this.baseRecord = baseRecord;
+    }
+
+    public List<Record> getOtherIPA() {
+        return otherIPA;
+    }
+
+    public void addOtherIPA(Record r) {
+        this.otherIPA.add(r);
+    }
 }

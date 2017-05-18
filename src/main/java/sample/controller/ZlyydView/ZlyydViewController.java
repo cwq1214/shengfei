@@ -36,6 +36,15 @@ public class ZlyydViewController extends BaseController {
     //整理音韵调
     public boolean isZLYYD;
 
+    public boolean isZLYYD() {
+        return isZLYYD;
+    }
+
+    public void setZLYYD(boolean ZLYYD) {
+        isZLYYD = ZLYYD;
+        setSomethingDisable();
+    }
+
     private ObservableList<YBCCBean> originDatas;
     private ObservableList<CollectBean> smDatas;
     private ObservableList<CollectBean> ymDatas;
@@ -259,7 +268,6 @@ public class ZlyydViewController extends BaseController {
         super.prepareInit();
         setupBtnAction();
         setupChoiceBoxContent();
-        setSomethingDisable();
     }
 
     public void setSomethingDisable(){
