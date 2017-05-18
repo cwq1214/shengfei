@@ -67,7 +67,7 @@ public class DialogUtil {
             );
         }else if (fileType == FILE_CHOOSE_TYPE_AC){
             fileChooser.getExtensionFilters().addAll(
-                    new FileChooser.ExtensionFilter("Audacity", "*.ac")
+                    new FileChooser.ExtensionFilter("Audacity", "*.txt")
             );
         }else if (fileType == FILE_CHOOSE_TYPE_WAV){
             fileChooser.getExtensionFilters().addAll(

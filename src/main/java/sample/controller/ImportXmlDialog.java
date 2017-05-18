@@ -246,6 +246,11 @@ public class ImportXmlDialog extends BaseController {
             System.out.println(Arrays.toString(xml.toArray()));
             tb_xmlName.getItems().clear();
             tb_xmlName.getItems().addAll(xml);
+        }else if (importType ==3 ){
+            List<String> xml = AudioCityHelper.getInstance().readAttrTitle(xmlFilePath.getPath());
+            System.out.println(Arrays.toString(xml.toArray()));
+            tb_xmlName.getItems().clear();
+            tb_xmlName.getItems().addAll(xml);
         }
     }
 
