@@ -381,6 +381,17 @@ public class NewTableView extends BaseController {
                 if (ourFile != null){
                     bean.setDemoPicLoc(ourFile.getAbsolutePath());
                     ((YBCCBean) originDatas.get(oIndex)).setDemoPicLoc(ourFile.getAbsolutePath());
+
+                    try {
+                        FileInputStream fip = new FileInputStream(ourFile);Image img = new Image(fip);
+                        imgView.setImage(img);
+                        fip.close();
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
                 }
             }
         });
@@ -399,6 +410,8 @@ public class NewTableView extends BaseController {
                 if (ourFile != null){
                     bean.setDemoVideoLoc(ourFile.getAbsolutePath());
                     ((YBCCBean) originDatas.get(oIndex)).setDemoVideoLoc(ourFile.getAbsolutePath());
+
+                    mediaView.setMediaPath(ourFile.getAbsolutePath());
                 }
             }
         });

@@ -40,7 +40,9 @@ public class AudioCityHelper {
             String tempLine;
             while ((tempLine= reader.readLine())!=null){
                 System.out.println("line" + tempLine);
-                if (tempLine.replaceAll(" ","").startsWith("^\\s{0,1}0.0")){
+                String[] temp = tempLine.split("\t");
+                System.out.println("fff:"+temp[0]);
+                if (temp[0].equalsIgnoreCase("0.0")){
                     System.out.println("start "+tempLine);
                 }
             }

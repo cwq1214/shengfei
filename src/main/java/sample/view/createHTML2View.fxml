@@ -20,34 +20,40 @@
     <HBox spacing="16">
         <VBox>
             <Label text="调查表清单"></Label>
-            <ListView></ListView>
+            <ListView fx:id="tableList"></ListView>
         </VBox>
 
         <VBox alignment="CENTER" spacing="8">
-            <Button prefWidth="80" prefHeight="30"><graphic><ImageView fitWidth="15" fitHeight="15"><image><Image url="@../resource/img/right1.png"></Image></image></ImageView></graphic></Button>
-            <Button prefWidth="80" prefHeight="30"><graphic><ImageView fitWidth="15" fitHeight="15"><image><Image url="@../resource/img/left1.png"></Image></image></ImageView></graphic></Button>
-            <Button prefWidth="80" prefHeight="30"><graphic><ImageView fitWidth="15" fitHeight="15"><image><Image url="@../resource/img/right2.png"></Image></image></ImageView></graphic></Button>
-            <Button prefWidth="80" prefHeight="30"><graphic><ImageView fitWidth="15" fitHeight="15"><image><Image url="@../resource/img/left2.png"></Image></image></ImageView></graphic></Button>
+            <Button prefWidth="80" prefHeight="30" fx:id="b1" onAction="#b1Click"></Button>
+            <Button prefWidth="80" prefHeight="30" fx:id="b2" onAction="#b2Click"></Button>
+            <Button prefWidth="80" prefHeight="30" fx:id="b3" onAction="#b3Click"></Button>
+            <Button prefWidth="80" prefHeight="30" fx:id="b4" onAction="#b4Click"></Button>
         </VBox>
 
         <VBox>
             <Label text="已选择的调查表"></Label>
-            <ListView></ListView>
+            <ListView fx:id="tableSelectList"></ListView>
         </VBox>
     </HBox>
 
     <HBox spacing="16">
-        <CheckBox text="网页是否显示说话人"></CheckBox>
-        <CheckBox text="是否显示元数据"></CheckBox>
+        <CheckBox text="网页是否显示说话人" fx:id="showSpeaker"></CheckBox>
+        <CheckBox text="是否显示元数据" fx:id="showMeta"></CheckBox>
     </HBox>
 
     <HBox alignment="CENTER_LEFT" spacing="16">
-        <RadioButton text="页面不分页显示"></RadioButton>
-        <RadioButton text="页面分页显示"></RadioButton>
+        <RadioButton text="页面不分页显示" fx:id="noSplit">
+            <toggleGroup>
+                <ToggleGroup fx:id="a" />
+            </toggleGroup>
+        </RadioButton>
+        <RadioButton text="页面分页显示" fx:id="split" toggleGroup="$a"></RadioButton>
         <HBox alignment="CENTER">
             <Label text="每页"></Label>
-            <ChoiceBox>
+            <ChoiceBox fx:id="lineCB">
                 <String fx:value="200"></String>
+                <String fx:value="300"></String>
+                <String fx:value="500"></String>
             </ChoiceBox>
             <Label text="行"></Label>
         </HBox>
@@ -57,18 +63,22 @@
 
         <HBox alignment="CENTER_LEFT" >
             <Label text="字词分栏"></Label>
-            <ChoiceBox>
+            <ChoiceBox fx:id="flCB">
+                <String fx:value="1"></String>
                 <String fx:value="2"></String>
+                <String fx:value="3"></String>
             </ChoiceBox>
 
             <Label text="对齐"><HBox.margin><Insets><left>16</left></Insets></HBox.margin></Label>
-            <ChoiceBox>
+            <ChoiceBox fx:id="alignCB">
                 <String fx:value="左对齐"></String>
+                <String fx:value="居中"></String>
+                <String fx:value="右对齐"></String>
             </ChoiceBox>
 
 
         </HBox>
-        <Button text="输出调查表网页" wrapText="false" AnchorPane.rightAnchor="0">
+        <Button text="输出调查表网页" wrapText="false" AnchorPane.rightAnchor="0" onAction="#outHtmlClick">
         </Button>
     </AnchorPane>
 

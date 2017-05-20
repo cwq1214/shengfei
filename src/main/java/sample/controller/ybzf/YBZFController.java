@@ -75,8 +75,6 @@ public class YBZFController extends BaseController {
             flowPane = otherFlowPane;
         }
 
-
-    public void setupPaneWithType(String type){
         ObservableList<CodeIPABase> temp = paneDatas.filtered(new Predicate<CodeIPABase>() {
             @Override
             public boolean test(CodeIPABase codeIPABase) {

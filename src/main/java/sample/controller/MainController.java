@@ -309,9 +309,10 @@ public class MainController extends BaseController {
                     return;
                 }
 
-                ExportUtil.exportTable(mStage,
-                        vc.getTableView(),
-                        ((Table) vc.preData));
+//                ExportUtil.exportTable(mStage,
+//                        vc.getTableView(),
+//                        ((Table) vc.preData));
+                ExportUtil.exportTable(((Table) vc.preData));
             }
         }
     }
@@ -712,7 +713,7 @@ public class MainController extends BaseController {
     @FXML
     private void onCreateHTMLFileClick()throws IOException{
         CreateHTMLFileController controller = ViewUtil.getInstance().openCreateHTMLFileView();
-        controller.getmStage().setAlwaysOnTop(true);
+        controller.mStage.initModality(Modality.APPLICATION_MODAL);
         controller.show();
 //        Tab tab = WidgetUtil.createNewTab("调查表元数据信息", controller.getmParent());
 //        WidgetUtil.addTabToTabPane(contentPane, tab, true);

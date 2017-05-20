@@ -132,6 +132,23 @@ public class ZlyydViewController extends BaseController {
     private Button sdPSB;
 
     @FXML
+    private Button smAs;
+
+    @FXML
+    private Button ymAs;
+
+    @FXML
+    private Button sdAs;
+
+    @FXML
+    private Button smAns;
+
+    @FXML
+    private Button ymAns;
+
+    @FXML
+    private Button sdAns;
+    @FXML
     public void radioBtnClick(){
         lineSmCount.setDisable(vBtn.isSelected());
         lineYmCount.setDisable(vBtn.isSelected());
@@ -372,6 +389,72 @@ public class ZlyydViewController extends BaseController {
                 preSetDatas(3);
             }
         });
+        smAs.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                allSelect(1);
+            }
+        });
+        ymAs.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                allSelect(2);
+            }
+        });
+        sdAs.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                allSelect(3);
+            }
+        });
+        smAns.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                allUnSelect(1);
+            }
+        });
+        ymAns.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                allUnSelect(2);
+            }
+        });
+        sdAns.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                allUnSelect(3);
+            }
+        });
+    }
+
+    public void allUnSelect(int type){
+        ListView temp = null;
+        if (type == 1){
+            temp = smList;
+        }else if (type == 2){
+            temp = ymList;
+        }else if (type == 3){
+            temp = sdList;
+        }
+        for (int i = 0; i < temp.getItems().size(); i++) {
+            CollectBean bean = ((CollectBean) temp.getItems().get(i));
+            bean.setIsChecked(false);
+        }
+    }
+
+    public void allSelect(int type){
+        ListView temp = null;
+        if (type == 1){
+            temp = smList;
+        }else if (type == 2){
+            temp = ymList;
+        }else if (type == 3){
+            temp = sdList;
+        }
+        for (int i = 0; i < temp.getItems().size(); i++) {
+            CollectBean bean = ((CollectBean) temp.getItems().get(i));
+            bean.setIsChecked(true);
+        }
     }
 
     public void doAction(ListView temp,int nowIndex,int newIndex){
@@ -607,6 +690,7 @@ public class ZlyydViewController extends BaseController {
                 if (i == temp.size()){
                     CollectBean bean = new CollectBean(keyWord,1,type);
                     bean.addDemoReocrd(cBean.getRecord());
+                    bean.setIsChecked(true);
                     temp.add(bean);
                 }
             }

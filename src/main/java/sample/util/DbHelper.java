@@ -290,6 +290,25 @@ public class DbHelper {
         return FXCollections.observableArrayList(resultList);
     }
 
+    public ObservableList<Record> searchTempRecordKeepAndDone(int baseId){
+        List<Record> result = new ArrayList<>();
+        try {
+            Dao<Record,String> recordDao = DaoManager.createDao(connectionSource,Record.class);
+            result = recordDao.queryForEq("baseId",baseId);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return FXCollections.observableArrayList(result).filtered(new Predicate<Record>() {
+            @Override
+            public boolean test(Record record) {
+//                if (record.getHide().equals("0") && record.getDone().equalsIgnoreCase("1")){
+                    return true;
+//                }
+//                return false;
+            }
+        });
+    }
+
     public ObservableList<Record> searchTempRecordKeep(String dataType,int baseId){
         List<Record> result = new ArrayList<>();
         try {

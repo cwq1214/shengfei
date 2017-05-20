@@ -13,7 +13,7 @@
          <children>
             <VBox alignment="CENTER">
                <children>
-                  <Label text="Excel表头">
+                  <Label text="用户Excel表">
                      <VBox.margin>
                         <Insets bottom="10.0" top="10.0" />
                      </VBox.margin></Label>
@@ -22,7 +22,7 @@
             </VBox>
              <VBox alignment="CENTER">
                  <children>
-                     <Label text="导入字段">
+                     <Label text="声飞数据表">
                      <VBox.margin>
                         <Insets bottom="10.0" top="10.0" />
                      </VBox.margin></Label>

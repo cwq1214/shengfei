@@ -895,6 +895,8 @@ public class RewriteViewController extends BaseController {
                 if (rowIndex  <= tableDatas.size() - 1){
                     tableView.scrollTo(rowIndex);
                     tableView.edit(rowIndex, column);
+                    tableView.getSelectionModel().clearSelection();
+                    tableView.getSelectionModel().select(rowIndex);
                     selectIndex(rowIndex);
                 }
             }
