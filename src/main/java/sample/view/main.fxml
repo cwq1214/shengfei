@@ -58,6 +58,9 @@
               <MenuItem mnemonicParsing="false" onAction="#tyzhchClick" text="%menu_data_tyzhch" />
                 <SeparatorMenuItem />
               <MenuItem mnemonicParsing="false" onAction="#dbdzClick" text="%menu_data_dbdz" />
+                <MenuItem mnemonicParsing="false" onAction="#tqjzchClick" text="%menu_data_tqjzch"/>
+                <MenuItem mnemonicParsing="false" onAction="#tqjzClick" text="%menu_data_tqjz"/>
+                <MenuItem mnemonicParsing="false" onAction="#tqchClick" text="%menu_data_tqch"/>
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="%menu_option">

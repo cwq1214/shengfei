@@ -40,6 +40,47 @@ public class MainController extends BaseController {
     @FXML
     public Label changeLanguage;
 
+    @FXML
+    public void tqjzchClick(){
+        int index = contentPane.getSelectionModel().getSelectedIndex();
+        if (index != -1){
+            Tab tab = contentPane.getTabs().get(index);
+            if (tab.getUserData() !=  null && tab.getUserData() instanceof NewTableView){
+                NewTableView vc = ((NewTableView) tab.getUserData());
+                Table t = ((Table) vc.preData);
+
+                if (t.getDatatype().equalsIgnoreCase("2")){
+                    TqjzchViewController tvc = ((TqjzchViewController) ViewUtil.getInstance().showView("view/tqjzchView.fxml", "选择格式", -1, -1, ""));
+                    tvc.setListener(new TqjzchViewController.TqjzchListener() {
+                        @Override
+                        public void exportExcel(int format) {
+                            ExportUtil.exportSentenceJZCH(t,true,format);
+                        }
+
+                        @Override
+                        public void exportHtml() {
+                            ExportUtil.exportSentenceJZCH(t,false,-1);
+                        }
+                    });
+
+                    tvc.mStage.initModality(Modality.APPLICATION_MODAL);
+                    tvc.mStage.setResizable(false);
+                    tvc.mStage.show();
+                }
+            }
+        }
+    }
+
+    @FXML
+    public void tqjzClick(){
+
+    }
+
+    @FXML
+    public void tqchClick(){
+
+    }
+
     public void openImpExcelBindWithType(int type){
         ImportExcelBindViewController vc = ((ImportExcelBindViewController) ViewUtil.getInstance().showView("view/impExcelBindView.fxml", "导入数据绑定", -1, -1, this));
         vc.setExcelType(type);
@@ -303,15 +344,8 @@ public class MainController extends BaseController {
         int tabIndex = contentPane.getSelectionModel().getSelectedIndex();
         if (tabIndex != -1) {
             Tab t = contentPane.getTabs().get(tabIndex);
-            if (t.getUserData() != null && (t.getUserData() instanceof NewTableView)) {
-                NewTableView vc = ((NewTableView) t.getUserData());
-                if (vc.getNewType() == NewTableView.NewHuaYuType) {
-                    return;
-                }
-
-//                ExportUtil.exportTable(mStage,
-//                        vc.getTableView(),
-//                        ((Table) vc.preData));
+            if (t.getUserData() != null && (t.getUserData() instanceof NewTableView || t.getUserData() instanceof RecordTabController || t.getUserData() instanceof RewriteViewController)) {
+                BaseController vc = ((BaseController) t.getUserData());
                 ExportUtil.exportTable(((Table) vc.preData));
             }
         }

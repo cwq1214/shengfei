@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.controller.NewTableView.TqjzchViewController">
+   <center>
+      <VBox prefHeight="100.0" prefWidth="100.0" spacing="10.0" BorderPane.alignment="CENTER">
+         <children>
+            <Label text="请选择导出格式">
+               <VBox.margin>
+                  <Insets top="10.0" />
+               </VBox.margin>
+            </Label>
+            <RadioButton fx:id="normalFormat" mnemonicParsing="false" selected="true" text="普通词表格式">
+               <toggleGroup>
+                  <ToggleGroup fx:id="a" />
+               </toggleGroup></RadioButton>
+            <RadioButton fx:id="horFormat" mnemonicParsing="false" text="横排格式" toggleGroup="$a" />
+         </children>
+         <BorderPane.margin>
+            <Insets left="10.0" />
+         </BorderPane.margin>
+      </VBox>
+   </center>
+   <bottom>
+      <HBox alignment="CENTER" prefWidth="300.0" BorderPane.alignment="CENTER">
+         <children>
+            <Button mnemonicParsing="false" onAction="#exportExcelClick" prefWidth="75.0" text="输出excel">
+               <HBox.margin>
+                  <Insets right="10.0" />
+               </HBox.margin></Button>
+            <Button mnemonicParsing="false" onAction="#exportHtmlClick" prefWidth="75.0" text="输出网页">
+               <HBox.margin>
+                  <Insets bottom="10.0" top="10.0" />
+               </HBox.margin></Button>
+         </children></HBox>
+   </bottom>
+</BorderPane>

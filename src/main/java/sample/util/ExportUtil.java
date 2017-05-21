@@ -30,6 +30,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 
 /**
  * Created by Bee on 2017/5/5.
@@ -802,5 +803,114 @@ public class ExportUtil {
     }
     public static void exportTableXML(String savePath,TableView tableView,Table t){
         XMLHelper.getInstance().writeToXml(savePath,tableView,t);
+    }
+
+    public static void exportSentenceJZCH(Table t,boolean isExportExcel,int excelFormat){
+        ObservableList<YBCCBean> tempBeans = DbHelper.getInstance().searchTempRecord2YBCCBean(t.getDatatype(),t.getId());
+        tempBeans = tempBeans.filtered(new Predicate<YBCCBean>() {
+            @Override
+            public boolean test(YBCCBean bean) {
+                if (bean.getRecord().getIPA() != null && bean.getRecord().getIPA().length() != 0){
+                    return true;
+                }
+                return false;
+            }
+        });
+
+        File saveFile = DialogUtil.exportTqjzchDialog(isExportExcel);
+        String saveType = saveFile.getName().substring(saveFile.getName().lastIndexOf(".") + 1);
+
+
+        if (isExportExcel){
+            Workbook workbook;
+            if (saveType.equals("xls")){
+                workbook = new HSSFWorkbook();
+            }else{
+                workbook = new XSSFWorkbook();
+            }
+
+            Sheet sheet = workbook.createSheet();
+
+            if (excelFormat == 0){
+                for (int i = 0; i <= tempBeans.size(); i++) {
+                    if (i == 0){
+                        Row row = sheet.createRow(i);
+                        row.createCell(0).setCellValue("编码");
+                        row.createCell(1).setCellValue("音标注音");
+                        row.createCell(2).setCellValue("民文方言");
+                        row.createCell(3).setCellValue("普通话对译");
+                        continue;
+                    }
+
+                    YBCCBean bean = tempBeans.get(i - 1);
+                    String[] ipas = bean.getRecord().getIPA().split(" ");
+                    String[] mwfys = bean.getRecord().getMWFY().split(" ");
+                    String[] frees = bean.getRecord().getFree_trans().split(" ");
+                    for (int j = 0; j < ipas.length; j++) {
+                        Row row = sheet.createRow(sheet.getLastRowNum() + 1);
+                        row.createCell(0).setCellValue(bean.getRecord().getBaseCode());
+                        row.createCell(1).setCellValue(ipas[j]);
+
+                        if (j < mwfys.length) {
+                            row.createCell(2).setCellValue(mwfys[j]);
+                        }
+
+                        if (j < frees.length) {
+                            row.createCell(3).setCellValue(frees[j]);
+                        }
+                    }
+                }
+            }else {
+                int maxLen = 0;
+                for (YBCCBean bean :tempBeans) {
+                    String[] ipas = bean.getRecord().getIPA().split(" ");
+                    String[] mwfys = bean.getRecord().getMWFY().split(" ");
+                    String[] frees = bean.getRecord().getFree_trans().split(" ");
+                    
+                    Row r1 = sheet.createRow(sheet.getLastRowNum() == 0?1:sheet.getLastRowNum()+1);
+                    Row r2 = sheet.createRow(sheet.getLastRowNum()+1);
+                    Row r3 = sheet.createRow(sheet.getLastRowNum()+1);
+
+                    r1.createCell(0).setCellValue(bean.getRecord().getBaseCode());
+                    r2.createCell(0).setCellValue(bean.getRecord().getBaseCode());
+                    r3.createCell(0).setCellValue(bean.getRecord().getBaseCode());
+
+                    if (ipas.length > maxLen ){
+                        maxLen = ipas.length;
+                    }
+
+                    for (int i = 0; i < ipas.length; i++) {
+                        r1.createCell(i + 1).setCellValue(ipas[i]);
+
+                        if (i<mwfys.length){
+                            r2.createCell(i + 1).setCellValue(mwfys[i]);
+                        }
+
+                        if (i<frees.length){
+                            r3.createCell(i + 1).setCellValue(frees[i]);
+                        }
+                    }
+                }
+                Row first = sheet.createRow(0);
+                for (int i = 0; i <= maxLen; i++) {
+                    if (i == 0){
+                        first.createCell(0).setCellValue("编码");
+                    }else {
+                        first.createCell(i).setCellValue("词"+i);
+                    }
+                }
+            }
+
+            try {
+                FileOutputStream outputStream = new FileOutputStream(saveFile);
+                workbook.write(outputStream);
+                outputStream.flush();
+                outputStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+
     }
 }
