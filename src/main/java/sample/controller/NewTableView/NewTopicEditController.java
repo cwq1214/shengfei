@@ -20,7 +20,10 @@ import sample.diycontrol.TopicSpeak.TopicSpeakCtlListener;
 import sample.entity.Record;
 import sample.entity.Topic;
 import sample.util.DbHelper;
+import sample.util.TextUtil;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -104,13 +107,13 @@ public class NewTopicEditController extends BaseController {
     @FXML
     public void addSpeakerBtnClick(){
         Topic t = new Topic(kindCode,baseId);
-        topics.add(t);
 
         if (scrollVBox.getChildren().size() != 0){
             scrollVBox.getChildren().add(new Separator());
         }
 
         scrollVBox.getChildren().add(getTSC(t));
+        topics.add(t);
     }
 
     @FXML
@@ -165,6 +168,22 @@ public class NewTopicEditController extends BaseController {
     }
 
     private TopicSpeakControl getTSC(Topic t){
+        String spkId;
+
+        if (TextUtil.isEmpty(t.speakerId)) {
+            if (topics.size() != 0) {
+                String lastTopicSpId = topics.get(topics.size() - 1).speakerId;
+                if (TextUtil.isEmpty(lastTopicSpId)) {
+                    spkId = "SPK1";
+                } else {
+                    String index = lastTopicSpId.split("SPK")[1];
+                    spkId = "SPK" + (Integer.valueOf(index) + 1);
+                }
+            } else {
+                spkId = "SPK1";
+            }
+            t.speakerId = spkId;
+        }
         TopicSpeakControl ctl = new TopicSpeakControl();
         ctl.setupTextFieldContent(t);
         ctl.setUserData(t);
@@ -204,6 +223,17 @@ public class NewTopicEditController extends BaseController {
             }
         });
         return ctl;
+    }
+
+    public List<Topic> getTopics(){
+        int realIndex = 0;
+        for (int i = 0; i < scrollVBox.getChildren().size(); i++) {
+            Node n = scrollVBox.getChildren().get(i);
+            if (n instanceof TopicSpeakControl){
+                ((TopicSpeakControl) scrollVBox.getChildren().get(i)).makeTopicMsg(topics.get(realIndex++));
+            }
+        }
+        return topics;
     }
 
 }

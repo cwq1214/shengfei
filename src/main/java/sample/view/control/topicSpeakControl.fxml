@@ -10,7 +10,7 @@
    <children>
       <HBox alignment="CENTER_LEFT" prefHeight="30.0">
          <children>
-            <Label minWidth="120.0" text="(SPK1)音标注音">
+            <Label minWidth="120.0" text="(SPK1)音标注音" fx:id="ipaLB">
                <HBox.margin>
                   <Insets left="5.0" />
                </HBox.margin></Label>
@@ -21,7 +21,7 @@
          </children></HBox>
        <HBox alignment="CENTER_LEFT" prefHeight="30.0">
            <children>
-               <Label minWidth="120.0" text="(SPK1)民文或方言">
+               <Label minWidth="120.0" text="(SPK1)民文或方言" fx:id="mwfyLB">
                    <HBox.margin>
                        <Insets left="5.0" />
                    </HBox.margin></Label>
@@ -32,7 +32,7 @@
            </children></HBox>
        <HBox alignment="CENTER_LEFT" prefHeight="30.0">
            <children>
-               <Label minWidth="120.0" text="(SPK1)拼音">
+               <Label minWidth="120.0" text="(SPK1)拼音" fx:id="spellLB">
                    <HBox.margin>
                        <Insets left="5.0" />
                    </HBox.margin></Label>
@@ -43,7 +43,7 @@
            </children></HBox>
        <HBox alignment="CENTER_LEFT" prefHeight="30.0">
            <children>
-               <Label minWidth="120.0" text="(SPK1)普通话词对译">
+               <Label minWidth="120.0" text="(SPK1)普通话词对译" fx:id="wordTranLB">
                    <HBox.margin>
                        <Insets left="5.0" />
                    </HBox.margin></Label>
@@ -54,7 +54,7 @@
            </children></HBox>
        <HBox alignment="CENTER_LEFT" prefHeight="30.0">
            <children>
-               <Label minWidth="120.0" text="(SPK1)普通话意译">
+               <Label minWidth="120.0" text="(SPK1)普通话意译" fx:id="freeTranLB">
                    <HBox.margin>
                        <Insets left="5.0" />
                    </HBox.margin></Label>
@@ -65,7 +65,7 @@
            </children></HBox>
        <HBox alignment="CENTER_LEFT" prefHeight="30.0">
            <children>
-               <Label minWidth="120.0" text="(SPK1)注释">
+               <Label minWidth="120.0" text="(SPK1)注释" fx:id="noteLB">
                    <HBox.margin>
                        <Insets left="5.0" />
                    </HBox.margin></Label>
@@ -76,7 +76,7 @@
            </children></HBox>
        <HBox alignment="CENTER_LEFT" prefHeight="30.0">
            <children>
-               <Label minWidth="120.0" text="(SPK1)英语">
+               <Label minWidth="120.0" text="(SPK1)英语" fx:id="englishLB">
                    <HBox.margin>
                        <Insets left="5.0" />
                    </HBox.margin></Label>

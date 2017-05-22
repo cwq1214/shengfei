@@ -347,6 +347,9 @@ public class MainController extends BaseController {
             if (t.getUserData() != null && (t.getUserData() instanceof NewTableView || t.getUserData() instanceof RecordTabController || t.getUserData() instanceof RewriteViewController)) {
                 BaseController vc = ((BaseController) t.getUserData());
                 ExportUtil.exportTable(((Table) vc.preData));
+            }else if (t.getUserData()!=null&&t.getUserData() instanceof NewTopicEditController){
+                NewTopicEditController newTopicEditController  = (NewTopicEditController) t.getUserData();
+                ExportUtil.exportTopic(newTopicEditController.getTopics());
             }
         }
     }

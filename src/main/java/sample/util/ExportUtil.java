@@ -6,6 +6,7 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.stage.DirectoryChooser;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import jdk.nashorn.internal.ir.IfNode;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -15,6 +16,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.bytedeco.javacpp.annotation.Const;
+import org.dom4j.DocumentException;
 import sample.controller.NewTableView.TempTableView;
 import sample.controller.YBCC.YBCCBean;
 import sample.controller.ZlyydView.CollectBean;
@@ -22,12 +24,11 @@ import sample.controller.ZlyydView.SameIPABean;
 import sample.entity.Record;
 import sample.entity.Speaker;
 import sample.entity.Table;
+import sample.entity.Topic;
 
 import java.awt.*;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
@@ -145,7 +146,95 @@ public class ExportUtil {
         exportTable(null,temp.getTableView(),t);
     }
 
+    public static void exportTopic(List<Topic> topics){
+        File saveFile = DialogUtil.exportFileDialog(new FileChooser.ExtensionFilter[]{new FileChooser.ExtensionFilter("2003Excel文件", "*.xls")
+                ,new FileChooser.ExtensionFilter("2007Excel文件", "*.xlsx")
+                ,new FileChooser.ExtensionFilter("网页", "*.html")
+                ,new FileChooser.ExtensionFilter("手机版网页", "*.htm")
+                ,new FileChooser.ExtensionFilter("exmaralda", "*.exb")
+                ,new FileChooser.ExtensionFilter("声飞xml", "*.xml")
+        });
+
+        if (saveFile==null){
+            return;
+        }
+        if (saveFile.getPath().endsWith(".xlsx")
+                ||saveFile.getPath().endsWith(".xls")){
+            Workbook workbook ;
+            if (saveFile.getPath().endsWith(".xlsx")){
+                workbook = new XSSFWorkbook();
+            }else {
+                workbook = new HSSFWorkbook();
+            }
+            Sheet sheet = workbook.createSheet();
+            String[] title = {"音标注音","民文或方言转写","拼音","普通话词对译","普通话意译","注释","英语"};
+            String[] fieldName = {"ipa","mwfy","spell","word_trans","free_trans","note","english"};
+            for (int i=0,max = topics.size();i<max;i++){
+                if (i == 0){
+                    Row row = sheet.createRow(i);
+                    for (int j=0;j<title.length;j++){
+                        Cell cell = row.createCell(j);
+                        cell.setCellValue(title[j]);
+                    }
+                }
+
+
+                Row row = sheet.createRow(i+1);
+
+
+                for (int j=0,max2=fieldName.length;j<max2;j++){
+                    Cell cell = row.createCell(j);
+                    try {
+                        Field field = Topic.class.getDeclaredField(fieldName[j]);
+                        Object o = field.get(topics.get(i));
+                        String value = o==null?"":o.toString();
+                        cell.setCellValue(value);
+                    } catch (NoSuchFieldException e) {
+                        e.printStackTrace();
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+
+            }
+            try {
+                FileOutputStream fileOutputStream = new FileOutputStream(saveFile);
+                workbook.write(fileOutputStream);
+                fileOutputStream.flush();
+                fileOutputStream.close();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }else if (saveFile.getPath().endsWith(".exb")){
+            try {
+                EXBHelper.getInstance().writeToEXB(saveFile,topics);
+            } catch (DocumentException e) {
+                e.printStackTrace();
+            } catch (NoSuchFieldException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }else if (saveFile.getPath().endsWith(".xml")){
+
+        }else if (saveFile.getPath().endsWith("html")
+                ||saveFile.getPath().endsWith("htm")){
+
+        }
+
+
+
+        return;
+
+    }
+
     public static void exportTable(Stage stage, TableView tableView,Table t){
+
+
         File saveFile = DialogUtil.exportFileDialog();
         String saveType = saveFile.getName().substring(saveFile.getName().lastIndexOf(".") + 1);
 
@@ -911,6 +1000,17 @@ public class ExportUtil {
             }
         }
 
+
+    }
+
+
+    private void exportTopic2XML(){
+
+    }
+    private void exportTopic2Excel(){
+
+    }
+    private void exportTopic2Html(){
 
     }
 }

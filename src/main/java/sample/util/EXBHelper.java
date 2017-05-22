@@ -12,10 +12,7 @@ import org.dom4j.io.OutputFormat;
 import org.dom4j.io.SAXReader;
 import org.dom4j.io.XMLWriter;
 import sample.controller.YBCC.YBCCBean;
-import sample.entity.BindResult;
-import sample.entity.Record;
-import sample.entity.Speaker;
-import sample.entity.Table;
+import sample.entity.*;
 
 import java.io.*;
 import java.lang.reflect.Field;
@@ -101,6 +98,239 @@ public class EXBHelper {
         createXML(speaker,filePath,filePath.replace(".exb",Constant.AUDIO_SUFFIX),records,tableType);
     }
 
+
+    public void writeToEXB(File savePath, List<Topic> topics) throws DocumentException, NoSuchFieldException, IllegalAccessException {
+        Document document = DocumentHelper.createDocument();
+        Element basic = document.addElement("basic-transcription");
+        Element head = basic.addElement("head");
+        head.add(DocumentHelper.parseText("<meta-information>\n" +
+                "<ud-meta-information>\n" +
+                "</ud-meta-information>\n" +
+                "</meta-information>").getRootElement());
+        Element speakertable = head.addElement("speakertable");
+
+        for (int i = 0,max = topics.size();i<max;i++){
+            Element speaker = speakertable.addElement("speaker");
+            speaker.addAttribute("id",topics.get(i).speakerId);
+            speaker.addElement("abbreviation");
+        }
+        Element basic_body = basic.addElement("basic-body");
+        Element tb_type = basic_body.addElement("tb-type");
+        tb_type.addText("HY");
+        Element common_timeLine = basic_body.addElement("common-timeline");
+        for (int i = 0,max = topics.size();i<max;i++){
+            Element tli = common_timeLine.addElement("tli");
+            tli.addAttribute("id","T"+i);
+            tli.addAttribute("time","0.0");
+        }
+
+        String[] category = {"IPA","MWFY","PYIN","PTHWORD","PTHSENT","NOTE","EN"};
+        String[] fieldName = {"ipa","mwfy","spell","word_trans","free_trans","note","english"};
+        String[] type = {"t","a","a","a","a","a","a"};
+
+        for (int i = 0,max = topics.size();i<max;i++){
+
+            for (int j=0 , max2 =fieldName.length;j<max2;j++){
+                Element tier = basic_body.addElement("tier");
+                tier.addAttribute("id","TIE0");
+                tier.addAttribute("speaker",topics.get(i).speakerId);
+                tier.addAttribute("category",category[j]);
+                tier.addAttribute("type",type[j]);
+                tier.addAttribute("display-name",topics.get(i).speakerId+"["+category[j]+"]");
+
+                Element event = tier.addElement("event");
+                event.addAttribute("start","T0");
+                event.addAttribute("end","T1");
+                Field field = Topic.class.getDeclaredField(fieldName[j]);
+                Object value = field.get(topics.get(i));
+                event.addText(value==null?"":value.toString());
+            }
+
+
+        }
+        basic.add(DocumentHelper.parseText("<tierformat-table>\n" +
+                "<timeline-item-format show-every-nth-numbering=\"1\" show-every-nth-absolute=\"1\" absolute-time-format=\"time\" miliseconds-digits=\"1\"/>\n" +
+                "<tier-format tierref=\"EMPTY\">\n" +
+                "<property name=\"row-height-calculation\">Generous</property>\n" +
+                "<property name=\"fixed-row-height\">10</property>\n" +
+                "<property name=\"font-face\">Plain</property>\n" +
+                "<property name=\"font-color\">white</property>\n" +
+                "<property name=\"chunk-border-style\">solid</property>\n" +
+                "<property name=\"bg-color\">white</property>\n" +
+                "<property name=\"text-alignment\">Left</property>\n" +
+                "<property name=\"chunk-border-color\">#R00G00B00</property>\n" +
+                "<property name=\"chunk-border\">\n" +
+                "</property>\n" +
+                "<property name=\"font-size\">2</property>\n" +
+                "<property name=\"font-name\">Times New Roman</property>\n" +
+                "</tier-format>\n" +
+                "<tier-format tierref=\"COLUMN-LABEL\">\n" +
+                "<property name=\"row-height-calculation\">Generous</property>\n" +
+                "<property name=\"fixed-row-height\">10</property>\n" +
+                "<property name=\"font-face\">Plain</property>\n" +
+                "<property name=\"font-color\">black</property>\n" +
+                "<property name=\"chunk-border-style\">solid</property>\n" +
+                "<property name=\"bg-color\">lightGray</property>\n" +
+                "<property name=\"text-alignment\">Left</property>\n" +
+                "<property name=\"chunk-border-color\">#R00G00B00</property>\n" +
+                "<property name=\"chunk-border\">\n" +
+                "</property>\n" +
+                "<property name=\"font-size\">7</property>\n" +
+                "<property name=\"font-name\">Times New Roman</property>\n" +
+                "</tier-format>\n" +
+                "<tier-format tierref=\"TIE6\">\n" +
+                "<property name=\"row-height-calculation\">Generous</property>\n" +
+                "<property name=\"fixed-row-height\">10</property>\n" +
+                "<property name=\"font-face\">Plain</property>\n" +
+                "<property name=\"font-color\">black</property>\n" +
+                "<property name=\"chunk-border-style\">solid</property>\n" +
+                "<property name=\"bg-color\">white</property>\n" +
+                "<property name=\"text-alignment\">Left</property>\n" +
+                "<property name=\"chunk-border-color\">#R00G00B00</property>\n" +
+                "<property name=\"chunk-border\">\n" +
+                "</property>\n" +
+                "<property name=\"font-size\">14</property>\n" +
+                "<property name=\"font-name\">Times New Roman</property>\n" +
+                "</tier-format>\n" +
+                "<tier-format tierref=\"ROW-LABEL\">\n" +
+                "<property name=\"row-height-calculation\">Generous</property>\n" +
+                "<property name=\"fixed-row-height\">10</property>\n" +
+                "<property name=\"font-face\">Bold</property>\n" +
+                "<property name=\"font-color\">black</property>\n" +
+                "<property name=\"chunk-border-style\">solid</property>\n" +
+                "<property name=\"bg-color\">lightGray</property>\n" +
+                "<property name=\"text-alignment\">Left</property>\n" +
+                "<property name=\"chunk-border-color\">#R00G00B00</property>\n" +
+                "<property name=\"chunk-border\">\n" +
+                "</property>\n" +
+                "<property name=\"font-size\">10</property>\n" +
+                "<property name=\"font-name\">Times New Roman</property>\n" +
+                "</tier-format>\n" +
+                "<tier-format tierref=\"TIE5\">\n" +
+                "<property name=\"row-height-calculation\">Generous</property>\n" +
+                "<property name=\"fixed-row-height\">10</property>\n" +
+                "<property name=\"font-face\">Plain</property>\n" +
+                "<property name=\"font-color\">black</property>\n" +
+                "<property name=\"chunk-border-style\">solid</property>\n" +
+                "<property name=\"bg-color\">white</property>\n" +
+                "<property name=\"text-alignment\">Left</property>\n" +
+                "<property name=\"chunk-border-color\">#R00G00B00</property>\n" +
+                "<property name=\"chunk-border\">\n" +
+                "</property>\n" +
+                "<property name=\"font-size\">14</property>\n" +
+                "<property name=\"font-name\">宋体</property>\n" +
+                "</tier-format>\n" +
+                "<tier-format tierref=\"TIE4\">\n" +
+                "<property name=\"row-height-calculation\">Generous</property>\n" +
+                "<property name=\"fixed-row-height\">10</property>\n" +
+                "<property name=\"font-face\">Plain</property>\n" +
+                "<property name=\"font-color\">black</property>\n" +
+                "<property name=\"chunk-border-style\">solid</property>\n" +
+                "<property name=\"bg-color\">white</property>\n" +
+                "<property name=\"text-alignment\">Left</property>\n" +
+                "<property name=\"chunk-border-color\">#R00G00B00</property>\n" +
+                "<property name=\"chunk-border\">\n" +
+                "</property>\n" +
+                "<property name=\"font-size\">14</property>\n" +
+                "<property name=\"font-name\">宋体</property>\n" +
+                "</tier-format>\n" +
+                "<tier-format tierref=\"TIE3\">\n" +
+                "<property name=\"row-height-calculation\">Generous</property>\n" +
+                "<property name=\"fixed-row-height\">10</property>\n" +
+                "<property name=\"font-face\">Plain</property>\n" +
+                "<property name=\"font-color\">black</property>\n" +
+                "<property name=\"chunk-border-style\">solid</property>\n" +
+                "<property name=\"bg-color\">white</property>\n" +
+                "<property name=\"text-alignment\">Left</property>\n" +
+                "<property name=\"chunk-border-color\">#R00G00B00</property>\n" +
+                "<property name=\"chunk-border\">\n" +
+                "</property>\n" +
+                "<property name=\"font-size\">14</property>\n" +
+                "<property name=\"font-name\">Times New Roman</property>\n" +
+                "</tier-format>\n" +
+                "<tier-format tierref=\"TIE2\">\n" +
+                "<property name=\"row-height-calculation\">Generous</property>\n" +
+                "<property name=\"fixed-row-height\">10</property>\n" +
+                "<property name=\"font-face\">Plain</property>\n" +
+                "<property name=\"font-color\">black</property>\n" +
+                "<property name=\"chunk-border-style\">solid</property>\n" +
+                "<property name=\"bg-color\">white</property>\n" +
+                "<property name=\"text-alignment\">Left</property>\n" +
+                "<property name=\"chunk-border-color\">#R00G00B00</property>\n" +
+                "<property name=\"chunk-border\">\n" +
+                "</property>\n" +
+                "<property name=\"font-size\">14</property>\n" +
+                "<property name=\"font-name\">Times New Roman</property>\n" +
+                "</tier-format>\n" +
+                "<tier-format tierref=\"TIE1\">\n" +
+                "<property name=\"row-height-calculation\">Generous</property>\n" +
+                "<property name=\"fixed-row-height\">10</property>\n" +
+                "<property name=\"font-face\">Plain</property>\n" +
+                "<property name=\"font-color\">black</property>\n" +
+                "<property name=\"chunk-border-style\">solid</property>\n" +
+                "<property name=\"bg-color\">white</property>\n" +
+                "<property name=\"text-alignment\">Left</property>\n" +
+                "<property name=\"chunk-border-color\">#R00G00B00</property>\n" +
+                "<property name=\"chunk-border\">\n" +
+                "</property>\n" +
+                "<property name=\"font-size\">14</property>\n" +
+                "<property name=\"font-name\">宋体</property>\n" +
+                "</tier-format>\n" +
+                "<tier-format tierref=\"TIE0\">\n" +
+                "<property name=\"row-height-calculation\">Generous</property>\n" +
+                "<property name=\"fixed-row-height\">10</property>\n" +
+                "<property name=\"font-face\">Plain</property>\n" +
+                "<property name=\"font-color\">black</property>\n" +
+                "<property name=\"chunk-border-style\">solid</property>\n" +
+                "<property name=\"bg-color\">white</property>\n" +
+                "<property name=\"text-alignment\">Left</property>\n" +
+                "<property name=\"chunk-border-color\">#R00G00B00</property>\n" +
+                "<property name=\"chunk-border\">\n" +
+                "</property>\n" +
+                "<property name=\"font-size\">14</property>\n" +
+                "<property name=\"font-name\">Times New Roman</property>\n" +
+                "</tier-format>\n" +
+                "<tier-format tierref=\"EMPTY-EDITOR\">\n" +
+                "<property name=\"row-height-calculation\">Generous</property>\n" +
+                "<property name=\"fixed-row-height\">10</property>\n" +
+                "<property name=\"font-face\">Plain</property>\n" +
+                "<property name=\"font-color\">white</property>\n" +
+                "<property name=\"chunk-border-style\">solid</property>\n" +
+                "<property name=\"bg-color\">lightGray</property>\n" +
+                "<property name=\"text-alignment\">Left</property>\n" +
+                "<property name=\"chunk-border-color\">#R00G00B00</property>\n" +
+                "<property name=\"chunk-border\">\n" +
+                "</property>\n" +
+                "<property name=\"font-size\">2</property>\n" +
+                "<property name=\"font-name\">Times New Roman</property>\n" +
+                "</tier-format>\n" +
+                "<tier-format tierref=\"SUB-ROW-LABEL\">\n" +
+                "<property name=\"row-height-calculation\">Generous</property>\n" +
+                "<property name=\"fixed-row-height\">10</property>\n" +
+                "<property name=\"font-face\">Plain</property>\n" +
+                "<property name=\"font-color\">black</property>\n" +
+                "<property name=\"chunk-border-style\">solid</property>\n" +
+                "<property name=\"bg-color\">white</property>\n" +
+                "<property name=\"text-alignment\">Right</property>\n" +
+                "<property name=\"chunk-border-color\">#R00G00B00</property>\n" +
+                "<property name=\"chunk-border\">\n" +
+                "</property>\n" +
+                "<property name=\"font-size\">8</property>\n" +
+                "<property name=\"font-name\">Times New Roman</property>\n" +
+                "</tier-format>\n" +
+                "</tierformat-table>").getRootElement());
+
+
+        try {
+            XMLWriter xmlWriter = new XMLWriter(new FileOutputStream(savePath,false), OutputFormat.createPrettyPrint());
+            xmlWriter.write(document);
+            xmlWriter.close();
+            ToastUtil.show("导出成功");
+        } catch (Exception e) {
+            ToastUtil.show("导出失败");
+            e.printStackTrace();
+        }
+    }
 
     private void createXML(Speaker speakerBean, String savePath, String media_url, List<Record> records, int tableType){
         Document doc = DocumentHelper.createDocument();

@@ -7,6 +7,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.input.ContextMenuEvent;
@@ -44,6 +45,21 @@ public class TopicSpeakControl extends VBox {
 
     @FXML
     private TextField englishTF;
+    @FXML
+    Label ipaLB;
+    @FXML
+    Label mwfyLB;
+    @FXML
+    Label spellLB;
+    @FXML
+    Label wordTranLB;
+    @FXML
+    Label freeTranLB;
+    @FXML
+    Label noteLB;
+    @FXML
+    Label englishLB;
+
 
 
     private ContextMenu contextMenu;
@@ -108,6 +124,14 @@ public class TopicSpeakControl extends VBox {
         freeTranTF.setText(t.getFree_trans());
         noteTF.setText(t.getNote());
         englishTF.setText(t.getEnglish());
+
+        ipaLB.setText("("+t.speakerId+")音标注音");
+        mwfyLB.setText("("+t.speakerId+")民文或方言");
+        spellLB.setText("("+t.speakerId+")拼音");
+        wordTranLB.setText("("+t.speakerId+")普通话词对译");
+        freeTranLB.setText("("+t.speakerId+")普通话意译");
+        noteLB.setText("("+t.speakerId+")注释");
+        englishLB.setText("("+t.speakerId+")英语");
     }
 
     private void setupTextFieldActive(){
@@ -214,6 +238,17 @@ public class TopicSpeakControl extends VBox {
         });
     }
 
+    public Topic getInputData(){
+        Topic topic = new Topic();
+        topic.setIpa(ipaTF.getText());
+        topic.setMwfy(mwfyTF.getText());
+        topic.setSpell(spellTF.getText());
+        topic.setWord_trans(wordTranTF.getText());
+        topic.setFree_trans(freeTranTF.getText());
+        topic.setNote(noteTF.getText());
+        topic.setEnglish(englishTF.getText());
+        return topic;
+    }
 
     public Topic makeTopicMsg(Topic t){
         t.setIpa(ipaTF.getText());

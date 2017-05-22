@@ -138,6 +138,23 @@ public class DialogUtil {
         }
         return saveFile;
     }
+    public static File exportFileDialog(FileChooser.ExtensionFilter[] filters){
+        FileChooser chooser = new FileChooser();
+        chooser.setTitle("请选择文件");
+        chooser.getExtensionFilters().addAll(filters);
+        chooser.setInitialDirectory(
+                new File(System.getProperty("user.home"))
+        );
+        Stage stage = new Stage();
+        File saveFile = chooser.showSaveDialog(stage);
+        if (saveFile == null) {
+            throw new RuntimeException("save File can not be null");
+        }
+        if (!saveFile.exists()) {
+            saveFile.getParentFile().mkdirs();
+        }
+        return saveFile;
+    }
 
     public static List<File> chooseAudio(boolean multiSel){
 
