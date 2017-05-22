@@ -89,6 +89,29 @@ public class DialogUtil {
         return choiceDir;
     }
 
+    public static File exportTqjzchDialog(boolean isExcel){
+        FileChooser chooser = new FileChooser();
+        chooser.setTitle("请选择文件");
+        if (isExcel){
+            chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("2003Excel文件", "*.xls"));
+            chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("2007Excel文件", "*.xlsx"));
+        }else{
+            chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("网页", "*.html"));
+        }
+        chooser.setInitialDirectory(
+                new File(System.getProperty("user.home"))
+        );
+        Stage stage = new Stage();
+        File saveFile = chooser.showSaveDialog(stage);
+        if (saveFile == null) {
+            throw new RuntimeException("save File can not be null");
+        }
+        if (!saveFile.exists()) {
+            saveFile.getParentFile().mkdirs();
+        }
+        return saveFile;
+    }
+
     public static File exportFileDialog(){
         FileChooser chooser = new FileChooser();
         chooser.setTitle("请选择文件");

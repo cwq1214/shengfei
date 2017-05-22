@@ -158,7 +158,7 @@ public class ExportUtil {
         }else if (saveType.equals("xml")){
             exportTableXML(saveFile.getAbsolutePath(),tableView,t);
         }else if (saveType.equals("txt")){
-            exportTableAC(saveFile.getAbsolutePath(),tableView,t);
+
         }
 
     }

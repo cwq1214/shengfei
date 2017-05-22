@@ -29,10 +29,14 @@ public class YBZFController extends BaseController {
     }
 
     @FXML
-    private FlowPane flowPane;
+    private FlowPane yyFlowPane;
 
     @FXML
-    private ChoiceBox typeChoice;
+    private FlowPane fyFlowPane;
+
+    @FXML
+    private FlowPane otherFlowPane;
+
 
     @FXML
     public void okBtnClick(){
@@ -47,25 +51,30 @@ public class YBZFController extends BaseController {
     @Override
     public void prepareInit() {
         super.prepareInit();
-        flowPane.setVgap(1);
-        flowPane.setHgap(1);
+        yyFlowPane.setVgap(1);
+        yyFlowPane.setHgap(1);
+        fyFlowPane.setVgap(1);
+        fyFlowPane.setHgap(1);
+        otherFlowPane.setVgap(1);
+        otherFlowPane.setHgap(1);
 
         paneDatas = DbHelper.getInstance().searchAllCodeIPABase();
-        setupChoiceBox();
-    }
 
-    public void setupChoiceBox(){
-        typeChoice.setItems(FXCollections.observableArrayList("元音字符","辅音字符","其他字符"));
-        typeChoice.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                setupPaneWithType(typeChoice.getSelectionModel().getSelectedIndex() + 1 + "");
-            }
-        });
-        typeChoice.getSelectionModel().select(0);
+        setupPaneWithType("1");
+        setupPaneWithType("2");
+        setupPaneWithType("3");
     }
 
     public void setupPaneWithType(String type){
+        FlowPane flowPane = null;
+        if (type.equalsIgnoreCase("1")){
+            flowPane = yyFlowPane;
+        }else if (type.equalsIgnoreCase("2")){
+            flowPane = fyFlowPane;
+        }else if (type.equalsIgnoreCase("3")){
+            flowPane = otherFlowPane;
+        }
+
         ObservableList<CodeIPABase> temp = paneDatas.filtered(new Predicate<CodeIPABase>() {
             @Override
             public boolean test(CodeIPABase codeIPABase) {
@@ -75,8 +84,6 @@ public class YBZFController extends BaseController {
                 return false;
             }
         });
-
-        flowPane.getChildren().clear();
 
         for (int i = 0; i < temp.size(); i++) {
             CodeIPABase ipaBase = temp.get(i);

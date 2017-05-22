@@ -1,7 +1,9 @@
 package sample.controller;
 
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -9,8 +11,11 @@ import javafx.scene.control.*;
 import javafx.scene.web.WebView;
 import javafx.stage.Modality;
 import sample.controller.ImportExcel.ImportExcelBindViewController;
+import sample.controller.MutiAnaly.AfterAnalyViewController;
+import sample.controller.MutiAnaly.MutiAnalyBean;
 import sample.controller.MutiAnaly.MutiAnalySelectFileController;
 import sample.controller.NewTableView.*;
+import sample.controller.RewriteView.RewriteViewController;
 import sample.controller.YBCC.YBCCBean;
 import sample.controller.YBCC.YBCCController;
 import sample.controller.ZlyydView.ZlyydViewController;
@@ -24,9 +29,7 @@ import sample.util.*;
 import javax.swing.text.View;
 import java.io.*;
 import java.net.URL;
-import java.util.Collections;
-import java.util.Locale;
-import java.util.ResourceBundle;
+import java.util.*;
 import java.util.function.Predicate;
 
 public class MainController extends BaseController {
@@ -37,12 +40,149 @@ public class MainController extends BaseController {
     @FXML
     public Label changeLanguage;
 
+    @FXML
+    public void tqjzchClick(){
+        int index = contentPane.getSelectionModel().getSelectedIndex();
+        if (index != -1){
+            Tab tab = contentPane.getTabs().get(index);
+            if (tab.getUserData() !=  null && tab.getUserData() instanceof NewTableView){
+                NewTableView vc = ((NewTableView) tab.getUserData());
+                Table t = ((Table) vc.preData);
+
+                if (t.getDatatype().equalsIgnoreCase("2")){
+                    TqjzchViewController tvc = ((TqjzchViewController) ViewUtil.getInstance().showView("view/tqjzchView.fxml", "选择格式", -1, -1, ""));
+                    tvc.setListener(new TqjzchViewController.TqjzchListener() {
+                        @Override
+                        public void exportExcel(int format) {
+                            ExportUtil.exportSentenceJZCH(t,true,format);
+                        }
+
+                        @Override
+                        public void exportHtml() {
+                            ExportUtil.exportSentenceJZCH(t,false,-1);
+                        }
+                    });
+
+                    tvc.mStage.initModality(Modality.APPLICATION_MODAL);
+                    tvc.mStage.setResizable(false);
+                    tvc.mStage.show();
+                }
+            }
+        }
+    }
+
+    @FXML
+    public void tqjzClick(){
+
+    }
+
+    @FXML
+    public void tqchClick(){
+
+    }
+
     public void openImpExcelBindWithType(int type){
         ImportExcelBindViewController vc = ((ImportExcelBindViewController) ViewUtil.getInstance().showView("view/impExcelBindView.fxml", "导入数据绑定", -1, -1, this));
         vc.setExcelType(type);
         vc.mStage.initModality(Modality.APPLICATION_MODAL);
         vc.mStage.setResizable(false);
         vc.mStage.show();
+    }
+
+    @FXML
+    public void changeTableNameClick(){
+        int nIndex = contentPane.getSelectionModel().getSelectedIndex();
+        if (nIndex != -1 ){
+            Tab tab = contentPane.getTabs().get(nIndex);
+            if (tab.getUserData() != null && (tab.getUserData() instanceof NewTableView)) {
+                TextInputDialog dialog = new TextInputDialog();
+                dialog.setTitle("修改表名");
+                dialog.setHeaderText("");
+                dialog.setContentText("请输入新表名：");
+                Optional<String> result = dialog.showAndWait();
+                if (result.isPresent()){
+                    Table t = ((Table) ((NewTableView) tab.getUserData()).preData);
+                    if (result.get().length()!=0){
+                        t.setTitle(result.get());
+                        t.setProjectname(result.get());
+
+                        DbHelper.getInstance().addOrUpdateTable(t);
+
+                        tab.setText(result.get());
+                    }else {
+                        ToastUtil.show("表名不可为空");
+                    }
+                }
+            }
+        }
+    }
+
+    @FXML
+    public void onTableModeClick(){
+        int nowIndex = contentPane.getSelectionModel().getSelectedIndex();
+        if (nowIndex != -1) {
+            Tab t = contentPane.getTabs().get(nowIndex);
+            if (t.getUserData() != null && (t.getUserData() instanceof RewriteViewController || t.getUserData() instanceof RecordTabController)) {
+
+                NewTableView nvc = null;
+                Table table = null;
+
+                if (t.getUserData() instanceof  RewriteViewController){
+                    RewriteViewController vc = ((RewriteViewController) t.getUserData());
+                    vc.saveBtnClick();
+                    table = ((Table) vc.preData);
+                    nvc = ((NewTableView) ViewUtil.getInstance().showView("view/newTableView.fxml", "", -1, -1, vc.preData));
+                }else {
+                    RecordTabController vc = ((RecordTabController) t.getUserData());
+                    table = vc.t;
+                    nvc = ((NewTableView) ViewUtil.getInstance().showView("view/newTableView.fxml", "", -1, -1, vc.t));
+                    contentPane.getTabs().get(nowIndex).getOnClosed().handle(new Event(Tab.CLOSED_EVENT));
+                }
+
+                if (table.datatype.equalsIgnoreCase("0")){
+                    nvc.setNewType(NewTableView.NewWordType);
+                }else if (table.datatype.equalsIgnoreCase("1")){
+                    nvc.setNewType(NewTableView.NewCiType);
+                }else if (table.datatype.equalsIgnoreCase("2")){
+                    nvc.setNewType(NewTableView.NewSentenceType);
+                }
+
+                contentPane.getTabs().remove(nowIndex);
+
+                Tab tab = WidgetUtil.createNewTab(table.title, nvc.getmParent());
+                WidgetUtil.addTabToTabPane(contentPane, tab,true,nvc);
+                WidgetUtil.selectTab(tab);
+            }
+        }
+    }
+
+    @FXML
+    public void onRewriteModeClick(){
+        int nowIndex = contentPane.getSelectionModel().getSelectedIndex();
+        if (nowIndex != -1) {
+            Tab t = contentPane.getTabs().get(nowIndex);
+            if (t.getUserData() != null && (t.getUserData() instanceof NewTableView || t.getUserData() instanceof RecordTabController)) {
+
+                RewriteViewController rvc = null;
+
+                if (t.getUserData() instanceof  NewTableView){
+                    NewTableView vc = ((NewTableView) t.getUserData());
+                    vc.saveBtnClick();
+                    rvc = ((RewriteViewController) ViewUtil.getInstance().showView("view/rewriteView.fxml", "", -1, -1, vc.preData));
+                }else {
+                    RecordTabController vc = ((RecordTabController) t.getUserData());
+                    rvc = ((RewriteViewController) ViewUtil.getInstance().showView("view/rewriteView.fxml", "", -1, -1, vc.t));
+                    contentPane.getTabs().get(nowIndex).getOnClosed().handle(new Event(Tab.CLOSED_EVENT));
+                }
+
+                contentPane.getTabs().remove(nowIndex);
+
+                Tab tab = WidgetUtil.createNewTab("转写模式", rvc.getmParent());
+                WidgetUtil.addTabToTabPane(contentPane, tab,true,rvc);
+                WidgetUtil.selectTab(tab);
+            }
+        }
+
     }
 
     @FXML
@@ -72,6 +212,7 @@ public class MainController extends BaseController {
         }
 
         Tab tab = WidgetUtil.createNewTab(t.getTitle(), vc.getmParent());
+        rightClickWithNewTableTab(tab);
         tab.setOnClosed(new EventHandler<Event>() {
             @Override
             public void handle(Event event) {
@@ -80,6 +221,36 @@ public class MainController extends BaseController {
         });
         WidgetUtil.addTabToTabPane(contentPane, tab,true,vc);
         WidgetUtil.selectTab(tab);
+    }
+
+    private void rightClickWithNewTableTab(Tab tab){
+        ContextMenu menu = new ContextMenu();
+        MenuItem changeName = new MenuItem("修改表名");
+        changeName.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                TextInputDialog dialog = new TextInputDialog();
+                dialog.setTitle("修改表名");
+                dialog.setHeaderText("");
+                dialog.setContentText("请输入新表名：");
+                Optional<String> result = dialog.showAndWait();
+                if (result.isPresent()){
+                    Table t = ((Table) ((NewTableView) tab.getUserData()).preData);
+                    if (result.get().length()!=0){
+                        t.setTitle(result.get());
+                        t.setProjectname(result.get());
+
+                        DbHelper.getInstance().addOrUpdateTable(t);
+
+                        tab.setText(result.get());
+                    }else {
+                        ToastUtil.show("表名不可为空");
+                    }
+                }
+            }
+        });
+        menu.getItems().add(changeName);
+        tab.setContextMenu(menu);
     }
 
     @FXML
@@ -152,6 +323,17 @@ public class MainController extends BaseController {
     @FXML
     public void dbdzClick(){
         MutiAnalySelectFileController vc = ((MutiAnalySelectFileController) ViewUtil.getInstance().showView("view/mutiTableAnaly.fxml", "多表对照", -1, -1, ""));
+        vc.setListener(new MutiAnalySelectFileController.AnalyListener() {
+            @Override
+            public void finishAnaly(List<MutiAnalyBean> result, List<Table> tbls, int type) {
+                AfterAnalyViewController avc = ((AfterAnalyViewController) ViewUtil.getInstance().showView("view/afterAnalyView.fxml", "", -1, -1, ""));
+                avc.setResultDatas(FXCollections.observableArrayList(result),tbls,type);
+
+                Tab tab = WidgetUtil.createNewTab("多表对照", avc.getmParent());
+                WidgetUtil.addTabToTabPane(contentPane, tab,true,avc);
+                WidgetUtil.selectTab(tab);
+            }
+        });
         vc.mStage.initModality(Modality.APPLICATION_MODAL);
         vc.mStage.setResizable(false);
         vc.mStage.show();
@@ -162,15 +344,9 @@ public class MainController extends BaseController {
         int tabIndex = contentPane.getSelectionModel().getSelectedIndex();
         if (tabIndex != -1) {
             Tab t = contentPane.getTabs().get(tabIndex);
-            if (t.getUserData() != null && (t.getUserData() instanceof NewTableView)) {
-                NewTableView vc = ((NewTableView) t.getUserData());
-                if (vc.getNewType() == NewTableView.NewHuaYuType) {
-                    return;
-                }
-
-                ExportUtil.exportTable(mStage,
-                        vc.getTableView(),
-                        ((Table) vc.preData));
+            if (t.getUserData() != null && (t.getUserData() instanceof NewTableView || t.getUserData() instanceof RecordTabController || t.getUserData() instanceof RewriteViewController)) {
+                BaseController vc = ((BaseController) t.getUserData());
+                ExportUtil.exportTable(((Table) vc.preData));
             }
         }
     }
@@ -220,7 +396,7 @@ public class MainController extends BaseController {
                 if (vc.isCanZlyyd()){
                     System.out.println("can zlyyd");
                     ZlyydViewController zVc = ((ZlyydViewController) ViewUtil.getInstance().showView("view/zlyydView.fxml", "整理音韵调", -1, -1, vc.preData));
-                    zVc.isZLYYD = false;
+                    zVc.setZLYYD(false);
                     zVc.setOriginDatas(vc.getAfterAnalyDatas());
                     zVc.mStage.initModality(Modality.APPLICATION_MODAL);
                     zVc.mStage.setResizable(false);
@@ -244,7 +420,7 @@ public class MainController extends BaseController {
                 if (vc.isCanZlyyd()){
                     System.out.println("can zlyyd");
                     ZlyydViewController zVc = ((ZlyydViewController) ViewUtil.getInstance().showView("view/zlyydView.fxml", "整理音韵调", -1, -1, vc.preData));
-                    zVc.isZLYYD = true;
+                    zVc.setZLYYD(true);
                     zVc.setOriginDatas(vc.getAfterAnalyDatas());
                     zVc.mStage.initModality(Modality.APPLICATION_MODAL);
                     zVc.mStage.setResizable(false);
@@ -321,6 +497,7 @@ public class MainController extends BaseController {
                     }
 
                     Tab tab = WidgetUtil.createNewTab(t.getTitle(), vc.getmParent());
+                    rightClickWithNewTableTab(tab);
                     tab.setOnClosed(new EventHandler<Event>() {
                         @Override
                         public void handle(Event event) {
@@ -349,6 +526,7 @@ public class MainController extends BaseController {
         vc.setNewType(NewTableView.NewWordType);
 
         Tab tab = WidgetUtil.createNewTab(t.getTitle(), vc.getmParent());
+        rightClickWithNewTableTab(tab);
         tab.setOnClosed(new EventHandler<Event>() {
             @Override
             public void handle(Event event) {
@@ -369,6 +547,7 @@ public class MainController extends BaseController {
         vc.setNewType(NewTableView.NewCiType);
 
         Tab tab = WidgetUtil.createNewTab(t.getTitle(), vc.getmParent());
+        rightClickWithNewTableTab(tab);
         tab.setOnClosed(new EventHandler<Event>() {
             @Override
             public void handle(Event event) {
@@ -390,6 +569,7 @@ public class MainController extends BaseController {
         vc.setNewType(NewTableView.NewSentenceType);
 
         Tab tab = WidgetUtil.createNewTab(t.getTitle(), vc.getmParent());
+        rightClickWithNewTableTab(tab);
         tab.setOnClosed(new EventHandler<Event>() {
             @Override
             public void handle(Event event) {
@@ -567,7 +747,7 @@ public class MainController extends BaseController {
     @FXML
     private void onCreateHTMLFileClick()throws IOException{
         CreateHTMLFileController controller = ViewUtil.getInstance().openCreateHTMLFileView();
-        controller.getmStage().setAlwaysOnTop(true);
+        controller.mStage.initModality(Modality.APPLICATION_MODAL);
         controller.show();
 //        Tab tab = WidgetUtil.createNewTab("调查表元数据信息", controller.getmParent());
 //        WidgetUtil.addTabToTabPane(contentPane, tab, true);
@@ -580,16 +760,27 @@ public class MainController extends BaseController {
         int nowIndex = contentPane.getSelectionModel().getSelectedIndex();
         if (nowIndex != -1){
             Tab t = contentPane.getTabs().get(nowIndex);
-            if (t.getUserData() !=  null && (t.getUserData() instanceof NewTableView)) {
-                //获取controller，先保存数据，然后关闭
-                NewTableView vc = ((NewTableView) t.getUserData());
-                ObservableList<Record> recordDatas = vc.getKeepAndHaveIPAOriginDatas();
-                vc.saveBtnClick();
-                contentPane.getTabs().remove(nowIndex);
+            if (t.getUserData() !=  null && ((t.getUserData() instanceof NewTableView) || t.getUserData() instanceof RewriteViewController)) {
 
                 RecordTabController controller = (RecordTabController) ViewUtil.getInstance().openRecordTab();
-                controller.tableType = ((Table) vc.preData).getDatatype();
-                controller.setRecordDatas(recordDatas);
+
+                if (t.getUserData() instanceof NewTableView){
+                    //获取controller，先保存数据，然后关闭
+                    NewTableView vc = ((NewTableView) t.getUserData());
+                    vc.saveBtnClick();
+
+                    controller.t = ((Table) vc.preData);
+                    controller.tableType = ((Table) vc.preData).getDatatype();
+                }else{
+                    RewriteViewController vc = ((RewriteViewController) t.getUserData());
+                    vc.saveBtnClick();
+
+                    controller.t = ((Table) vc.preData);
+                    controller.tableType = ((Table) vc.preData).getDatatype();
+                }
+
+                contentPane.getTabs().remove(nowIndex);
+
                 Tab tab = WidgetUtil.createNewTab("录制", controller.getmParent());
 
                 tab.setOnClosed(new EventHandler<Event>() {
@@ -600,7 +791,7 @@ public class MainController extends BaseController {
                     }
                 });
 
-                WidgetUtil.addTabToTabPane(contentPane, tab, true);
+                WidgetUtil.addTabToTabPane(contentPane, tab, true,controller);
                 WidgetUtil.selectTab(tab);
 
                 controller.startPreview();

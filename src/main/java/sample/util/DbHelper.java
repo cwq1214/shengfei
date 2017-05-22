@@ -25,6 +25,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.function.Predicate;
 
 /**
  * Created by Bee on 2017/4/11.
@@ -197,6 +198,17 @@ public class DbHelper {
         return FXCollections.observableList(resultList);
     }
 
+    public ObservableList searchAllWithoutTopicTable(){
+        return searchAllTable().filtered(new Predicate() {
+            @Override
+            public boolean test(Object o) {
+                if (Integer.parseInt(((Table) o).datatype) <= 2){
+                    return true;
+                }
+                return false;
+            }
+        });
+    }
 
     /**
      * 把Record数据插入到数据库中
@@ -276,6 +288,57 @@ public class DbHelper {
             e.printStackTrace();
         }
         return FXCollections.observableArrayList(resultList);
+    }
+
+    public ObservableList<Record> searchTempRecordKeepAndDone(int baseId){
+        List<Record> result = new ArrayList<>();
+        try {
+            Dao<Record,String> recordDao = DaoManager.createDao(connectionSource,Record.class);
+            result = recordDao.queryForEq("baseId",baseId);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return FXCollections.observableArrayList(result).filtered(new Predicate<Record>() {
+            @Override
+            public boolean test(Record record) {
+//                if (record.getHide().equals("0") && record.getDone().equalsIgnoreCase("1")){
+                    return true;
+//                }
+//                return false;
+            }
+        });
+    }
+
+    public ObservableList<Record> searchTempRecordKeep(String dataType,int baseId){
+        List<Record> result = new ArrayList<>();
+        try {
+            Dao<Record,String> recordDao = DaoManager.createDao(connectionSource,Record.class);
+            result = recordDao.queryForEq("baseId",baseId);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return FXCollections.observableArrayList(result).filtered(new Predicate<Record>() {
+            @Override
+            public boolean test(Record record) {
+                if (record.getHide().equals("0")){
+                    return true;
+                }
+                return false;
+            }
+        });
+    }
+
+    public ObservableList<YBCCBean> searchTempRecordDoneAndKeep2YBCCBean(String dataType,int baseId){
+        ObservableList<YBCCBean> temp = searchTempRecord2YBCCBean(dataType,baseId);
+        return temp.filtered(new Predicate<YBCCBean>() {
+            @Override
+            public boolean test(YBCCBean bean) {
+                if (bean.getRecord().getHide().equals("0") && bean.getRecord().getDone().equals("1")){
+                    return true;
+                }
+                return false;
+            }
+        });
     }
 
     /**

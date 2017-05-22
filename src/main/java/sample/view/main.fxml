@@ -26,6 +26,7 @@
                 <SeparatorMenuItem />
                 <MenuItem accelerator="CTRL+O" mnemonicParsing="false" onAction="#openTableClick" text="%menu_file_open" />
                 <MenuItem accelerator="CTRL+D" mnemonicParsing="false" onAction="#delTableClick" text="%menu_file_delete" />
+                <MenuItem mnemonicParsing="false" onAction="#changeTableNameClick" text="%menu_file_changeName" />
                 <SeparatorMenuItem />
                      <Menu mnemonicParsing="false" text="%menu_file_import">
                        <items>
@@ -57,14 +58,17 @@
               <MenuItem mnemonicParsing="false" onAction="#tyzhchClick" text="%menu_data_tyzhch" />
                 <SeparatorMenuItem />
               <MenuItem mnemonicParsing="false" onAction="#dbdzClick" text="%menu_data_dbdz" />
+                <MenuItem mnemonicParsing="false" onAction="#tqjzchClick" text="%menu_data_tqjzch"/>
+                <MenuItem mnemonicParsing="false" onAction="#tqjzClick" text="%menu_data_tqjz"/>
+                <MenuItem mnemonicParsing="false" onAction="#tqchClick" text="%menu_data_tqch"/>
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="%menu_option">
             <items>
 
-                <RadioMenuItem selected="true" text="%menu_option_zbms"><toggleGroup><ToggleGroup fx:id="mode" /></toggleGroup></RadioMenuItem>
+                <RadioMenuItem selected="true" text="%menu_option_zbms" onAction="#onTableModeClick"><toggleGroup><ToggleGroup fx:id="mode" /></toggleGroup></RadioMenuItem>
                 <RadioMenuItem onAction="#onRecordModeClick" text="%menu_option_lyms" toggleGroup="$mode" />
-                <RadioMenuItem text="%menu_option_zxms" toggleGroup="$mode" />
+                <RadioMenuItem onAction="#onRewriteModeClick" text="%menu_option_zxms" toggleGroup="$mode" />
                 <!--<SeparatorMenuItem />-->
                 <!--<MenuItem mnemonicParsing="false" text="%menu_option_zbtybh" />-->
                 <!--<MenuItem mnemonicParsing="false" text="%menu_option_cbtybh" />-->

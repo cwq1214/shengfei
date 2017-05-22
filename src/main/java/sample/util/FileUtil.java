@@ -14,11 +14,13 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.streaming.SXSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.bytedeco.javacpp.annotation.Const;
 
 import java.io.*;
 import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.util.UUID;
 
 /**
  * Created by chenweiqi on 2017/4/14.
@@ -162,5 +164,26 @@ public class FileUtil {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public static String mp4Copy2Temp(String src){
+        File oFile = new File(src);
+        if (!oFile.exists()){
+            return "";
+        }
+
+        String fileName = oFile.getName();
+
+        String result = Constant.TEMP_DIR + "/" + fileName;
+        File file = new File(result);
+        if (!file.exists()) {
+            File dir = new File(Constant.TEMP_DIR);
+            if (!dir.exists()) {
+                dir.mkdirs();
+            }
+
+            fileCopy(src, result);
+        }
+        return result;
     }
 }

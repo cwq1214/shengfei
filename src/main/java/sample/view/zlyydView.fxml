@@ -61,11 +61,21 @@
                         <Insets />
                      </VBox.margin>
                   </HBox>
-                  <Button fx:id="smPSB" mnemonicParsing="false" text="预设顺序">
+                  <HBox alignment="CENTER" spacing="5.0">
                      <VBox.margin>
-                        <Insets bottom="10.0" top="5.0" />
+                        <Insets bottom="5.0" top="5.0" />
                      </VBox.margin>
-                  </Button>
+                     <children>
+                        <Button fx:id="smPSB" mnemonicParsing="false" text="预设顺序" />
+                        <Button fx:id="smAs" mnemonicParsing="false" text="全选" />
+                        <Button fx:id="smAns" mnemonicParsing="false" text="全不选" />
+                     </children>
+                  </HBox>
+                  <Label text="声母列表">
+                     <VBox.margin>
+                        <Insets bottom="5.0" />
+                     </VBox.margin>
+                  </Label>
                   <ListView fx:id="smList">
                      <VBox.margin>
                         <Insets bottom="10.0" />
@@ -117,11 +127,21 @@
                              <Insets />
                          </VBox.margin>
                      </HBox>
-                     <Button fx:id="ymPSB" mnemonicParsing="false" text="预设顺序">
-                         <VBox.margin>
-                             <Insets bottom="10.0" top="5.0" />
-                         </VBox.margin>
-                     </Button>
+                  <HBox alignment="CENTER" spacing="5.0">
+                     <VBox.margin>
+                        <Insets bottom="5.0" top="5.0" />
+                     </VBox.margin>
+                     <children>
+                           <Button fx:id="ymPSB" mnemonicParsing="false" text="预设顺序" />
+                        <Button fx:id="ymAs" mnemonicParsing="false" text="全选" />
+                        <Button fx:id="ymAns" mnemonicParsing="false" text="全不选" />
+                     </children>
+                  </HBox>
+                  <Label text="韵母列表">
+                     <VBox.margin>
+                        <Insets bottom="5.0" />
+                     </VBox.margin>
+                  </Label>
                      <ListView fx:id="ymList">
                          <VBox.margin>
                              <Insets bottom="10.0" />
@@ -173,11 +193,21 @@
                              <Insets />
                          </VBox.margin>
                      </HBox>
-                     <Button fx:id="sdPSB" mnemonicParsing="false" text="预设顺序">
-                         <VBox.margin>
-                             <Insets bottom="10.0" top="5.0" />
-                         </VBox.margin>
-                     </Button>
+                  <HBox alignment="CENTER" spacing="5.0">
+                     <VBox.margin>
+                        <Insets bottom="5.0" top="5.0" />
+                     </VBox.margin>
+                     <children>
+                           <Button fx:id="sdPSB" mnemonicParsing="false" text="预设顺序" />
+                        <Button fx:id="sdAs" mnemonicParsing="false" text="全选" />
+                        <Button fx:id="sdAns" mnemonicParsing="false" text="全不选" />
+                     </children>
+                  </HBox>
+                  <Label text="声调列表">
+                     <VBox.margin>
+                        <Insets bottom="5.0" />
+                     </VBox.margin>
+                  </Label>
                      <ListView fx:id="sdList">
                          <VBox.margin>
                              <Insets bottom="10.0" />

@@ -40,7 +40,7 @@ public class YBCCController extends BaseController {
 
 
     private String biaoDian = "。，、：∶；‘’“”〝〞ˆˇ﹕︰﹔﹖﹑·¨.¸´？！～—｜‖＂〃｀@﹫¡¿﹏﹋︴々﹟#﹩$﹠&﹪%﹡﹢×﹦‐￣¯―﹨˜﹍﹎＿~（）〈〉‹›﹛﹜『』〖〗［］《》〔〕{}「」【】︵︷︿︹︽_︶︸﹀︺︾ˉ﹂﹄︼﹁﹃︻▲●□…→";
-    private String baseYuan = "əɛɿʮʅʯiyɪʏeøᴇɛεɛœæaɶɑɒʌɔɤoɷʊƜɯuɨʉɘɵəǝɚɜɝɞɐᴀɩϊàáâãäåḁèéêëḙḛẽìíîïòóôõöùúûüṵṷāăēĕěĩīĭōŏőũūŭůűǎǐǒǔǖǘǚǜǣȁȅȇȉȋȍȗ";
+    private String baseYuan = "əɛɿʮʅʯiɪʏeøᴇɛεɛœæaɶɑɒʌɔɤoɷʊƜɯuɨʉɘɵəǝɚɜɝɞɐᴀɩϊàáâãäåḁèéêëḙḛẽìíîïòóôõöùúûüṵṷāăēĕěĩīĭōŏőũūŭůűǎǐǒǔǖǘǚǜǣȁȅȇȉȋȍȗ";
     private String doubleYuan = "ai ei ui ao ou iu ie ue";
     private String wrongSD = "111 222 333 444 555 123 124 125 234 235 345 543 542 541 432 431 321";
     private String currectZeroSD = "01 02 03 04 05";
@@ -232,14 +232,14 @@ public class YBCCController extends BaseController {
                     //判断连续元音
                     for (int j = i + 1 ;j < sy.length(); j++){
                         Character afterC = sy.charAt(j);
-                        String tempStr = sy.substring(i,j);
+                        String tempStr = sy.substring(i,j+1);
                         if (baseYuan.contains(afterC.toString()) && !tempStr.matches("[0-5]+")){
                             //判断两个原因字母是否相连,且为复韵母
                             if(i + 1 == j && doubleYuan.contains(tempStr)){
                                 continue;
                             }
 
-                            bean.setWrongReason("元音字母之间没有包含声调");
+                            bean.setWrongReason("声调错漏");
                             return false;
                         }
                     }
@@ -371,8 +371,13 @@ public class YBCCController extends BaseController {
         mStage.setOnShown(new EventHandler<WindowEvent>() {
             @Override
             public void handle(WindowEvent event) {
+                boolean isPassAll = false;
                 for (int i = 0; i < analyDatas.size(); i++) {
                     YBCCBean bean = analyDatas.get(i);
+
+                    if (bean.getSmList()!=null) bean.getSmList().clear();
+                    if (bean.getYmList()!=null) bean.getYmList().clear();
+                    if (bean.getSdList()!=null) bean.getSdList().clear();
 
                     //分析得出有可能错误
                     if (hasWrong(bean)){
@@ -381,20 +386,22 @@ public class YBCCController extends BaseController {
                         bean.addYm(bean.getRecord().getIPA());
                         bean.addSd("无");
 
-                        int result = wrongTipAlert("",bean.getRecord().getInvestCode()+":"+bean.getWrongReason()+"\n"+"条目音标:"+bean.getRecord().getIPA()+"\n\n");
-                        if (result == 0){
-                            showDatas.add(bean);
-                        }else if (result == 1){
-                            bean.setWrongReason("");
-                            continue;
-                        }else if (result == 2){
-                            bean.setWrongReason("");
-                            break;
-                        }else if (result == 3){
-                            resetAllWrongReason();
-                            break;
-                        }else if (result == -1){
+                        if (!isPassAll){
+                            int result = wrongTipAlert("",bean.getRecord().getInvestCode()+":"+bean.getWrongReason()+"\n"+"条目音标:"+bean.getRecord().getIPA()+"\n\n");
+                            if (result == 0){
+                                showDatas.add(bean);
+                            }else if (result == 1){
+                                bean.setWrongReason("");
+                                continue;
+                            }else if (result == 2){
+                                bean.setWrongReason("");
+                                isPassAll = true;
+                            }else if (result == 3){
+                                resetAllWrongReason();
+                                break;
+                            }else if (result == -1){
 
+                            }
                         }
 
                         tableView.setItems(showDatas);
