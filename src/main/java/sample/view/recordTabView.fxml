@@ -84,9 +84,9 @@
                     <String fx:value="以编码导出选中条目" />
                     <String fx:value="以中文导出选中条目" />
                     <String fx:value="以英文导出选中条目" />
-                    <String fx:value="以编码导出选中条目" />
-                    <String fx:value="以中文导出选中条目" />
-                    <String fx:value="以英文导出选中条目" />
+                    <String fx:value="以编码导出全部条目" />
+                    <String fx:value="以中文导出全部条目" />
+                    <String fx:value="以英文导出全部条目" />
                 </ChoiceBox>
                 <ChoiceBox GridPane.columnIndex="2" GridPane.rowIndex="1" fx:id="cb_delVideo">
                     <String fx:value="删除选中条目视频" />

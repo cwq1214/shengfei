@@ -6,6 +6,8 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by chenweiqi on 2017/4/13.
@@ -112,6 +114,41 @@ public class DialogUtil {
             saveFile.getParentFile().mkdirs();
         }
         return saveFile;
+    }
+
+    public static List<File> chooseAudio(boolean multiSel){
+
+        FileChooser chooser = new FileChooser();
+        chooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("audio", "*.wav"));
+        if (multiSel){
+            return chooser.showOpenMultipleDialog(new Stage());
+        }else {
+            List list = new ArrayList<>();
+            list.add(chooser.showOpenDialog(new Stage()));
+            return list;
+        }
+    }
+    public static List<File> chooseVideo(boolean multiSel){
+
+        FileChooser chooser = new FileChooser();
+        chooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("video", "*.mp4"));
+        if (multiSel){
+            return chooser.showOpenMultipleDialog(new Stage());
+        }else {
+            List list = new ArrayList<>();
+            File file = chooser.showOpenDialog(new Stage());
+            if (file!=null)
+                list.add(file);
+            return list;
+        }
+    }
+
+    public static File selDir(){
+        DirectoryChooser directoryChooser = new DirectoryChooser();
+        directoryChooser.setInitialDirectory(
+                new File(System.getProperty("user.home"))
+        );
+        return directoryChooser.showDialog(new Stage());
     }
 
     public static File saveFileDialog(String title) {

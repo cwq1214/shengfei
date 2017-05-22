@@ -16,7 +16,11 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Field;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
@@ -127,7 +131,7 @@ public class RecordTabController extends BaseController {
     String fileName;
 
     Record selRecord;
-
+    VideoTimerThread videoTimerThread;
     //音频播放
     MediaPlayer mediaPlayer;
 
@@ -483,6 +487,181 @@ public class RecordTabController extends BaseController {
             }
         });
 
+        //导入音频
+        cb_importAudio.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener() {
+            @Override
+            public void changed(ObservableValue observable, Object oldValue, Object newValue) {
+                if (newValue.toString().equals("-1")){
+                    return;
+                }
+                List<File> files = DialogUtil.chooseAudio(!newValue.toString().equals("0"));
+                if (files==null||files.size()==0){
+                    return;
+                }
+                importMedia(tableView.getSelectionModel().getSelectedItems(),files,Integer.valueOf(newValue.toString()),true);
+            }
+        });
+
+
+        //导入视频
+        cb_importVideo.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                if (newValue.toString().equals("-1")){
+                    return;
+                }
+                List<File> files = DialogUtil.chooseVideo(!newValue.toString().equals("0"));
+                if (files==null||files.size()==0){
+                    return;
+                }
+                importMedia(tableView.getSelectionModel().getSelectedItems(),files,Integer.valueOf(newValue.toString()),false);
+            }
+        });
+
+        //导出音频
+        cb_exportAudio.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                if (newValue.toString().equals("-1")){
+                    return;
+                }
+                //0 编码导出选中
+                //1 中文导出选中
+                //2 英文导出选中
+                //3 编码+中文导出选中
+                //4 编码导出全部
+                //5 中文导出全部
+                //6 英文导出全部
+                //7 编码+中文导出全部
+                File file = DialogUtil.selDir();
+                List<Record> records ;
+                int type = newValue.intValue();
+
+                if (newValue.intValue()>=4){
+                    type -=4;
+                    records = tableView.getItems();
+                }else {
+                    records = tableView.getSelectionModel().getSelectedItems();
+                }
+
+                try {
+                    exportMedia(records,file,type,true);
+                } catch (NoSuchFieldException e) {
+                    e.printStackTrace();
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        //导出视频
+        cb_exportVideo.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                if (newValue.toString().equals("-1")){
+                    return;
+                }
+                File file = DialogUtil.selDir();
+
+                //0 编码导出选中
+                //1 中文导出选中
+                //2 英文导出选中
+                //3 编码导出全部
+                //4 中文导出全部
+                //5 英文导出全部
+                int type = newValue.intValue();
+                List<Record> records;
+                if (type>=3){
+                    type -= 3;
+                    records = tableView.getItems();
+                }else {
+                    records = tableView.getSelectionModel().getSelectedItems();
+                }
+                try {
+                    exportMedia(records,file,type,false);
+                } catch (NoSuchFieldException e) {
+                    e.printStackTrace();
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+
+
+            }
+        });
+    }
+
+    private void importMedia(List<Record> records,List<File> files,int type,boolean audio){
+        if (type == 0){
+            Record record = records.get(0);
+            if (audio) {
+                copyFile(files.get(0).getPath(), Constant.getAudioPath(record.baseId + "", record.uuid));
+            }else {
+                copyFile(files.get(0).getPath(), Constant.getVideoPath(record.baseId + "", record.uuid));
+            }
+        }else if (type == 1
+                ||type==2){
+            for (int i=0,max=files.size();i<max;i++){
+                for (int j=0,max2 = records.size();j<max2;j++){
+                    if (type==1&&records.get(j).investCode.equals(files.get(i).getName().split(".")[0])
+                            ||type==2&&records.get(j).content.equals(files.get(i).getName().split(".")[0])
+                            ) {
+                        String path;
+                        if (audio){
+                            path = Constant.getAudioPath(records.get(j).baseId + "", records.get(j).uuid);
+                        }else {
+                            path = Constant.getVideoPath(records.get(j).baseId + "", records.get(j).uuid);
+                        }
+                        copyFile(files.get(i).getPath(),path);
+                    }
+                }
+            }
+        }
+
+        ToastUtil.show("导入完成");
+    }
+
+    private void exportMedia(List<Record> records,File dir,int type,boolean audio) throws NoSuchFieldException, IllegalAccessException {
+
+        Field[] fields = new Field[0];
+        if (type==0){//编码导出选中
+            fields = new Field[]{Record.class.getDeclaredField("investCode")};
+        }else if (type == 1){//中文导出选中
+            fields = new Field[]{Record.class.getDeclaredField("content")};
+        }else if (type == 2){//英文导出选中
+            fields = new Field[]{Record.class.getDeclaredField("english")};
+        }else if (type == 3){//编码+中文导出选中
+            fields = new Field[]{Record.class.getDeclaredField("investCode"),Record.class.getDeclaredField("content")};
+        }
+
+
+        for (int i=0,max = records.size();i<max;i++){
+            Record record = records.get(i);
+            File source;
+            if (audio){
+                source = new File(Constant.getAudioPath(record.baseId+"",record.uuid));
+            }else {
+                source = new File(Constant.getVideoPath(record.baseId+"",record.uuid));
+            }
+            if (!source.exists()){
+                continue;
+            }
+            String name = "";
+            for (int j=0;j<fields.length;j++){
+                name += fields[j].get(record);
+                if (j!=fields.length-1){
+                    name += "_";
+                }
+            }
+            if (audio){
+                name += Constant.AUDIO_SUFFIX;
+            }else {
+                name += Constant.VIDEO_SUFFIX;
+            }
+            File des = new File(dir.getPath()+"/"+name);
+
+            FileUtil.copyFile(source,des);
+
+        }
+        ToastUtil.show("导出完成");
 
     }
 
@@ -813,6 +992,7 @@ public class RecordTabController extends BaseController {
         }
 
     }
+    Thread thread;
     //录制一条视频
     private void recordOneVideo(Button btn){
         Image image;
@@ -825,7 +1005,32 @@ public class RecordTabController extends BaseController {
             recorder.startRecordVideo(getVideoPathWithoutSuffix(selRecord),cb_cover.isSelected());
             image = new Image(Main.class.getResourceAsStream("/sample/resource/img/b5.png"));
             setBtnDisable(btn,false,true);
+            videoTimerThread = new VideoTimerThread();
+            videoTimerThread.setRecordFinishCallback(new RecordFinishCallback() {
+                @Override
+                public void finish() {
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            recordOneVideo(btn_recordVideo);
+                            if (thread!=null) {
+                                thread.stop();
+                            }
+                            thread = null;
+                        }
+                    });
+
+                }
+            });
+            thread = new Thread(videoTimerThread);
+            thread.start();
+
         }else {
+            if (thread!=null){
+                thread.stop();
+            }
+            thread = null;
+
             startRecordTimes = 0;
             recordingVideo = false;
             recorder.stopRecord();
@@ -1054,5 +1259,45 @@ public class RecordTabController extends BaseController {
     }
     public interface RecordFinishCallback{
         void finish();
+    }
+
+    public class VideoTimerThread implements Runnable{
+        RecordFinishCallback recordFinishCallback;
+        @Override
+        public void run() {
+            long startTime = System.currentTimeMillis();
+            long currentTime = 0;
+            while (currentTime-startTime<2*60*1000){
+                System.out.println(currentTime-startTime);
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                currentTime = System.currentTimeMillis();
+            }
+
+            recordFinishCallback.finish();
+        }
+        public void setRecordFinishCallback(RecordFinishCallback callback){
+            this.recordFinishCallback = callback;
+        }
+    }
+
+
+
+    public void copyFile(String sourcePath,String desPath){
+        File sourceFile = new File(sourcePath);
+        if (!sourceFile.exists()){
+            return;
+        }
+//        File desFile = new File(desPath+"/"+sourceFile.getName());
+
+        try {
+            Files.copy(sourceFile.toPath(),new File(desPath).toPath(), StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 }

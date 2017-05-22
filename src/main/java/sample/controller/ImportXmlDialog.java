@@ -1,17 +1,15 @@
 package sample.controller;
 
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.util.Callback;
-import sample.controller.YBCC.YBCCBean;
 import sample.entity.BindResult;
-import sample.entity.Record;
 import sample.util.*;
 
 import java.io.File;
-import java.lang.reflect.Field;
 import java.net.URL;
 import java.util.*;
 
@@ -61,7 +59,8 @@ public class ImportXmlDialog extends BaseController {
     Button tab3_cancel;
     @FXML
     TabPane tb_tabPane;
-
+    @FXML
+    ToggleGroup tg_type;
 
 
     /*
@@ -136,7 +135,7 @@ public class ImportXmlDialog extends BaseController {
             @Override
             public ObservableValue call(TableColumn.CellDataFeatures param) {
                 BindResult o = ((BindResult) param.getValue());
-                return new SimpleStringProperty(o.key1+" - "+o.key2);
+                return new SimpleStringProperty(o.key1+" - "+o.key2.recordName);
             }
         });
         tb_bindName.getColumns().add(bindTC);
@@ -145,19 +144,50 @@ public class ImportXmlDialog extends BaseController {
         sfTC.setCellValueFactory(new Callback<TableColumn.CellDataFeatures, ObservableValue<String>>() {
             @Override
             public ObservableValue<String> call(TableColumn.CellDataFeatures param) {
-                return new SimpleStringProperty((String) param.getValue());
+                return new SimpleStringProperty(((BindResult.RecordMapper) param.getValue()).recordName);
             }
         });
         tb_sfName.getColumns().add(sfTC);
 
-        tb_sfName.getItems().clear();
-        Field[] fields = Record.class.getDeclaredFields();
-        List<String> sfList = new ArrayList<>();
-        for (int i=0;i<fields.length;i++){
-            sfList.add(fields[i].getName());
-        }
-        tb_sfName.getItems().addAll(sfList);
 
+        tg_type.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+            @Override
+            public void changed(ObservableValue<? extends Toggle> observable, Toggle oldValue, Toggle newValue) {
+
+                int selType = getSelType();
+                List<BindResult.RecordMapper> mappers = new ArrayList<>();
+                if (selType == 0){
+                    mappers.add(new BindResult.RecordMapper("编码","baseCode"));
+                    mappers.add(new BindResult.RecordMapper("条目","content"));
+                    mappers.add(new BindResult.RecordMapper("音标注音","IPA"));
+                    mappers.add(new BindResult.RecordMapper("音韵","yun"));
+                    mappers.add(new BindResult.RecordMapper("注释","note"));
+                    mappers.add(new BindResult.RecordMapper("拼音","spell"));
+                    mappers.add(new BindResult.RecordMapper("英文","english"));
+                }else if (selType == 1){
+                    mappers.add(new BindResult.RecordMapper("编码","baseCode"));
+                    mappers.add(new BindResult.RecordMapper("条目","content"));
+                    mappers.add(new BindResult.RecordMapper("音标注音","IPA"));
+                    mappers.add(new BindResult.RecordMapper("民文或方言字","MWFY"));
+                    mappers.add(new BindResult.RecordMapper("注释","note"));
+                    mappers.add(new BindResult.RecordMapper("拼音","spell"));
+                    mappers.add(new BindResult.RecordMapper("英文","english"));
+
+                }else if (selType == 2){
+                    mappers.add(new BindResult.RecordMapper("编码","baseCode"));
+                    mappers.add(new BindResult.RecordMapper("条目","content"));
+                    mappers.add(new BindResult.RecordMapper("音标注音","IPA"));
+                    mappers.add(new BindResult.RecordMapper("民文或方言字","MWFY"));
+                    mappers.add(new BindResult.RecordMapper("注释","note"));
+                    mappers.add(new BindResult.RecordMapper("普通话词对译","free_trans"));
+                    mappers.add(new BindResult.RecordMapper("英文","english"));
+
+                }
+
+                tb_sfName.getItems().clear();
+                tb_sfName.getItems().addAll(mappers);
+            }
+        });
 
     }
 
@@ -215,7 +245,7 @@ public class ImportXmlDialog extends BaseController {
         }else if (importType==1){//exb
             EXBHelper.getInstance().deco(xmlFilePath.getPath(),wavFilePath.getPath(),tb_bindName.getItems(),selType);
         }else if (importType==3){//ac
-
+            AudoCityHelper.getInstance().deco(xmlFilePath.getPath(),wavFilePath.getPath(),tb_bindName.getItems(),selType);
         }
     }
 
@@ -247,7 +277,7 @@ public class ImportXmlDialog extends BaseController {
             tb_xmlName.getItems().clear();
             tb_xmlName.getItems().addAll(xml);
         }else if (importType ==3 ){
-            List<String> xml = AudioCityHelper.getInstance().readAttrTitle(xmlFilePath.getPath());
+            List<String> xml = AudoCityHelper.getInstance().readAttrTitle(xmlFilePath.getPath());
             System.out.println(Arrays.toString(xml.toArray()));
             tb_xmlName.getItems().clear();
             tb_xmlName.getItems().addAll(xml);
@@ -268,7 +298,7 @@ public class ImportXmlDialog extends BaseController {
         if (tb_sfName.getSelectionModel().getSelectedItem()!=null
                 &&tb_xmlName.getSelectionModel().getSelectedItem()!=null){
             String xmlItem = (String) tb_xmlName.getSelectionModel().getSelectedItem();
-            String sfItem = (String) tb_sfName.getSelectionModel().getSelectedItem();
+            BindResult.RecordMapper sfItem = (BindResult.RecordMapper) tb_sfName.getSelectionModel().getSelectedItem();
 
             tb_xmlName.getItems().remove(xmlItem);
             tb_sfName.getItems().remove(sfItem);
@@ -304,6 +334,8 @@ public class ImportXmlDialog extends BaseController {
             list.clear();
         }
     }
+
+
 
 
 

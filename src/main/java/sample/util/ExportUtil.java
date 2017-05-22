@@ -158,7 +158,7 @@ public class ExportUtil {
         }else if (saveType.equals("xml")){
             exportTableXML(saveFile.getAbsolutePath(),tableView,t);
         }else if (saveType.equals("txt")){
-
+            exportTableAC(saveFile.getAbsolutePath(),tableView,t);
         }
 
     }
@@ -516,5 +516,9 @@ public class ExportUtil {
     public static void exportTableXML(String savePath,TableView tableView,Table t){
 
         XMLHelper.getInstance().writeToXml(savePath,tableView,t);
+    }
+
+    public static void exportTableAC(String savePath,TableView tableView,Table t){
+        AudoCityHelper.getInstance().writeToAc(savePath,tableView,t);
     }
 }

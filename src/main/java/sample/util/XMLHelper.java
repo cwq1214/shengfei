@@ -42,9 +42,17 @@ public class XMLHelper {
 
         int tableType = Integer.parseInt(t.getDatatype());
         List<Record> records = new ArrayList<>();
-        for (Object bean:
-                tableView.getItems()) {
-            records.add(((YBCCBean) bean).getRecord());
+        for (int i=0;i<tableView.getItems().size();i++) {
+            Record r;
+            Object object = tableView.getItems().get(i);
+            if (object instanceof  Record){
+                r = (Record) object;
+            }else if (object instanceof YBCCBean){
+                r = ((YBCCBean) object).getRecord();
+            }else {
+                return;
+            }
+            records.add(r);
         }
         createXml(filePath,records,tableType);
     }
@@ -95,11 +103,9 @@ public class XMLHelper {
             XMLWriter xmlWriter = new XMLWriter(new FileOutputStream(new File(savePath),false), OutputFormat.createPrettyPrint());
             xmlWriter.write(doc);
             xmlWriter.close();
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+            ToastUtil.show("导出成功");
+        } catch (Exception e) {
+            ToastUtil.show("导出失败");
             e.printStackTrace();
         }
     }
@@ -148,13 +154,11 @@ public class XMLHelper {
                 records.get(i).baseCode =records.get(i).investCode;
                 records.get(i).uuid = UUID.randomUUID().toString();
             }
-
+            ToastUtil.show("导入成功");
             return records;
-        } catch (DocumentException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (NoSuchFieldException e) {
+
+        } catch (Exception e) {
+            ToastUtil.show("导入失败");
             e.printStackTrace();
         }
         return null;

@@ -59,8 +59,15 @@ public class EXBHelper {
 
         List<String> audioFilPaths = new ArrayList<>();
         for (int i=0;i<content.size();i++){
-            YBCCBean bean = ((YBCCBean) tableView.getItems().get(i));
-            Record r = bean.getRecord();
+            Record r;
+            Object object = tableView.getItems().get(i);
+            if (object instanceof  Record){
+                r = (Record) object;
+            }else if (object instanceof YBCCBean){
+                r = ((YBCCBean) object).getRecord();
+            }else {
+                return;
+            }
             if (TextUtil.isEmpty(r.createDate)){
                 System.out.println(r.uuid);
                 ToastUtil.show("有未录音条目，请录音后再重试");
@@ -369,11 +376,9 @@ public class EXBHelper {
             XMLWriter xmlWriter = new XMLWriter(new FileOutputStream(new File(savePath),false), OutputFormat.createPrettyPrint());
             xmlWriter.write(doc);
             xmlWriter.close();
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+            ToastUtil.show("导出成功");
+        } catch (Exception e) {
+            ToastUtil.show("导出失败");
             e.printStackTrace();
         }
     }
@@ -458,8 +463,9 @@ public class EXBHelper {
 
             WAVUtil.getInstance().deco(audioAttrs,audioPath);
 
-
+            ToastUtil.show("导入成功");
         } catch (DocumentException e) {
+            ToastUtil.show("导入失败");
             e.printStackTrace();
         }
     }

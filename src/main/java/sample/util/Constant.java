@@ -19,4 +19,12 @@ public class Constant {
 
         return Constant.ROOT_FILE_DIR+"/audio/"+baseId+"/"+uuid+AUDIO_SUFFIX;
     }
+
+
+    public static String getVideoPath(String baseId,String uuid){
+        if (TextUtil.isEmpty(baseId)||TextUtil.isEmpty(uuid))
+            return null;
+
+        return Constant.ROOT_FILE_DIR+"/video/"+baseId+"/"+uuid+VIDEO_SUFFIX;
+    }
 }

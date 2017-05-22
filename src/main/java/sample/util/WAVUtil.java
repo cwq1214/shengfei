@@ -216,7 +216,7 @@ public class WAVUtil {
 
     public static class AudioAttr {
         public String start;//开始时间 单位： 毫秒
-        public String eng;
+        public String end;
         public String path;
     }
 
