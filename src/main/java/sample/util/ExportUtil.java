@@ -203,9 +203,9 @@ public class ExportUtil {
                 workbook.write(fileOutputStream);
                 fileOutputStream.flush();
                 fileOutputStream.close();
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
+                ToastUtil.show("导出成功");
+            } catch (Exception e) {
+                ToastUtil.show("导出失败");
                 e.printStackTrace();
             }
 
@@ -220,10 +220,10 @@ public class ExportUtil {
                 e.printStackTrace();
             }
         }else if (saveFile.getPath().endsWith(".xml")){
-
+            XMLHelper.getInstance().writeToXml(saveFile,topics);
         }else if (saveFile.getPath().endsWith("html")
                 ||saveFile.getPath().endsWith("htm")){
-
+                exportTopic2Html(topics,saveFile);
         }
 
 
@@ -1004,13 +1004,44 @@ public class ExportUtil {
     }
 
 
-    private void exportTopic2XML(){
 
-    }
-    private void exportTopic2Excel(){
+    private static void exportTopic2Html(List<Topic> topics,File savePath){
 
-    }
-    private void exportTopic2Html(){
+        try {
+            Table table = DbHelper.getInstance().getTableById(topics.get(0).baseId);
+            BufferedWriter writer = new BufferedWriter(new FileWriter(savePath));
 
+            writer.write("<html><head>\n" +
+                    "<title>");
+
+            writer.write(table.projectname);
+            writer.write("</title>\n" +
+                    "<meta http-equiv='content-type' content='text/html;charset=utf-8'>\n" +
+                    "<script src=\"voice/jquery.min.js\"></script><script src=\"voice/playwav.js\"></script><style type='text/css'>\n" +
+                    "table{background-color:#5382BB;margin-top:5px; }\n" +
+                    "table.sm{font-size:12px; }\n" +
+                    "table  tr{background-color: #FFFFFF;}\n" +
+                    "table  tr.title{background-color: #5382BB;color:#FFFFFF;}\n" +
+                    "table  td.tdtitle{font-weight:700; background-color: #AEEEEE;color:#000;}\n" +
+                    "a {\ttext-decoration: none;}\n" +
+                    ".autop { text-indent:2em }\n" +
+                    "audio {\tdisplay: none;}\n" +
+                    "div[f]{float:left1;display:inline;overflow:hidden}\n" +
+                    "#maskdiv{z-index: 1;width:320;height:250px;background: #cccccc;  position:fixed;right: 0px; top: 100px; border-radius:10px; }\n" +
+                    "#maskdiv #video{ z-index: 2;margin-top:-10px; }\n" +
+                    "#maskdiv a{text-decoration:none;float:right;margin:5px;}</style></head><body><div class='wrapper'>\n");
+            writer.write("<h1 align='center'>"+table.projectname+"</h1><table width='100%' border='0' cellspacing='1' cellpadding='5'><tr class='title'><th>音标注音</th><th>民文或方言转写</th><th>拼音</th><th>普通话词对译</th><th>普通话意译</th><th>注释</th><th>英语</th></tr>");
+            for (int i=0,max = topics.size();i<max;i++){
+                Topic topic = topics.get(i);
+                writer.write("</tr><tr><td>"+topic.ipa+"</td><td>"+topic.mwfy+"</td><td>"+topic.spell+"</td><td>"+topic.word_trans+"</td><td>"+topic.free_trans+"</td><td>"+topic.note+"</td><td>"+topic.english+"</td></tr>\n");
+            }
+
+            writer.flush();
+            writer.close();
+            ToastUtil.show("导出成功");
+        } catch (IOException e) {
+            e.printStackTrace();
+            ToastUtil.show("导出失败");
+        }
     }
 }

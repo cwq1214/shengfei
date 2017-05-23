@@ -623,8 +623,8 @@ public class EXBHelper {
             Document document = reader.read(new File(xmlPath));
             Element rootElement = document.getRootElement();
             Element basic_body = rootElement.element("basic-body");
-
             Element timeLine = basic_body.element("common-timeline");
+
 
             List<Element> timeLines = timeLine.elements();
             for (int i=0,max = timeLines.size();i<max;i++){
@@ -634,6 +634,7 @@ public class EXBHelper {
                 audioAttr.start = (long)(Double.valueOf(value)*1000)+"";
                 audioAttrs.add(audioAttr);
             }
+
             List<Element> tiers = basic_body.elements("tier");
             for (int i=0,max1 = tiers.size(); i < max1;i++){
                 Element tier = tiers.get(i);
@@ -691,7 +692,9 @@ public class EXBHelper {
 
             DbHelper.getInstance().insertOrUpdateRecord(records);
 
-            WAVUtil.getInstance().deco(audioAttrs,audioPath);
+            if (tableType!=3) {
+                WAVUtil.getInstance().deco(audioAttrs, audioPath);
+            }
 
             ToastUtil.show("导入成功");
         } catch (DocumentException e) {

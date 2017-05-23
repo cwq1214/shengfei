@@ -1180,7 +1180,7 @@ public class RecordTabController extends BaseController {
         private RecordFinishCallback recordFinishCallback;
         @Override
         public void run() {
-            System.out.println("TimerThread 开始录音");
+//            System.out.println("TimerThread 开始录音");
             status = TimerStatus.START;
 
             isRecording = true;
@@ -1202,8 +1202,8 @@ public class RecordTabController extends BaseController {
 
             //循环等待
             while (System.currentTimeMillis()-startTime<recordTime*1000&&isRecording){
-                System.out.println("recording timer");
-                System.out.println(new Date(System.currentTimeMillis()-startTime).getSeconds());
+//                System.out.println("recording timer");
+//                System.out.println(new Date(System.currentTimeMillis()-startTime).getSeconds());
                 status = TimerStatus.RECORDING;
             }
             System.out.println("TimerThread 录音时间 "+new Date(System.currentTimeMillis()-startTime).getSeconds());

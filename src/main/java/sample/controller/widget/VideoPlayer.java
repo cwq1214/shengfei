@@ -1,5 +1,6 @@
 package sample.controller.widget;
 
+import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.beans.binding.ObjectBinding;
@@ -91,15 +92,23 @@ public class VideoPlayer extends VBox implements Initializable {
 
     public void setMediaPath(String path){
         this.path = FileUtil.mp4Copy2Temp(path);
-        if (mediaPlayer!=null){
-            if (mediaPlayer.getStatus()== MediaPlayer.Status.PLAYING){
-                mediaPlayer.stop();
-            }
-            btn_play.setGraphic(new ImageView(new Image(Main.class.getResourceAsStream("/sample/resource/img/播放.png"))));
+        Platform.runLater(new Runnable() {
+                              @Override
+                              public void run() {
+            if (mediaPlayer!=null){
+                if (mediaPlayer.getStatus()== MediaPlayer.Status.PLAYING){
+                    mediaPlayer.stop();
+                }
 
-            mediaPlayer=null;
-            mv_mediaView.setMediaPlayer(null);
-        }
+                        btn_play.setGraphic(new ImageView(new Image(Main.class.getResourceAsStream("/sample/resource/img/播放.png"))));
+
+                    }
+
+                mediaPlayer=null;
+                mv_mediaView.setMediaPlayer(null);
+            }
+        });
+
 
 
         File file = new File(path);

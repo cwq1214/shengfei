@@ -118,8 +118,8 @@ public class ImportXmlDialog2  extends BaseController {
             return 1;
         if (rb_toJB.isSelected())
             return 2;
-//        if (rb_toHYB.isSelected())
-//            return 3;
+        if (rb_toHYB.isSelected())
+            return 3;
 
         return -1;
     }

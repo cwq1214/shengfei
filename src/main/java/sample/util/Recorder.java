@@ -3,14 +3,18 @@ package sample.util;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import org.bytedeco.javacpp.avcodec;
 import org.bytedeco.javacpp.avutil;
 import org.bytedeco.javacpp.opencv_core;
 import org.bytedeco.javacv.*;
+import sample.Main;
 
 import javax.sound.sampled.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.net.URISyntaxException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.ShortBuffer;
@@ -78,6 +82,15 @@ public class Recorder extends Thread {
     private FFmpegFrameRecorder coverRecorder;
 
     private boolean isStartRecord = false;
+    MediaPlayer mediaPlayer;
+    public Recorder() {
+        try {
+            mediaPlayer = new MediaPlayer(new Media(Main.class.getResource("resource/sound/14.wav").toURI().toString()));
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+
+    }
 
     @Override
     public void run() {
@@ -96,7 +109,7 @@ public class Recorder extends Thread {
             int nSamplesRead;
 
             while (startPreview) {
-                if (initVideoParameter) {
+                if (initVideoParameter) {//修改视频参数
                     grabber = null;
                     Thread.sleep(1000);
                     grabber = new OpenCVFrameGrabber(webcam_index);
@@ -110,7 +123,7 @@ public class Recorder extends Thread {
                     grabber.start();
                     initVideoParameter = false;
                 }
-                if (changeAudioParameter){
+                if (changeAudioParameter){//修改音频参数
                     if (line != null){
                         line.close();
                         line=null;
@@ -161,13 +174,14 @@ public class Recorder extends Thread {
                         System.out.println("startRecordVideo");
                         recorder = initRecorder(Constant.ROOT_FILE_DIR+"/video/"+fileName+Constant.VIDEO_SUFFIX,true);
                         recorder.start();
+                        playSound();
                         startRecordVideo = false;
                         startRecordTimes = System.currentTimeMillis();
 
                     }
 
-                    System.out.println("frame width " + frame.imageWidth);
-                    System.out.println("frame height " + frame.imageHeight);
+//                    System.out.println("frame width " + frame.imageWidth);
+//                    System.out.println("frame height " + frame.imageHeight);
 
                     recorder.record(frame);
                     nSamplesRead = nBytesRead / 2;
@@ -178,12 +192,14 @@ public class Recorder extends Thread {
 
                 } else if (recordingAudio){
                     if (startRecordAudio){
-                        System.out.println("startRecordAudio");
-                        System.out.println(this.fileName);
+//                        System.out.println("startRecordAudio");
+//                        System.out.println(this.fileName);
                         recorder = initRecorder(Constant.ROOT_FILE_DIR+"/audio/"+fileName+Constant.AUDIO_SUFFIX,true);
                         recorder.start();
+                        playSound();
                         startRecordAudio = false;
                         startRecordTimes = System.currentTimeMillis();
+
                     }
                     try {
                         nSamplesRead = nBytesRead / 2;
@@ -192,7 +208,7 @@ public class Recorder extends Thread {
                         sBuff = ShortBuffer.wrap(samples, 0, nSamplesRead);
 
                         isStartRecord = true;
-                        System.out.println("record");
+//                        System.out.println("record");
                         recorder.recordSamples(sampleRate, numChannels, sBuff);
                     } catch (org.bytedeco.javacv.FrameRecorder.Exception e) {
                         // do nothing
@@ -201,7 +217,7 @@ public class Recorder extends Thread {
                 }else {
                     startRecordTimes = 0;
                     if (recorder!=null){
-                        System.out.println("close recorder");
+//                        System.out.println("close recorder");
                         recorder.close();
                         isStartRecord = false;
                         recorder = null;
@@ -214,7 +230,7 @@ public class Recorder extends Thread {
                     }
 
                     if(cover){
-                        System.out.println("cover");
+//                        System.out.println("cover");
                         FileUtil.copyFile(new File(Constant.ROOT_FILE_DIR+"/video/"+fileName+Constant.VIDEO_SUFFIX)
                                 ,new File(Constant.ROOT_FILE_DIR+"/audio/"+fileName+Constant.AUDIO_SUFFIX));
 
@@ -408,4 +424,15 @@ public class Recorder extends Thread {
     }
 
 
+
+    public void playSound(){
+        System.out.println("play sound");
+        if (mediaPlayer==null){
+            return;
+        }
+        if (mediaPlayer.getStatus() == MediaPlayer.Status.PLAYING){
+            mediaPlayer.stop();
+        }
+        mediaPlayer.play();
+    }
 }

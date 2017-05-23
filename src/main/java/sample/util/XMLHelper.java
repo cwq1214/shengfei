@@ -11,6 +11,7 @@ import org.dom4j.io.XMLWriter;
 import sample.controller.YBCC.YBCCBean;
 import sample.entity.Record;
 import sample.entity.Table;
+import sample.entity.Topic;
 
 import java.io.*;
 import java.lang.reflect.Field;
@@ -37,7 +38,48 @@ public class XMLHelper {
         return xmlHelper;
     }
 
+    public void writeToXml(File savePath, List<Topic> topics) {
+        Document doc = DocumentHelper.createDocument();
+        Element basic_body = doc.addElement("basic-body");
 
+        Element tb_type = basic_body.addElement("tb-type");
+        tb_type.addText("HY");
+        String[] category = {"IPA","MWFY","PYIN","PTHWORD","PTHSENT","NOTE","EN"};
+        String[] fieldName = {"ipa","mwfy","spell","word_trans","free_trans","note","english"};
+        for (int i=0,max  =topics.size();i<max;i++){
+            Element speaker = basic_body.addElement("speaker");
+            speaker.addAttribute("id",topics.get(i).speakerId);
+            for (int j=0,max2=fieldName.length;j<max2;j++){
+                Element tier = speaker.addElement("tier");
+                tier.addAttribute("category",category[j]);
+
+                Element element = tier.addElement("event");
+                try {
+                    Field field = Topic.class.getDeclaredField(fieldName[j]);
+                    Object object = field.get(topics.get(i));
+                    element.addText(object==null?"":object.toString());
+
+                } catch (NoSuchFieldException e) {
+                    e.printStackTrace();
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        try {
+            XMLWriter xmlWriter = new XMLWriter(new FileOutputStream(savePath,false), OutputFormat.createPrettyPrint());
+            xmlWriter.write(doc);
+            xmlWriter.close();
+            ToastUtil.show("导出成功");
+        } catch (Exception e) {
+            ToastUtil.show("导出失败");
+            e.printStackTrace();
+        }
+
+
+
+    }
     public void writeToXml(String filePath,TableView tableView, Table t){
 
         int tableType = Integer.parseInt(t.getDatatype());
@@ -130,6 +172,9 @@ public class XMLHelper {
             }else if (tableType==2){
                 category = new String[]{"SN","CH","IPA","MWFY","EN","NOTE","PTHWORD"};
                 field_name = new String[]{"investCode","content","IPA","MWFY","english","note","free_trans"};
+            }else if (tableType==3){
+                category = new String[]{"IPA","MWFY","PYIN","PTHWORD","PTHSENT","NOTE","EN"};
+                field_name = new String[]{"IPA","MWFY","spell","content","free_trans","note","english"};
             }
 
             List<Record> records = new ArrayList<>();
@@ -142,7 +187,6 @@ public class XMLHelper {
                     Record record = records.get(j);
                     Field field = Record.class.getField(field_name[i]);
                     field.set(record,value);
-
                 }
             }
             Table  table = new Table(tableType+"");
@@ -150,7 +194,9 @@ public class XMLHelper {
 
             for (int i=0,max = records.size(); i < max;i++){
                 records.get(i).baseId = table.id;
-//                records.get(i).baseCode = "A"+String.format("%0" + 5 + "d", i + 1);
+                if (TextUtil.isEmpty(records.get(i).investCode)){
+                    records.get(i).investCode = "A"+String.format("%0" + 5 + "d", i + 1);
+                }
                 records.get(i).baseCode =records.get(i).investCode;
                 records.get(i).uuid = UUID.randomUUID().toString();
             }
