@@ -754,6 +754,7 @@ public class ExportUtil {
 
     public static String tdHtml = "<td>%s</td><td><div f=%s></div>%s</td>";
 
+
     public static void exportTableHtml(List<Table> tbls,boolean isShowSpeaker,boolean isShowMeta,boolean isSplit,int line,int lineItemCount,int align){
         File choiceDir = DialogUtil.dirChooses(new Stage());
         FileUtil.copy(Constant.ROOT_FILE_DIR + "/HtmlData/voice", choiceDir.getAbsolutePath() + "/voice");
@@ -998,8 +999,52 @@ public class ExportUtil {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }else {
+            StringBuilder thSb = new StringBuilder();
+            StringBuilder trSb = new StringBuilder();
+
+            for (int i = 0; i <= tempBeans.size(); i++) {
+                if (i == 0){
+                    thSb.append("<th>编码</th>");
+                    thSb.append("<th>音标注音</th>");
+                    thSb.append("<th>民文方言</th>");
+                    thSb.append("<th>普通话对译</th>");
+                    continue;
+                }
+
+                YBCCBean bean = tempBeans.get(i - 1);
+                String[] ipas = bean.getRecord().getIPA().split(" ");
+                String[] mwfys = bean.getRecord().getMWFY().split(" ");
+                String[] frees = bean.getRecord().getFree_trans().split(" ");
+                for (int j = 0; j < ipas.length; j++) {
+                    trSb.append("<tr>");
+                    trSb.append("<td>"+bean.getRecord().getBaseCode()+"</td>");
+                    trSb.append("<td>"+bean.getRecord().getIPA()+"</td>");
+                    if (j < mwfys.length) {
+                        trSb.append("<td>"+mwfys[j]+"</td>");
+                    }else
+                    {
+                        trSb.append("<td></td>");
+                    }
+
+                    if (j < frees.length) {
+                        trSb.append("<td>"+frees[j]+"</td>");
+                    }else {
+                        trSb.append("<td></td>");
+                    }
+                    trSb.append("</tr>");
+                }
+            }
+
+            String html = String.format(htmlWithYDBase,t.getTitle(),t.getTitle(),String.format(contentHtml,thSb,trSb),"1");
+            saveContentToFile(saveFile.getAbsolutePath(),
+                    html);
         }
 
+
+    }
+
+    public static void exportDBDZTable(TableView tbl){
 
     }
 
