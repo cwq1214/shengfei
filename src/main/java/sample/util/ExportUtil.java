@@ -1054,7 +1054,7 @@ public class ExportUtil {
 
         try {
             Table table = DbHelper.getInstance().getTableById(topics.get(0).baseId);
-            BufferedWriter writer = new BufferedWriter(new FileWriter(savePath));
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(savePath),"UTF-8"));
 
             writer.write("<html><head>\n" +
                     "<title>");
