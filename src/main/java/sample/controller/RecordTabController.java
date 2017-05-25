@@ -21,6 +21,7 @@ import java.lang.reflect.Field;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
@@ -751,12 +752,14 @@ public class RecordTabController extends BaseController {
         if (autoRecordNext){
             if (!looperThread.isRecording) {
                 int maxIndex = getTableViewItems().size()-1;
-                if (maxIndex==0){
+                if (maxIndex<=0){
                     return;
                 }
                 looperThread.maxIndex = getLastCount();
                 looperThread.isRecording = true;
-                new Thread(looperThread).start();
+                Thread thread =new Thread(looperThread);
+                thread.setName("自动录音线程");
+                thread.start();
 
             }else {
                 looperThread.stopRecord();
@@ -825,6 +828,7 @@ public class RecordTabController extends BaseController {
 //        recordVideoThread.start();
 
         recorder = new Recorder();
+        recorder.setName("录音线程");
         recorder.setPreviewImageView(img);
         recorder.setTimeCallback(new Recorder.RecordTimeCallback() {
             @Override
@@ -909,6 +913,7 @@ public class RecordTabController extends BaseController {
         }
 
         if (!recordingAudio){
+            resetTimeLabel();
             recordingAudio = true;
 //            recordAudioThread.startRecordAudio(selRecord.baseId+"/"+selRecord.uuid);
             recorder.startRecordAudio(getAudioNameWithoutSuffix(selRecord));
@@ -916,6 +921,8 @@ public class RecordTabController extends BaseController {
             setBtnDisable(btn,false,true);
 
             System.out.println("开始录音 recordOneAudio");
+
+
         }else {
             startRecordTimes = 0;
             recordingAudio = false;
@@ -941,62 +948,7 @@ public class RecordTabController extends BaseController {
         });
     }
 
-    //开始录制音频
-    private void startRecordAudio(){
-        Image image;
-        if (selRecord==null){
-            return;
-        }
 
-        if (!recordingAudio){
-            recordingAudio = true;
-//            recordAudioThread.startRecordAudio(selRecord.baseId+"/"+selRecord.uuid);
-            recorder.startRecordAudio(getAudioNameWithoutSuffix(selRecord));
-            image = new Image(Main.class.getResourceAsStream("/sample/resource/img/b5.png"));
-            setBtnDisable(btn_recordAudio,false,true);
-
-            System.out.println("开始录音 recordOneAudio");
-            ImageView imageView = new ImageView(image);
-            imageView.setFitWidth(24);
-            imageView.setFitHeight(24);
-
-            Platform.runLater(()->{
-                btn_recordAudio.graphicProperty().setValue(imageView);
-            });
-        }
-
-    }
-    //停止录制音频
-    private void stopRecordAudio(){
-        Image image;
-        if (selRecord==null){
-            return;
-        }
-
-        if (recordingAudio){
-            startRecordTimes = 0;
-            recordingAudio = false;
-//            recordAudioThread.stopRecordAudio();
-            recorder.stopRecordAudio();
-            System.out.println("停止录音 recordOneAudio");
-
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            selRecord.createDate= simpleDateFormat.format(new Date());
-            selRecord.done = "1";
-            DbHelper.getInstance().updateRecord(selRecord);
-            tableView.refresh();
-            image = new Image(Main.class.getResourceAsStream("/sample/resource/img/b1.png"));
-            setBtnDisable(btn_recordAudio,false,false);
-            ImageView imageView = new ImageView(image);
-            imageView.setFitWidth(24);
-            imageView.setFitHeight(24);
-
-            Platform.runLater(()->{
-                btn_recordAudio.graphicProperty().setValue(imageView);
-            });
-        }
-
-    }
     Thread thread;
     //录制一条视频
     private void recordOneVideo(Button btn){
@@ -1145,9 +1097,8 @@ public class RecordTabController extends BaseController {
                 }
 
                 if (thread==null){
-
-
                     thread = new Thread(timerThread);
+                    thread.setName("单次录音线程");
                     thread.start();
                 }
 
@@ -1176,7 +1127,7 @@ public class RecordTabController extends BaseController {
         TimerStatus status = TimerStatus.STOP;
         long startTime;
         int recordTime = 2;
-        boolean isRecording= false;
+        boolean isRecording= false;//外部控制跳出循环
         private RecordFinishCallback recordFinishCallback;
         @Override
         public void run() {
@@ -1201,14 +1152,16 @@ public class RecordTabController extends BaseController {
 
 
             //循环等待
-            while (System.currentTimeMillis()-startTime<recordTime*1000&&isRecording){
+            while (parseRecordTime() < (recordTime*1000)&&isRecording){
 //                System.out.println("recording timer");
 //                System.out.println(new Date(System.currentTimeMillis()-startTime).getSeconds());
                 status = TimerStatus.RECORDING;
             }
+
+
             System.out.println("TimerThread 录音时间 "+new Date(System.currentTimeMillis()-startTime).getSeconds());
             System.out.println("TimerThread 录音结束");
-
+            resetTimeLabel();
 //            stopRecordAudio();
             Thread t2 = new Thread(){
                 @Override
@@ -1220,24 +1173,25 @@ public class RecordTabController extends BaseController {
             t2.start();
 
 
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
 //            while (recorder.isStartRecord()){
 //                System.out.println("2");
 //            }
 
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            if (t1.isAlive()) {
-                t1.stop();
-
-            }
-            if (t2.isAlive()){
-                t2.stop();
-            }
-            t1=null;
-            t2=null;
+//            if (t1.isAlive()) {
+//                t1.stop();
+//
+//            }
+//            if (t2.isAlive()){
+//                t2.stop();
+//            }
+//            t1=null;
+//            t2=null;
 
 
             isRecording = false;
@@ -1259,6 +1213,15 @@ public class RecordTabController extends BaseController {
 
 
     }
+    public long parseRecordTime(){
+        String time = label_recordTime.getText();
+        String min = time.split(":")[0];
+        String secAndMs = time.split(":")[1];
+
+        long ms = Long.valueOf(secAndMs.split("\\.")[0])*1000;
+//        System.out.println(ms);
+        return ms;
+    }
     public enum TimerStatus {
         RECORDING,START,STOP
     }
@@ -1266,6 +1229,7 @@ public class RecordTabController extends BaseController {
         void finish();
     }
 
+    //录制视频时长最长两分钟
     public class VideoTimerThread implements Runnable{
         RecordFinishCallback recordFinishCallback;
         @Override
@@ -1304,5 +1268,14 @@ public class RecordTabController extends BaseController {
             e.printStackTrace();
         }
 
+    }
+
+    public void resetTimeLabel(){
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                label_recordTime.setText("00:00.000");
+            }
+        });
     }
 }

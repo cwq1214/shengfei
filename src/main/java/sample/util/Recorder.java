@@ -10,10 +10,13 @@ import org.bytedeco.javacpp.avutil;
 import org.bytedeco.javacpp.opencv_core;
 import org.bytedeco.javacv.*;
 import sample.Main;
+import sun.audio.AudioPlayer;
+import sun.audio.AudioStream;
 
 import javax.sound.sampled.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -83,10 +86,14 @@ public class Recorder extends Thread {
 
     private boolean isStartRecord = false;
     MediaPlayer mediaPlayer;
+    AudioStream as;
     public Recorder() {
         try {
             mediaPlayer = new MediaPlayer(new Media(Main.class.getResource("resource/sound/14.wav").toURI().toString()));
+            as = new AudioStream(Main.class.getResourceAsStream("resource/sound/14.wav"));
         } catch (URISyntaxException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
@@ -168,7 +175,7 @@ public class Recorder extends Thread {
                 opencv_core.IplImage iplImage = toIplImage.convert(frame);
 
 
-                //是否录制
+                //是否录制视频
                 if (recordingVideo) {
                     if (startRecordVideo) {
                         System.out.println("startRecordVideo");
@@ -190,12 +197,14 @@ public class Recorder extends Thread {
                     sBuff = ShortBuffer.wrap(samples, 0, nSamplesRead);
                     recorder.recordSamples(sampleRate, numChannels, sBuff);
 
-                } else if (recordingAudio){
+                } else if (recordingAudio){//是否录制音频
                     if (startRecordAudio){
 //                        System.out.println("startRecordAudio");
 //                        System.out.println(this.fileName);
                         recorder = initRecorder(Constant.ROOT_FILE_DIR+"/audio/"+fileName+Constant.AUDIO_SUFFIX,true);
                         recorder.start();
+
+                        Thread.sleep(250);
                         playSound();
                         startRecordAudio = false;
                         startRecordTimes = System.currentTimeMillis();
@@ -427,12 +436,28 @@ public class Recorder extends Thread {
 
     public void playSound(){
         System.out.println("play sound");
-        if (mediaPlayer==null){
-            return;
-        }
-        if (mediaPlayer.getStatus() == MediaPlayer.Status.PLAYING){
-            mediaPlayer.stop();
-        }
-        mediaPlayer.play();
+        new Thread(){
+            @Override
+            public void run() {
+                super.run();
+//                if (AudioPlayer.player.isAlive()){
+//                    AudioPlayer.player.stop(as);
+//                }
+                try {
+                    AudioPlayer.player.start(new AudioStream(Main.class.getResourceAsStream("resource/sound/14.wav")));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+//                if (mediaPlayer==null){
+//                    return;
+//                }
+//                if (mediaPlayer.getStatus() == MediaPlayer.Status.PLAYING){
+//                    mediaPlayer.stop();
+//                }
+//                mediaPlayer.play();
+            }
+        }.start();
+
     }
 }

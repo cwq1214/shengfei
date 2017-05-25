@@ -34,9 +34,11 @@ public class WidgetUtil {
             List<Tab> tabs = pane.getTabs();
             for (int i = tabs.size() - 1; i >= 0; i--) {
                 if (tabs.get(i).getText().equals(tab.getText())) {
-                    tabs.remove(i);
-                    if (tabs.get(i).getOnClosed()!=null)
+
+                    if (tabs.get(i).getOnClosed()!=null) {
                         tabs.get(i).getOnClosed().handle(null);
+                    }
+                    tabs.remove(i);
                 }
             }
         }

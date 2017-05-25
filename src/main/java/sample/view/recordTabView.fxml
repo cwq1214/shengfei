@@ -218,7 +218,7 @@
                     </ChoiceBox>
                 </HBox>
 
-                <Label fx:id="label_recordTime" text="0:00:00" GridPane.columnIndex="1" GridPane.rowIndex="0" GridPane.rowSpan="2" style="-fx-font-size: 25px"/>
+                <Label fx:id="label_recordTime" text="00:00.000" GridPane.columnIndex="1" GridPane.rowIndex="0" GridPane.rowSpan="2" style="-fx-font-size: 25px"/>
 
                 <CheckBox text="覆盖已有录音" GridPane.columnIndex="2" GridPane.rowIndex="1" fx:id="cb_cover" />
                 <columnConstraints>
