@@ -7,6 +7,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.input.MouseEvent;
 import sample.controller.BaseController;
 import sample.entity.Table;
@@ -42,9 +43,11 @@ public class OpenTableController extends BaseController {
 
     public void setOpen(boolean open) {
         isOpen = open;
+
         if (!open){
             openBtn.setText("删除");
             tipL.setText("请选择删除的表：");
+            listView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         }
     }
 
@@ -98,10 +101,13 @@ public class OpenTableController extends BaseController {
                 mStage.close();
             }
         }else {
-            if (nowIndex != -1){
-                DbHelper.getInstance().delTableAndRecord(tableDatas.get(nowIndex));
-                tableDatas.remove(nowIndex);
-                tableNameDatas.remove(nowIndex);
+            ObservableList<Integer> indexs = listView.getSelectionModel().getSelectedIndices();
+            if (indexs.size() != 0){
+                for (int i = indexs.size() - 1; i >= 0 ; i--) {
+                    DbHelper.getInstance().delTableAndRecord(tableDatas.get(indexs.get(i).intValue()));
+                    tableDatas.remove(indexs.get(i).intValue());
+                    tableNameDatas.remove(indexs.get(i).intValue());
+                }
                 listView.refresh();
             }
         }

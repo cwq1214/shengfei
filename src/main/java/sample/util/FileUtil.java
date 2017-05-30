@@ -186,4 +186,16 @@ public class FileUtil {
         }
         return result;
     }
+
+    public static File searchFile(String root,String fileName){
+        File rFile = new File(root);
+        if (rFile.isDirectory()){
+            for (File f : rFile.listFiles()){
+                if (f.isFile() && f.getName().contains(fileName+".")){
+                    return f;
+                }
+            }
+        }
+        return null;
+    }
 }

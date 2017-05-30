@@ -1,6 +1,7 @@
 package sample.util;
 
 import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -8,6 +9,7 @@ import javafx.stage.Stage;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Created by chenweiqi on 2017/4/13.
@@ -87,6 +89,82 @@ public class DialogUtil {
             choiceDir.mkdirs();
         }
         return choiceDir;
+    }
+
+    public static int exportDBDZDialog(){
+        Alert _alert = new Alert(Alert.AlertType.NONE,"选择导出格式",new ButtonType("输出Excel"),new ButtonType("输出网页"),
+                new ButtonType("输出音频网"));
+        _alert.setTitle("选择导出格式");
+        Optional<ButtonType> _buttonType = _alert.showAndWait();
+
+        if(_buttonType.get().getText().equals("输出Excel")){
+            return 0;
+        }
+        else if(_buttonType.get().getText().equals("输出网页")){
+            return 1;
+        }
+        else if(_buttonType.get().getText().equals("输出音频网")){
+            return 2;
+        }
+        return -1;
+    }
+
+    public static int exportTQDialog(){
+        Alert _alert = new Alert(Alert.AlertType.NONE,"选择导出格式",new ButtonType("输出Excel"),new ButtonType("输出网页"));
+        _alert.setTitle("选择导出格式");
+        Optional<ButtonType> _buttonType = _alert.showAndWait();
+
+        if(_buttonType.get().getText().equals("输出Excel")){
+            return 0;
+        }
+        else if(_buttonType.get().getText().equals("输出网页")){
+            return 1;
+        }
+        return -1;
+    }
+
+    public static File exportTQJZDialog(){
+        FileChooser chooser = new FileChooser();
+        chooser.setTitle("请选择文件");
+        chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("2003Excel文件", "*.xls"));
+        chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("2007Excel文件", "*.xlsx"));
+        chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("网页", "*.html"));
+        chooser.setInitialDirectory(
+                new File(System.getProperty("user.home"))
+        );
+        Stage stage = new Stage();
+        File saveFile = chooser.showSaveDialog(stage);
+        if (saveFile == null) {
+            throw new RuntimeException("save File can not be null");
+        }
+        if (!saveFile.exists()) {
+            saveFile.getParentFile().mkdirs();
+        }
+        return saveFile;
+    }
+
+    public static File exportDBDZDialog(boolean isExcel){
+        FileChooser chooser = new FileChooser();
+        chooser.setTitle("请选择文件");
+        if (isExcel){
+            chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("2003Excel文件", "*.xls"));
+            chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("2007Excel文件", "*.xlsx"));
+        }else{
+            chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("网页", "*.html"));
+            chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("音频网页", "*.htm"));
+        }
+        chooser.setInitialDirectory(
+                new File(System.getProperty("user.home"))
+        );
+        Stage stage = new Stage();
+        File saveFile = chooser.showSaveDialog(stage);
+        if (saveFile == null) {
+            throw new RuntimeException("save File can not be null");
+        }
+        if (!saveFile.exists()) {
+            saveFile.getParentFile().mkdirs();
+        }
+        return saveFile;
     }
 
     public static File exportTqjzchDialog(boolean isExcel){

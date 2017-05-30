@@ -6,7 +6,10 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextField;
+import sample.controller.ybzf.YBZFController;
+import sample.controller.ybzf.YBZFListener;
 import sample.util.TextUtil;
+import sample.util.ViewUtil;
 
 import java.net.URL;
 import java.util.List;
@@ -32,6 +35,24 @@ public class SearchViewController extends BaseController {
 
 
     List<String> tableTitles;
+
+    @FXML
+    public void ybmbClick(){
+        YBZFController vc = ((YBZFController) ViewUtil.getInstance().showView("view/ybzfView.fxml", "音标面板", -1, -1, ""));
+        vc.setListener(new YBZFListener() {
+            @Override
+            public void btnClickWithText(String str) {
+                input_content.setText(input_content.getText() + str);
+            }
+
+            @Override
+            public void okBtnClick() {
+
+            }
+        });
+        vc.mStage.setResizable(false);
+        vc.mStage.show();
+    }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {

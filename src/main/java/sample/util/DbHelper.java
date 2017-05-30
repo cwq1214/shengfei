@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.function.Predicate;
+import java.util.regex.Pattern;
 
 /**
  * Created by Bee on 2017/4/11.
@@ -41,6 +42,33 @@ public class DbHelper {
     Dao<CodeBase, String> codeBaseDao;
     Dao<CodeLangHanYu, String> hanyuDao;
     Dao<CodeIPABase, String> codeIPADao;
+
+    /**
+     * 插入模板记录
+     * @param tmp
+     */
+    public void insertTmp (ExportTemplate tmp){
+        try {
+            Dao<ExportTemplate,String> tmpDao = DaoManager.createDao(connectionSource,ExportTemplate.class);
+            tmpDao.createOrUpdate(tmp);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 查询所有导出模板
+     * @return
+     */
+    public ObservableList searchAllTemplate(){
+        try {
+            Dao<ExportTemplate,String> tmpDao = DaoManager.createDao(connectionSource,ExportTemplate.class);
+            return FXCollections.observableArrayList(tmpDao.queryForAll());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
     /**
      * 更新编码替换的Record
@@ -107,17 +135,17 @@ public class DbHelper {
             topicDao.callBatchTasks(new Callable<Void>() {
                 @Override
                 public Void call() throws Exception {
-                    List<Topic> temp = topicDao.queryForEq("baseId",topics.get(0).getBaseId());
-
-                    int lastSpeakerId = 0;
-                    if (temp.size() != 0){
-                        lastSpeakerId = Integer.parseInt(temp.get(temp.size() - 1).getSpeakerId());
-                    }
+//                    List<Topic> temp = topicDao.queryForEq("baseId",topics.get(0).getBaseId());
+//
+//                    int lastSpeakerId = 0;
+//                    if (temp.size() != 0){
+//                        lastSpeakerId = Integer.parseInt(temp.get(temp.size() - 1).getSpeakerId());
+//                    }
 
                     for (Topic t: topics) {
-                        if (t.getSpeakerId() == null || t.getSpeakerId().length() == 0){
-                            t.setSpeakerId(Integer.toString(++lastSpeakerId));
-                        }
+//                        if (t.getSpeakerId() == null || t.getSpeakerId().length() == 0){
+//                            t.setSpeakerId(Integer.toString(++lastSpeakerId));
+//                        }
                         topicDao.createOrUpdate(t);
                     }
                     return null;
@@ -174,9 +202,15 @@ public class DbHelper {
         try {
             Dao<Table,String> tableDao = DaoManager.createDao(connectionSource,Table.class);
             Dao<Record,String> recordDao = DaoManager.createDao(connectionSource,Record.class);
+            Dao<Topic,String> topicDao = DaoManager.createDao(connectionSource,Topic.class);
 
-            recordDao.delete(recordDao.queryForEq("baseId",t.getId()));
+            if (Integer.parseInt(t.getDatatype()) < 3){
+                recordDao.delete(recordDao.queryForEq("baseId",t.getId()));
+            }else{
+                topicDao.delete(topicDao.queryForEq("baseId",t.getId()));
+            }
             tableDao.delete(t);
+
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -389,8 +423,15 @@ public class DbHelper {
             if (tempTable.size() == 0){
                 lastIndex = 1;
             }else{
-                Table lastT = ((Table) tempTable.get(tempTable.size() - 1));
-                lastIndex = Integer.parseInt(lastT.getTitle().substring(titlePre.length(),lastT.getTitle().length()))+1;
+                Pattern p = Pattern.compile("^.+\\d$");
+                for (int i = tempTable.size() - 1 ; i >= 0 ; i--) {
+                    Table tbl = ((Table) tempTable.get(i));
+                    if (p.matcher(tbl.getTitle()).find() && tbl.getTitle().startsWith(titlePre)){
+                        lastIndex = Integer.parseInt(tbl.getTitle().substring(titlePre.length(),tbl.getTitle().length()))+1;
+                        break;
+                    }
+                }
+                lastIndex = 1;
             }
 
             tableDao.create(t);

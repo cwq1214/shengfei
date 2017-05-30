@@ -16,6 +16,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.net.URL;
@@ -34,6 +36,7 @@ import javafx.scene.media.MediaPlayer;
 import javafx.util.Callback;
 import org.apache.poi.xwpf.usermodel.TOC;
 import sample.Main;
+import sample.controller.YBCC.YBCCBean;
 import sample.controller.widget.VideoPlayer;
 import sample.entity.Record;
 import sample.entity.Table;
@@ -100,7 +103,10 @@ public class RecordTabController extends BaseController {
     TextField input_number;
     @FXML
     Label label_maxNumber;
-
+    @FXML
+    private ImageView demoImgView;
+    @FXML
+    private VideoPlayer demoVideoPlayer;
 
     //录音时间间隔
     int recordTImeSpace = 2;
@@ -166,6 +172,7 @@ public class RecordTabController extends BaseController {
 
     public void setupTablView(){
         TableColumn<Record,String> doneCol = new TableColumn<>("录音状态");
+        TableColumn<Record,String> videoDoneCol = new TableColumn<>("录像状态");
         TableColumn<Record,String> codeCol = new TableColumn<>("编码");
         TableColumn<Record,String> rankCol = new TableColumn<>("分级");
         TableColumn<Record,String> yunCol = new TableColumn<>("音韵");
@@ -187,6 +194,16 @@ public class RecordTabController extends BaseController {
                 return new ReadOnlyStringWrapper("已录");
             }
         });
+        videoDoneCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Record, String>, ObservableValue<String>>() {
+            @Override
+            public ObservableValue<String> call(TableColumn.CellDataFeatures<Record, String> param) {
+                File f = new File(Constant.ROOT_FILE_DIR+"/video/"+t.getId()+"/"+param.getValue().getUuid()+".mp4");
+                if (f.exists()){
+                    return new ReadOnlyStringWrapper("已录");
+                }
+                return new ReadOnlyStringWrapper("未录");
+            }
+        });
         codeCol.setCellValueFactory(new PropertyValueFactory<>("investCode"));
         rankCol.setCellValueFactory(new PropertyValueFactory<>("rank"));
         yunCol.setCellValueFactory(new PropertyValueFactory<>("yun"));
@@ -200,11 +217,11 @@ public class RecordTabController extends BaseController {
         freeTran.setCellValueFactory(new PropertyValueFactory<>("free_trans"));
 
         if (tableType.equals("0")) {
-            tableView.getColumns().addAll(codeCol, doneCol, contentCol, englishCol, yunCol, noteCol, rankCol, spellCol, IPACol, recordDateCol);
+            tableView.getColumns().addAll(codeCol, doneCol,videoDoneCol, contentCol, englishCol, yunCol, noteCol, rankCol, spellCol, IPACol, recordDateCol);
         }else if (tableType.equals("1")){
-            tableView.getColumns().addAll(doneCol, codeCol, rankCol, contentCol, mwfyCol, IPACol, spellCol,englishCol, noteCol, recordDateCol);
+            tableView.getColumns().addAll(doneCol,videoDoneCol, codeCol, rankCol, contentCol, mwfyCol, IPACol, spellCol,englishCol, noteCol, recordDateCol);
         }else if (tableType.equals("2")){
-            tableView.getColumns().addAll(doneCol, codeCol, rankCol, contentCol, mwfyCol, IPACol, freeTran, noteCol, englishCol, recordDateCol);
+            tableView.getColumns().addAll(doneCol,videoDoneCol, codeCol, rankCol, contentCol, mwfyCol, IPACol, freeTran, noteCol, englishCol, recordDateCol);
         }
 
         recordDatas = DbHelper.getInstance().searchTempRecordKeep(tableType,t.getId());
@@ -286,6 +303,36 @@ public class RecordTabController extends BaseController {
             public void changed(ObservableValue observable, Record oldValue, Record newValue) {
                 selRecord = newValue;
                 int selIndex = tableView.getSelectionModel().getSelectedIndex();
+                Record r = tableView.getItems().get(selIndex);
+
+                File demoPFile = FileUtil.searchFile( Constant.DEMO_PIC_DIR + "/",r.getUuid());
+                File demoVFile = FileUtil.searchFile(Constant.DEMO_Video_DIR + "/",r.getUuid());
+                String demoP = null;
+                String demoV = null;
+                if (demoPFile != null) demoP = demoPFile.getAbsolutePath();
+                if (demoVFile != null) demoV = demoVFile.getAbsolutePath();
+
+
+                if (demoP != null && demoP.length() != 0){
+                    try {
+                        FileInputStream fip = new FileInputStream(demoP);
+                        Image img = new Image(fip);
+                        demoImgView.setImage(img);
+                        fip.close();
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }else {
+                    demoImgView.setImage(null);
+                }
+                if (demoV != null && demoV.length() != 0){
+                    demoVideoPlayer.setMediaPath(demoV);
+                }else {
+                    demoVideoPlayer.setMediaPath("");
+                }
+
                 if (selRecord==null){
                     return;
                 }

@@ -82,6 +82,8 @@
                     <MenuItem mnemonicParsing="false" onAction="#onSpeakerInfoTableClick" text="%menu_archives_shrxxb" />
                     <MenuItem mnemonicParsing="false" onAction="#onTableMetadataInfoClick" text="%menu_archives_dcys" />
                     <MenuItem mnemonicParsing="false" onAction="#onCreateHTMLFileClick" text="%menu_archives_cjydwy" />
+                    <SeparatorMenuItem />
+                    <MenuItem mnemonicParsing="false" onAction="#onCreateQyjFileClick" text="%menu_archives_qyj" />
                 </items>
             </Menu>
             <Menu mnemonicParsing="false" text="%menu_system">

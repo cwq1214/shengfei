@@ -402,7 +402,10 @@ public class YBCCController extends BaseController {
                             }else if (result == -1){
 
                             }
+                        }else{
+                            bean.setWrongReason("");
                         }
+
 
                         tableView.setItems(showDatas);
                         tableView.refresh();

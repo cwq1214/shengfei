@@ -271,8 +271,12 @@
             </GridPane>
 
             <TabPane>
-                <Tab closable="false" text="演示图片" />
-                <Tab closable="false" text="演示视频" />
+                <Tab closable="false" text="演示图片" >
+                    <ImageView fx:id="demoImgView" fitHeight="300" fitWidth="400" preserveRatio="true"></ImageView>
+                </Tab>
+                <Tab closable="false" text="演示视频" >
+                    <VideoPlayer fx:id="demoVideoPlayer"></VideoPlayer>
+                </Tab>
                 <Tab closable="false" text="发音视频" >
                     <VideoPlayer fx:id="videoPlayer" ></VideoPlayer>
                 </Tab>

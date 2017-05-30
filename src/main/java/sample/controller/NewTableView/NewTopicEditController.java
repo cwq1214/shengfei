@@ -36,6 +36,7 @@ public class NewTopicEditController extends BaseController {
     private int baseId;
 
     private ObservableList<Topic> topics;
+
     private TextField nowEditTF;
 
     private Matcher searchM;
