@@ -15,6 +15,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.stage.Modality;
 import sample.diycontrol.TextAreaInput.TextAreaInputController;
 import sample.util.DialogUtil;
+import sample.util.ExportUtil;
 import sample.util.ViewUtil;
 
 import java.io.File;
@@ -27,23 +28,23 @@ import java.util.ResourceBundle;
  */
 public class CreateHTML3Controller extends BaseController {
     @FXML
-    private TextField gkTF;
+    public TextField gkTF;
     @FXML
-    private TextField zbTF;
+    public TextField zbTF;
     @FXML
-    private TextField chTF;
+    public TextField chTF;
     @FXML
-    private TextField jzTF;
+    public TextField jzTF;
     @FXML
-    private TextField yxTF;
+    public TextField yxTF;
     @FXML
-    private TextField dzdzTF;
+    public TextField dzdzTF;
     @FXML
-    private TextField chdzTF;
+    public TextField chdzTF;
     @FXML
-    private TextField jzdzTF;
+    public TextField jzdzTF;
     @FXML
-    private TextField wbwyTF;
+    public TextField wbwyTF;
 
     @FXML
     public void gkTextBtnClick(){
@@ -51,8 +52,10 @@ public class CreateHTML3Controller extends BaseController {
         vc.setListener(new TextAreaInputController.TextAreaInputListener() {
             @Override
             public void onFinishInput(String str) {
+                String tempPath = ExportUtil.export2DescHtml(str);
                 gkTF.setText(gkTF.getText().length() == 0?"":gkTF.getText() + ";");
-                gkTF.setText(gkTF.getText() + str);
+                gkTF.setText(gkTF.getText() + tempPath);
+                gkTF.setUserData(gkTF.getText());
             }
         });
 
@@ -117,17 +120,5 @@ public class CreateHTML3Controller extends BaseController {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         super.initialize(location, resources);
-        gkTF.setOnKeyPressed(new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent event) {
-                gkTF.setText(((String) gkTF.getUserData()));
-            }
-        });
-        gkTF.setOnKeyReleased(new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent event) {
-                gkTF.setText(((String) gkTF.getUserData()));
-            }
-        });
     }
 }

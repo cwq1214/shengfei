@@ -44,6 +44,14 @@ public class MainController extends BaseController {
     public Label changeLanguage;
 
     @FXML
+    public void onCreateSfyFileClick(){
+        ExportSFYController vc = ((ExportSFYController) ViewUtil.getInstance().showView("view/exportSFY.fxml", "导出声飞云", -1, -1, ""));
+        vc.mStage.initModality(Modality.APPLICATION_MODAL);
+        vc.mStage.setResizable(false);
+        vc.mStage.show();
+    }
+
+    @FXML
     public void onCreateQyjFileClick(){
         ExportQyjViewController vc = ((ExportQyjViewController) ViewUtil.getInstance().showView("view/exportQyjView.fxml", "导出千语街", -1, -1, ""));
         vc.mStage.initModality(Modality.APPLICATION_MODAL);

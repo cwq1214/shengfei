@@ -11,6 +11,7 @@ import javafx.stage.Stage;
 import jdk.nashorn.internal.ir.IfNode;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -29,6 +30,7 @@ import java.awt.*;
 import java.io.*;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -1517,5 +1519,211 @@ public class ExportUtil {
             sb.append("_zho");
         }
         return sb.toString();
+    }
+
+    public static String export2DescHtml(String str){
+        String htmlStr = "<html>\n" +
+                "  \n" +
+                "  <head>\n" +
+                "    <title>概况</title></head>\n" +
+                "  \n" +
+                "  <body>\n" +
+                "    <div class='wrapper'>\n" +
+                "      <h1 align='center'>概况</h1>\n" +
+                "      <p class='autop'>%s</p>\n" +
+                "      <p align='right'></p></div>\n" +
+                "  </body>\n" +
+                "\n" +
+                "</html>";
+
+        File tempFir = new File(Constant.TEMP_DIR);
+        if (!tempFir.exists()){
+            tempFir.mkdirs();
+        }
+
+        saveContentToFile(Constant.TEMP_DIR + "/tempGK.html",
+                String.format(htmlStr,str));
+        return tempFir.getAbsolutePath() + "/tempGK.html";
+    }
+
+    public static void exportYD(String ydbh,String ydmc,String cjr,String gxr,String cjrq,String cjdd,String rjgj,String gcjg,String urlLink,String xyms,String gk,String fyzb,String chb,String jzb,String yxb,String dzdzb,String chdzb,String jzdzb,String wbwy){
+        String mainHtmlStr = "\n" +
+                "<html><head>\n" +
+                "<title>%s</title>\n" +
+                "<meta http-equiv='content-type' content='text/html;charset=utf-8'>\n" +
+                "<script src=\"voice/jquery.min.js\"></script><script src=\"voice/playwav.js\"></script><style type='text/css'>\n" +
+                "table{background-color:#5382BB;margin-top:5px; }\n" +
+                "table.sm{font-size:12px; }\n" +
+                "table  tr{background-color: #FFFFFF;}\n" +
+                "table  tr.title{background-color: #5382BB;color:#FFFFFF;}\n" +
+                "table  td.tdtitle{font-weight:700; background-color: #AEEEEE;color:#000;}\n" +
+                "a {\ttext-decoration: none;}\n" +
+                ".autop { text-indent:2em }\n" +
+                "audio {\tdisplay: none;}\n" +
+                "div[f]{float:left1;display:inline;overflow:hidden}\n" +
+                "#maskdiv{z-index: 1;width:320;height:250px;background: #cccccc;  position:fixed;right: 0px; top: 100px; border-radius:10px; }\n" +
+                "#maskdiv #video{ z-index: 2;margin-top:-10px; }\n" +
+                "#maskdiv a{text-decoration:none;float:right;margin:5px;}\n" +
+                "</style></head><body><div class='wrapper'><h1 align='center'>%s</h1><table width='100%%' border='0' cellspacing='1' cellpadding='5'><tr><td class='tdtitle'>语档编号</td>\n" +
+                "<td>%s</td>\n" +
+                "</tr><tr><td class='tdtitle'>创建人</td>\n" +
+                "<td>%s</td>\n" +
+                "</tr><tr><td class='tdtitle'>贡献人</td>\n" +
+                "<td>%s</td>\n" +
+                "</tr><tr><td class='tdtitle'>创建日期</td>\n" +
+                "<td>%s</td>\n" +
+                "</tr><tr><td class='tdtitle'>创建地点</td>\n" +
+                "<td>%s</td>\n" +
+                "</tr><tr><td class='tdtitle'>资源描述</td>\n" +
+                "<td>%s</td>\n" +
+                "</tr><tr><td class='tdtitle'>软件工具</td>\n" +
+                "<td>%s</td>\n" +
+                "</tr><tr><td class='tdtitle'>馆藏机构</td>\n" +
+                "<td>%s</td>\n" +
+                "</tr><tr><td class='tdtitle'>概况</td>\n" +
+                "<td>%s</td>\n" +
+                "</tr><tr><td class='tdtitle'>方言字表</td>\n" +
+                "<td>%s</td>\n" +
+                "</tr><tr><td class='tdtitle'>词汇表</td>\n" +
+                "<td>%s</td>\n" +
+                "</tr><tr><td class='tdtitle'>句子表</td>\n" +
+                "<td>%s</td>\n" +
+                "</tr><tr><td class='tdtitle'>音系表</td>\n" +
+                "<td>%s</td>\n" +
+                "</tr><tr><td class='tdtitle'>单子对照</td>\n" +
+                "<td>%s</td>\n" +
+                "</tr><tr><td class='tdtitle'>词汇对照</td>\n" +
+                "<td>%s</td>\n" +
+                "</tr><tr><td class='tdtitle'>句子对照</td>\n" +
+                "<td>%s</td>\n" +
+                "</tr><tr><td class='tdtitle'>外部网页文件</td>\n" +
+                "<td>%s</td>\n" +
+                "</tr></table>\n" +
+                "</div></body></html>";
+
+
+        File saveDir = DialogUtil.dirChooses(new Stage());
+        String result = String.format(mainHtmlStr,ydmc,ydmc,ydbh,cjr,gxr,cjrq,cjdd,rjgj,gcjg,urlLink,xyms,
+                filePathCpy2Real(saveDir.getAbsolutePath(),gk,"gk"),
+                filePathCpy2Real(saveDir.getAbsolutePath(),fyzb,"fyzb"),
+                filePathCpy2Real(saveDir.getAbsolutePath(),chb,"chb"),
+                filePathCpy2Real(saveDir.getAbsolutePath(),jzb,"jzb"),
+                filePathCpy2Real(saveDir.getAbsolutePath(),yxb,"yxb"),
+                filePathCpy2Real(saveDir.getAbsolutePath(),dzdzb,"dzdzb"),
+                filePathCpy2Real(saveDir.getAbsolutePath(),chdzb,"chdzb"),
+                filePathCpy2Real(saveDir.getAbsolutePath(),jzdzb,"jzdzb"),
+                filePathCpy2Real(saveDir.getAbsolutePath(),wbwy,"wbwy"));
+        saveContentToFile(saveDir+"/index.html",result);
+    }
+
+    private static String filePathCpy2Real(String basePath,String paths,String extra) {
+        StringBuilder sb = new StringBuilder();
+        String[] ps = paths.split(";");
+        for (int i = 0; i < ps.length; i++) {
+            File f = new File(ps[i]);
+            if (f.exists() && f.isFile()) {
+                String desPath = extra + "-" + i + "/" + f.getName();
+                File df = new File(basePath + "/" + extra + "-" + i);
+                if (!df.exists()) {
+                    df.mkdir();
+                }
+
+                File[] vFiles = f.getParentFile().listFiles(new FilenameFilter() {
+                    @Override
+                    public boolean accept(File dir, String name) {
+                        if (dir.isDirectory() && name.equalsIgnoreCase("voice")) {
+                            return true;
+                        }
+                        return false;
+                    }
+                });
+
+                if (vFiles.length >= 1) {
+                    FileUtil.copy(vFiles[0].getAbsolutePath(), df + "/voice");
+                }
+                FileUtil.fileCopy(f.getAbsolutePath(), basePath + "/" + desPath);
+                sb.append("<a href='" + desPath + "'>" + f.getName() + "</a>\n");
+            }
+        }
+        return sb.toString();
+    }
+
+    public static void exportSFY(ObservableList<Table> tbls,String account){
+        File saveFile = DialogUtil.saveFileDialog("选择保存路径");
+        File vDir = new File(saveFile.getParent() + "/voice");
+        if (!vDir.exists()){
+            vDir.mkdir();
+        }
+
+        Workbook workbook = null;
+
+        if (saveFile.getName().contains(".xlsx")) {
+               workbook = new XSSFWorkbook();
+        } else {
+            workbook = new HSSFWorkbook();
+        }
+
+
+        Sheet sheet = workbook.createSheet();
+        Row head = sheet.createRow(0);
+        head.createCell(0).setCellValue("条目ID");
+        head.createCell(1).setCellValue("条目类别");
+        head.createCell(2).setCellValue("条目");
+        head.createCell(3).setCellValue("录音状态");
+        head.createCell(4).setCellValue("编码");
+        head.createCell(5).setCellValue("分级");
+        head.createCell(6).setCellValue("音韵");
+        head.createCell(7).setCellValue("民族文字或方言字");
+        head.createCell(8).setCellValue("音标注音");
+        head.createCell(9).setCellValue("普通话词对译");
+        head.createCell(10).setCellValue("拼音");
+        head.createCell(11).setCellValue("英语");
+        head.createCell(12).setCellValue("注释");
+
+        for (Table t:tbls){
+            ObservableList<Record> rs = DbHelper.getInstance().searchTempRecordKeep("",t.getId());
+            for (Record r : rs) {
+                Row row = sheet.createRow(sheet.getLastRowNum()+1);
+                row.createCell(0).setCellValue(r.getUuid());
+
+                String typeStr = "";
+                if (t.datatype.equalsIgnoreCase("0")){
+                    typeStr = "字表";
+                }else if (t.datatype.equalsIgnoreCase("1")){
+                    typeStr = "词表";
+                }else if (t.datatype.equalsIgnoreCase("2")){
+                    typeStr = "句表";
+                }
+
+                row.createCell(1).setCellValue(typeStr);
+                row.createCell(2).setCellValue(r.getContent());
+                row.createCell(3).setCellValue(r.getDone().equals("0")?"未录":"已录");
+                row.createCell(4).setCellValue(r.getBaseCode());
+                row.createCell(5).setCellValue(r.getRank());
+                row.createCell(6).setCellValue(r.getYun());
+                row.createCell(7).setCellValue(r.getMWFY());
+                row.createCell(8).setCellValue(r.getIPA());
+                row.createCell(9).setCellValue(r.getFree_trans());
+                row.createCell(10).setCellValue(r.getSpell());
+                row.createCell(11).setCellValue(r.getEnglish());
+                row.createCell(12).setCellValue(r.getNote());
+
+                File vFile = new File(Constant.ROOT_FILE_DIR + "/audio/" + t.getId() +"/"+r.getUuid()+".wav");
+                if (vFile.exists()){
+                    FileUtil.fileCopy(vFile.getAbsolutePath(),vDir.getAbsolutePath() + "/" + r.getBaseCode()+"_"+r.getUuid()+"_"+account+".wav");
+                }
+            }
+        }
+
+        try {
+            FileOutputStream outputStream = new FileOutputStream(saveFile);
+            workbook.write(outputStream);
+            outputStream.flush();
+            outputStream.close();
+            ToastUtil.show("导出成功");
+        } catch (IOException e) {
+            e.printStackTrace();
+            ToastUtil.show("导出失败");
+        }
     }
 }
