@@ -424,14 +424,17 @@ public class DbHelper {
                 lastIndex = 1;
             }else{
                 Pattern p = Pattern.compile("^.+\\d$");
-                for (int i = tempTable.size() - 1 ; i >= 0 ; i--) {
+                int i;
+                for (i = tempTable.size() - 1 ; i >= 0 ; i--) {
                     Table tbl = ((Table) tempTable.get(i));
                     if (p.matcher(tbl.getTitle()).find() && tbl.getTitle().startsWith(titlePre)){
                         lastIndex = Integer.parseInt(tbl.getTitle().substring(titlePre.length(),tbl.getTitle().length()))+1;
                         break;
                     }
                 }
-                lastIndex = 1;
+                if (i<0){
+                    lastIndex = 1;
+                }
             }
 
             tableDao.create(t);

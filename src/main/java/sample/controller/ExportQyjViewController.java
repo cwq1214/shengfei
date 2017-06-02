@@ -177,6 +177,34 @@ public class ExportQyjViewController extends BaseController {
 
         tmps = DbHelper.getInstance().searchAllTemplate();
         templateList.setItems(tmps);
+
+        templateList.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                ExportTemplate t = tmps.get(newValue.intValue());
+                selectCBContent(learnCB,learnTF,t.getLearnLang());
+                selectCBContent(appCB,appTF,t.getAppKind());
+                selectCBContent(mediaCB,mediaTF,t.getMediaKind());
+                selectCBContent(diffCB,diffTF,t.getDifficult());
+                selectCBContent(lessonCB,lessonTF,t.getLessonName());
+                selectCBContent(fDirCB,fDirTF,t.getfDir());
+                selectCBContent(sDirCB,sDirTF,t.getsDir());
+            }
+        });
+    }
+
+    private void selectCBContent(ChoiceBox cb,TextField tf,String content){
+        ObservableList items = cb.getItems();
+        for (int i = 0; i < items.size(); i++) {
+            String c = ((String) items.get(i));
+            if (c.equalsIgnoreCase(content)){
+                cb.getSelectionModel().select(i);
+                return;
+            }
+        }
+        cb.getSelectionModel().select(cb.getItems().size() - 1);
+//        tf.setDisable(false);
+        tf.setText(content);
     }
 
     private void setupTblList(){
@@ -210,6 +238,9 @@ public class ExportQyjViewController extends BaseController {
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
                 learnTF.setDisable(newValue.intValue() != learnCB.getItems().size() - 1);
+                if (newValue.intValue() != learnCB.getItems().size() - 1){
+                    learnTF.setText("");
+                }
             }
         });
 
@@ -217,30 +248,45 @@ public class ExportQyjViewController extends BaseController {
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
                 appTF.setDisable(newValue.intValue() != appCB.getItems().size() - 1);
+                if (newValue.intValue() != appCB.getItems().size() - 1){
+                    appTF.setText("");
+                }
             }
         });
         mediaCB.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
                 mediaTF.setDisable(newValue.intValue() != mediaCB.getItems().size() - 1);
+                if (newValue.intValue() != mediaCB.getItems().size() - 1){
+                    mediaTF.setText("");
+                }
             }
         });
         diffCB.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
                 diffTF.setDisable(newValue.intValue() != diffCB.getItems().size() - 1);
+                if (newValue.intValue() != diffCB.getItems().size() - 1){
+                    diffTF.setText("");
+                }
             }
         });
         lessonCB.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
                 lessonTF.setDisable(newValue.intValue() != lessonCB.getItems().size() - 1);
+                if (newValue.intValue() != lessonCB.getItems().size() - 1){
+                    lessonTF.setText("");
+                }
             }
         });
         fDirCB.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
                 fDirTF.setDisable(newValue.intValue() != fDirCB.getItems().size() - 1);
+                if (newValue.intValue() != fDirCB.getItems().size() - 1){
+                    fDirTF.setText("");
+                }
                 if (!fDirTF.isDisable()) {
                     sDirCB.getSelectionModel().select(sDirCB.getItems().size() - 1);
                     sDirCB.setDisable(true);
@@ -253,6 +299,9 @@ public class ExportQyjViewController extends BaseController {
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
                 sDirTF.setDisable(newValue.intValue() != sDirCB.getItems().size() - 1);
+                if (newValue.intValue() != sDirCB.getItems().size() - 1){
+                    sDirTF.setText("");
+                }
             }
         });
 

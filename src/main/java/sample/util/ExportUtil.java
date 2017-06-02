@@ -760,13 +760,14 @@ public class ExportUtil {
             "      </table>";
 
     public static String tdHtml = "<td>%s</td><td><div f=%s></div>%s</td>";
+    public static String tdNoVoiceHtml = "<td>%s</td><td>%s</td>";
 
 
     public static void exportTableHtml(List<Table> tbls,boolean isShowSpeaker,boolean isShowMeta,boolean isSplit,int line,int lineItemCount,int align){
         File choiceDir = DialogUtil.dirChooses(new Stage());
-        FileUtil.copy(Constant.ROOT_FILE_DIR + "/HtmlData/voice", choiceDir.getAbsolutePath() + "/voice");
 
         for (Table t : tbls) {
+            FileUtil.copy(Constant.ROOT_FILE_DIR + "/HtmlData/voice", choiceDir.getAbsolutePath() + "/"+ t.getTitle() + "/voice");
             StringBuilder contentSB = new StringBuilder();
             StringBuilder headerSB = new StringBuilder();
             if (isShowSpeaker){
@@ -813,7 +814,62 @@ public class ExportUtil {
             ObservableList<Record> tReocrds = DbHelper.getInstance().searchTempRecordKeepAndDone(t.getId());
             //句表
             if (t.datatype.equalsIgnoreCase("2")){
+                StringBuilder thSb = new StringBuilder();
+                thSb.append("<th>编码</th><th>条目</th>");
 
+                StringBuilder trSb = new StringBuilder();
+                int lineCount = tReocrds.size();
+
+                //每个文件内现在行数
+                int nowLine = 0;
+                int nowFileSplit = 0;
+                int splitCount = lineCount%line == 0 ? lineCount/line : lineCount/line + 1;
+
+                for (int i = 0; i < lineCount; i++) {
+                    nowLine++;
+
+                    Record r = tReocrds.get(i);
+                    File vFile = new File(Constant.ROOT_FILE_DIR + "/audio/" + t.getId() + "/" + r.getUuid() + ".wav");
+                    if (vFile.exists()){
+                        FileUtil.fileCopy(vFile.getAbsolutePath(),choiceDir.getAbsolutePath()+"/"+ t.getTitle() + "/voice/" + vFile.getName());
+                    }
+                    trSb.append("<tr>"+ String.format(tdHtml,r.getBaseCode(),r.getUuid(),r.getContent()) +"</tr>");
+                    trSb.append("<tr>"+ String.format(tdNoVoiceHtml,r.getBaseCode(),r.getMWFY()) +"</tr>");
+                    trSb.append("<tr>"+ String.format(tdNoVoiceHtml,r.getBaseCode(),r.getIPA()) +"</tr>");
+                    trSb.append("<tr>"+ String.format(tdNoVoiceHtml,r.getBaseCode(),r.getFree_trans()) +"</tr>");
+
+
+                    if (isSplit && nowLine == line){
+                        nowLine = 0;
+                        contentSB.append(headerSB);
+                        contentSB.append(String.format(contentHtml,thSb,trSb));
+                        saveContentToFile(choiceDir.getAbsolutePath() + "/"+ t.getTitle() + "/" + t.getTitle()+ "-" + nowFileSplit + ".html",
+                                String.format(htmlWithYDBase,t.getTitle(),t.getTitle(),contentSB,makeHtmlPageDiv(t.getTitle(),nowFileSplit,splitCount)));
+                        trSb = new StringBuilder();
+                        contentSB = new StringBuilder();
+                        nowFileSplit++;
+                    }
+                }
+
+                if (isSplit){
+                    if (tReocrds.size() == 0){
+                        contentSB.append(headerSB);
+                        contentSB.append(String.format(contentHtml,thSb,trSb));
+                        saveContentToFile(choiceDir.getAbsolutePath() +"/"+ t.getTitle() + "/" + t.getTitle() + ".html",
+                                String.format(htmlWithYDBase,t.getTitle(),t.getTitle(),contentSB,"1"));
+                    }
+                    if (nowLine != 0){
+                        contentSB.append(headerSB);
+                        contentSB.append(String.format(contentHtml,thSb,trSb));
+                        saveContentToFile(choiceDir.getAbsolutePath() +"/"+ t.getTitle()+ "/" + t.getTitle()+ "-" + nowFileSplit + ".html",
+                                String.format(htmlWithYDBase,t.getTitle(),t.getTitle(),contentSB,makeHtmlPageDiv(t.getTitle(),nowFileSplit,splitCount)));
+                    }
+                }else{
+                    contentSB.append(headerSB);
+                    contentSB.append(String.format(contentHtml,thSb,trSb));
+                    saveContentToFile(choiceDir.getAbsolutePath()+ "/" + t.getTitle() + "/" + t.getTitle() + ".html",
+                            String.format(htmlWithYDBase,t.getTitle(),t.getTitle(),contentSB,"1"));
+                }
             }else{
             //字表，词表
                 StringBuilder thSb = new StringBuilder();
@@ -837,6 +893,11 @@ public class ExportUtil {
                         if (index < tReocrds.size()){
                             Record r = tReocrds.get(index);
                             tdSb.append(String.format(tdHtml,r.getBaseCode(),r.getUuid(),r.getContent()));
+
+                            File vFile = new File(Constant.ROOT_FILE_DIR + "/audio/" + t.getId() + "/" + r.getUuid() + ".wav");
+                            if (vFile.exists()){
+                                FileUtil.fileCopy(vFile.getAbsolutePath(),choiceDir.getAbsolutePath()+"/"+ t.getTitle() + "/voice/" + vFile.getName());
+                            }
                         }
                     }
 
@@ -846,7 +907,7 @@ public class ExportUtil {
                         nowLine = 0;
                         contentSB.append(headerSB);
                         contentSB.append(String.format(contentHtml,thSb,trSb));
-                        saveContentToFile(choiceDir.getAbsolutePath() + "/" + t.getTitle()+ "-" + nowFileSplit + ".html",
+                        saveContentToFile(choiceDir.getAbsolutePath() + "/"+ t.getTitle() + "/" + t.getTitle()+ "-" + nowFileSplit + ".html",
                                 String.format(htmlWithYDBase,t.getTitle(),t.getTitle(),contentSB,makeHtmlPageDiv(t.getTitle(),nowFileSplit,splitCount)));
                         trSb = new StringBuilder();
                         contentSB = new StringBuilder();
@@ -858,19 +919,19 @@ public class ExportUtil {
                     if (tReocrds.size() == 0){
                         contentSB.append(headerSB);
                         contentSB.append(String.format(contentHtml,thSb,trSb));
-                        saveContentToFile(choiceDir.getAbsolutePath() + "/" + t.getTitle() + ".html",
+                        saveContentToFile(choiceDir.getAbsolutePath() +"/"+ t.getTitle() + "/" + t.getTitle() + ".html",
                                 String.format(htmlWithYDBase,t.getTitle(),t.getTitle(),contentSB,"1"));
                     }
                     if (nowLine != 0){
                         contentSB.append(headerSB);
                         contentSB.append(String.format(contentHtml,thSb,trSb));
-                        saveContentToFile(choiceDir.getAbsolutePath() + "/" + t.getTitle()+ "-" + nowFileSplit + ".html",
+                        saveContentToFile(choiceDir.getAbsolutePath() +"/"+ t.getTitle()+ "/" + t.getTitle()+ "-" + nowFileSplit + ".html",
                                 String.format(htmlWithYDBase,t.getTitle(),t.getTitle(),contentSB,makeHtmlPageDiv(t.getTitle(),nowFileSplit,splitCount)));
                     }
                 }else{
                     contentSB.append(headerSB);
                     contentSB.append(String.format(contentHtml,thSb,trSb));
-                    saveContentToFile(choiceDir.getAbsolutePath() + "/" + t.getTitle() + ".html",
+                    saveContentToFile(choiceDir.getAbsolutePath()+ "/" + t.getTitle() + "/" + t.getTitle() + ".html",
                             String.format(htmlWithYDBase,t.getTitle(),t.getTitle(),contentSB,"1"));
                 }
             }
