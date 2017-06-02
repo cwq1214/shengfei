@@ -9,7 +9,9 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import jdk.nashorn.internal.ir.IfNode;
+import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -17,19 +19,18 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.bytedeco.javacpp.annotation.Const;
 import org.dom4j.DocumentException;
+import sample.controller.MutiAnaly.AfterAnalyViewController;
 import sample.controller.NewTableView.TempTableView;
 import sample.controller.YBCC.YBCCBean;
 import sample.controller.ZlyydView.CollectBean;
 import sample.controller.ZlyydView.SameIPABean;
-import sample.entity.Record;
-import sample.entity.Speaker;
-import sample.entity.Table;
-import sample.entity.Topic;
+import sample.entity.*;
 
 import java.awt.*;
 import java.io.*;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -334,8 +335,10 @@ public class ExportUtil {
             workbook.write(outputStream);
             outputStream.flush();
             outputStream.close();
+            ToastUtil.show("导出成功");
         } catch (IOException e) {
             e.printStackTrace();
+            ToastUtil.show("导出成功");
         }
     }
 
@@ -410,8 +413,10 @@ public class ExportUtil {
             workbook.write(outputStream);
             outputStream.flush();
             outputStream.close();
+            ToastUtil.show("导出成功");
         } catch (IOException e) {
             e.printStackTrace();
+            ToastUtil.show("导出失败");
         }
     }
 
@@ -486,8 +491,10 @@ public class ExportUtil {
             workbook.write(outputStream);
             outputStream.flush();
             outputStream.close();
+            ToastUtil.show("导出成功");
         } catch (IOException e) {
             e.printStackTrace();
+            ToastUtil.show("导出失败");
         }
     }
 
@@ -613,11 +620,13 @@ public class ExportUtil {
     public static void saveContentToFile(String path,String content){
         File target = new File(path);
         try {
-            FileWriter fw = new FileWriter(target);
+            BufferedWriter fw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(target),"utf-8"));
             fw.write(content);
             fw.close();
+            ToastUtil.show("导出成功");
         } catch (IOException e) {
             e.printStackTrace();
+            ToastUtil.show("导出失败");
         }
     }
 
@@ -754,13 +763,14 @@ public class ExportUtil {
             "      </table>";
 
     public static String tdHtml = "<td>%s</td><td><div f=%s></div>%s</td>";
+    public static String tdNoVoiceHtml = "<td>%s</td><td>%s</td>";
 
 
     public static void exportTableHtml(List<Table> tbls,boolean isShowSpeaker,boolean isShowMeta,boolean isSplit,int line,int lineItemCount,int align){
         File choiceDir = DialogUtil.dirChooses(new Stage());
-        FileUtil.copy(Constant.ROOT_FILE_DIR + "/HtmlData/voice", choiceDir.getAbsolutePath() + "/voice");
 
         for (Table t : tbls) {
+            FileUtil.copy(Constant.ROOT_FILE_DIR + "/HtmlData/voice", choiceDir.getAbsolutePath() + "/"+ t.getTitle() + "/voice");
             StringBuilder contentSB = new StringBuilder();
             StringBuilder headerSB = new StringBuilder();
             if (isShowSpeaker){
@@ -807,7 +817,62 @@ public class ExportUtil {
             ObservableList<Record> tReocrds = DbHelper.getInstance().searchTempRecordKeepAndDone(t.getId());
             //句表
             if (t.datatype.equalsIgnoreCase("2")){
+                StringBuilder thSb = new StringBuilder();
+                thSb.append("<th>编码</th><th>条目</th>");
 
+                StringBuilder trSb = new StringBuilder();
+                int lineCount = tReocrds.size();
+
+                //每个文件内现在行数
+                int nowLine = 0;
+                int nowFileSplit = 0;
+                int splitCount = lineCount%line == 0 ? lineCount/line : lineCount/line + 1;
+
+                for (int i = 0; i < lineCount; i++) {
+                    nowLine++;
+
+                    Record r = tReocrds.get(i);
+                    File vFile = new File(Constant.ROOT_FILE_DIR + "/audio/" + t.getId() + "/" + r.getUuid() + ".wav");
+                    if (vFile.exists()){
+                        FileUtil.fileCopy(vFile.getAbsolutePath(),choiceDir.getAbsolutePath()+"/"+ t.getTitle() + "/voice/" + vFile.getName());
+                    }
+                    trSb.append("<tr>"+ String.format(tdHtml,r.getBaseCode(),r.getUuid(),r.getContent()) +"</tr>");
+                    trSb.append("<tr>"+ String.format(tdNoVoiceHtml,r.getBaseCode(),r.getMWFY()) +"</tr>");
+                    trSb.append("<tr>"+ String.format(tdNoVoiceHtml,r.getBaseCode(),r.getIPA()) +"</tr>");
+                    trSb.append("<tr>"+ String.format(tdNoVoiceHtml,r.getBaseCode(),r.getFree_trans()) +"</tr>");
+
+
+                    if (isSplit && nowLine == line){
+                        nowLine = 0;
+                        contentSB.append(headerSB);
+                        contentSB.append(String.format(contentHtml,thSb,trSb));
+                        saveContentToFile(choiceDir.getAbsolutePath() + "/"+ t.getTitle() + "/" + t.getTitle()+ "-" + nowFileSplit + ".html",
+                                String.format(htmlWithYDBase,t.getTitle(),t.getTitle(),contentSB,makeHtmlPageDiv(t.getTitle(),nowFileSplit,splitCount)));
+                        trSb = new StringBuilder();
+                        contentSB = new StringBuilder();
+                        nowFileSplit++;
+                    }
+                }
+
+                if (isSplit){
+                    if (tReocrds.size() == 0){
+                        contentSB.append(headerSB);
+                        contentSB.append(String.format(contentHtml,thSb,trSb));
+                        saveContentToFile(choiceDir.getAbsolutePath() +"/"+ t.getTitle() + "/" + t.getTitle() + ".html",
+                                String.format(htmlWithYDBase,t.getTitle(),t.getTitle(),contentSB,"1"));
+                    }
+                    if (nowLine != 0){
+                        contentSB.append(headerSB);
+                        contentSB.append(String.format(contentHtml,thSb,trSb));
+                        saveContentToFile(choiceDir.getAbsolutePath() +"/"+ t.getTitle()+ "/" + t.getTitle()+ "-" + nowFileSplit + ".html",
+                                String.format(htmlWithYDBase,t.getTitle(),t.getTitle(),contentSB,makeHtmlPageDiv(t.getTitle(),nowFileSplit,splitCount)));
+                    }
+                }else{
+                    contentSB.append(headerSB);
+                    contentSB.append(String.format(contentHtml,thSb,trSb));
+                    saveContentToFile(choiceDir.getAbsolutePath()+ "/" + t.getTitle() + "/" + t.getTitle() + ".html",
+                            String.format(htmlWithYDBase,t.getTitle(),t.getTitle(),contentSB,"1"));
+                }
             }else{
             //字表，词表
                 StringBuilder thSb = new StringBuilder();
@@ -831,6 +896,11 @@ public class ExportUtil {
                         if (index < tReocrds.size()){
                             Record r = tReocrds.get(index);
                             tdSb.append(String.format(tdHtml,r.getBaseCode(),r.getUuid(),r.getContent()));
+
+                            File vFile = new File(Constant.ROOT_FILE_DIR + "/audio/" + t.getId() + "/" + r.getUuid() + ".wav");
+                            if (vFile.exists()){
+                                FileUtil.fileCopy(vFile.getAbsolutePath(),choiceDir.getAbsolutePath()+"/"+ t.getTitle() + "/voice/" + vFile.getName());
+                            }
                         }
                     }
 
@@ -840,7 +910,7 @@ public class ExportUtil {
                         nowLine = 0;
                         contentSB.append(headerSB);
                         contentSB.append(String.format(contentHtml,thSb,trSb));
-                        saveContentToFile(choiceDir.getAbsolutePath() + "/" + t.getTitle()+ "-" + nowFileSplit + ".html",
+                        saveContentToFile(choiceDir.getAbsolutePath() + "/"+ t.getTitle() + "/" + t.getTitle()+ "-" + nowFileSplit + ".html",
                                 String.format(htmlWithYDBase,t.getTitle(),t.getTitle(),contentSB,makeHtmlPageDiv(t.getTitle(),nowFileSplit,splitCount)));
                         trSb = new StringBuilder();
                         contentSB = new StringBuilder();
@@ -852,19 +922,19 @@ public class ExportUtil {
                     if (tReocrds.size() == 0){
                         contentSB.append(headerSB);
                         contentSB.append(String.format(contentHtml,thSb,trSb));
-                        saveContentToFile(choiceDir.getAbsolutePath() + "/" + t.getTitle() + ".html",
+                        saveContentToFile(choiceDir.getAbsolutePath() +"/"+ t.getTitle() + "/" + t.getTitle() + ".html",
                                 String.format(htmlWithYDBase,t.getTitle(),t.getTitle(),contentSB,"1"));
                     }
                     if (nowLine != 0){
                         contentSB.append(headerSB);
                         contentSB.append(String.format(contentHtml,thSb,trSb));
-                        saveContentToFile(choiceDir.getAbsolutePath() + "/" + t.getTitle()+ "-" + nowFileSplit + ".html",
+                        saveContentToFile(choiceDir.getAbsolutePath() +"/"+ t.getTitle()+ "/" + t.getTitle()+ "-" + nowFileSplit + ".html",
                                 String.format(htmlWithYDBase,t.getTitle(),t.getTitle(),contentSB,makeHtmlPageDiv(t.getTitle(),nowFileSplit,splitCount)));
                     }
                 }else{
                     contentSB.append(headerSB);
                     contentSB.append(String.format(contentHtml,thSb,trSb));
-                    saveContentToFile(choiceDir.getAbsolutePath() + "/" + t.getTitle() + ".html",
+                    saveContentToFile(choiceDir.getAbsolutePath()+ "/" + t.getTitle() + "/" + t.getTitle() + ".html",
                             String.format(htmlWithYDBase,t.getTitle(),t.getTitle(),contentSB,"1"));
                 }
             }
@@ -901,12 +971,17 @@ public class ExportUtil {
         tempBeans = tempBeans.filtered(new Predicate<YBCCBean>() {
             @Override
             public boolean test(YBCCBean bean) {
+                bean.getRecord().setIPA(bean.getRecord().getIPA().replaceAll(" +"," "));
+                bean.getRecord().setMWFY(bean.getRecord().getMWFY().replaceAll(" +"," "));
+                bean.getRecord().setFree_trans(bean.getRecord().getFree_trans().replaceAll(" +"," "));
+
                 if (bean.getRecord().getIPA() != null && bean.getRecord().getIPA().length() != 0){
                     return true;
                 }
                 return false;
             }
         });
+
 
         File saveFile = DialogUtil.exportTqjzchDialog(isExportExcel);
         String saveType = saveFile.getName().substring(saveFile.getName().lastIndexOf(".") + 1);
@@ -997,8 +1072,10 @@ public class ExportUtil {
                 workbook.write(outputStream);
                 outputStream.flush();
                 outputStream.close();
+                ToastUtil.show("导出成功");
             } catch (IOException e) {
                 e.printStackTrace();
+                ToastUtil.show("导出失败");
             }
         }else {
             StringBuilder thSb = new StringBuilder();
@@ -1045,10 +1122,263 @@ public class ExportUtil {
 
     }
 
-    public static void exportDBDZTable(TableView tbl){
+    public static void exportDBDZTable(TableView tbl,int type){
+        ObservableList<TableColumn> cols = tbl.getColumns();
+        if (type == 0){
+            File saveFile = DialogUtil.exportDBDZDialog(true);
+            String saveType = saveFile.getName().substring(saveFile.getName().lastIndexOf(".") + 1);
 
+            Workbook workbook;
+            if (saveType.equals("xls")){
+                workbook = new HSSFWorkbook();
+            }else{
+                workbook = new XSSFWorkbook();
+            }
+            Sheet sheet = workbook.createSheet();
+            for (int i = 0; i <= tbl.getItems().size(); i++) {
+                Row r = sheet.createRow(i);
+                for (int j = 0; j < cols.size(); j++) {
+                    if (i == 0){
+                        r.createCell(j).setCellValue(cols.get(j).getText());
+                    }else{
+                        r.createCell(j).setCellValue(((StringProperty) cols.get(j).getCellValueFactory().call(new TableColumn.CellDataFeatures<>(tbl, cols.get(j), tbl.getItems().get(i - 1)))).get());
+                    }
+                }
+            }
+            try {
+                FileOutputStream outputStream = new FileOutputStream(saveFile);
+                workbook.write(outputStream);
+                outputStream.flush();
+                outputStream.close();
+                ToastUtil.show("导出成功");
+            } catch (IOException e) {
+                e.printStackTrace();
+                ToastUtil.show("导出失败");
+            }
+        }else{
+            File saveFile = DialogUtil.exportDBDZDialog(false);
+            String saveType = saveFile.getName().substring(saveFile.getName().lastIndexOf(".") + 1);
+
+            StringBuilder thSb = new StringBuilder();
+            StringBuilder trSb = new StringBuilder();
+
+            for (int i = 0; i <= tbl.getItems().size(); i++) {
+                if (i != 0){
+                    trSb.append("<tr>");
+                }
+                for (int j = 0; j < cols.size(); j++) {
+                    if (i == 0){
+                        thSb.append("<th>"+cols.get(j).getText()+"</th>");
+                    }else {
+                        trSb.append("<td>"+((StringProperty) cols.get(j).getCellValueFactory().call(new TableColumn.CellDataFeatures<>(tbl, cols.get(j), tbl.getItems().get(i - 1)))).get()+"</td>");
+                    }
+                }
+                if (i != 0){
+                    trSb.append("</tr>");
+                }
+            }
+
+            String html = String.format(htmlWithYDBase,"多表对照","多表对照",String.format(contentHtml,thSb,trSb),"1");
+            saveContentToFile(saveFile.getAbsolutePath(),
+                    html);
+        }
     }
 
+    public static void exportTQJz(Topic topic){
+        int rs = DialogUtil.exportTQDialog();
+        if (rs == 0){
+            File saveFile = DialogUtil.exportDBDZDialog(true);
+            String saveType = saveFile.getName().substring(saveFile.getName().lastIndexOf(".") + 1);
+
+            Workbook workbook;
+            if (saveType.equals("xls")){
+                workbook = new HSSFWorkbook();
+            }else{
+                workbook = new XSSFWorkbook();
+            }
+            Sheet sheet = workbook.createSheet();
+            Row rTitle = sheet.createRow(0);
+            rTitle.createCell(0).setCellValue("音标注音");
+            rTitle.createCell(1).setCellValue("民文方言");
+            rTitle.createCell(2).setCellValue("拼音");
+            rTitle.createCell(3).setCellValue("普通话对译");
+            rTitle.createCell(4).setCellValue("普通话意译");
+            rTitle.createCell(5).setCellValue("注释");
+            rTitle.createCell(6).setCellValue("英语");
+
+            Row rContent = sheet.createRow(1);
+            rContent.createCell(0).setCellValue(topic.getIpa());
+            rContent.createCell(1).setCellValue(topic.getMwfy());
+            rContent.createCell(2).setCellValue(topic.getSpell());
+            rContent.createCell(3).setCellValue(topic.getWord_trans());
+            rContent.createCell(4).setCellValue(topic.getFree_trans());
+            rContent.createCell(5).setCellValue(topic.getNote());
+            rContent.createCell(6).setCellValue(topic.getEnglish());
+
+            try {
+                FileOutputStream outputStream = new FileOutputStream(saveFile);
+                workbook.write(outputStream);
+                outputStream.flush();
+                outputStream.close();
+                ToastUtil.show("导出成功");
+            } catch (IOException e) {
+                e.printStackTrace();
+                ToastUtil.show("导出失败");
+            }
+        }else {
+            File saveFile = DialogUtil.exportDBDZDialog(false);
+            String saveType = saveFile.getName().substring(saveFile.getName().lastIndexOf(".") + 1);
+
+            StringBuilder thSb = new StringBuilder();
+            StringBuilder trSb = new StringBuilder();
+
+            thSb.append("<th>"+"音标注音"+"</th>");
+            thSb.append("<th>"+"民文方言"+"</th>");
+            thSb.append("<th>"+"拼音"+"</th>");
+            thSb.append("<th>"+"普通话对译"+"</th>");
+            thSb.append("<th>"+"普通话意译"+"</th>");
+            thSb.append("<th>"+"注释"+"</th>");
+            thSb.append("<th>"+"英语"+"</th>");
+
+            trSb.append("<tr>");
+            trSb.append("<td>"+topic.getIpa()+"</td>");
+            trSb.append("<td>"+topic.getMwfy()+"</td>");
+            trSb.append("<td>"+topic.getSpell()+"</td>");
+            trSb.append("<td>"+topic.getWord_trans()+"</td>");
+            trSb.append("<td>"+topic.getFree_trans()+"</td>");
+            trSb.append("<td>"+topic.getNote()+"</td>");
+            trSb.append("<td>"+topic.getEnglish()+"</td>");
+            trSb.append("</tr>");
+
+            String html = String.format(htmlWithYDBase,"提取句子","提取句子",String.format(contentHtml,thSb,trSb),"1");
+            saveContentToFile(saveFile.getAbsolutePath(),
+                    html);
+        }
+    }
+
+    public static void exportTQCh(Topic topic){
+        String[] ipas = topic.getIpa().split(" ");
+        String[] mwfys = topic.getMwfy().split(" ");
+        String[] spells = topic.getSpell().split(" ");
+        String[] words = topic.getWord_trans().split(" ");
+        String[] frees = topic.getFree_trans().split(" ");
+        String[] notes = topic.getNote().split(" ");
+        String[] englishs = topic.getEnglish().split(" ");
+
+        int maxLengh = ipas.length;
+        maxLengh = mwfys.length>maxLengh?mwfys.length:maxLengh;
+        maxLengh = spells.length>maxLengh?spells.length:maxLengh;
+        maxLengh = words.length>maxLengh?words.length:maxLengh;
+        maxLengh = frees.length>maxLengh?frees.length:maxLengh;
+        maxLengh = notes.length>maxLengh?notes.length:maxLengh;
+        maxLengh = englishs.length>maxLengh?englishs.length:maxLengh;
+
+        int rs = DialogUtil.exportTQDialog();
+        if (rs == 0){
+            File saveFile = DialogUtil.exportDBDZDialog(true);
+            String saveType = saveFile.getName().substring(saveFile.getName().lastIndexOf(".") + 1);
+
+            Workbook workbook;
+            if (saveType.equals("xls")){
+                workbook = new HSSFWorkbook();
+            }else{
+                workbook = new XSSFWorkbook();
+            }
+            Sheet sheet = workbook.createSheet();
+
+            Row rTitle = sheet.createRow(0);
+            rTitle.createCell(0).setCellValue("音标注音");
+            rTitle.createCell(1).setCellValue("民文方言");
+            rTitle.createCell(2).setCellValue("拼音");
+            rTitle.createCell(3).setCellValue("普通话对译");
+            rTitle.createCell(4).setCellValue("普通话意译");
+            rTitle.createCell(5).setCellValue("注释");
+            rTitle.createCell(6).setCellValue("英语");
+
+            for (int i = 0; i < maxLengh; i++) {
+                Row r = sheet.createRow(i + 1);
+                if (i < ipas.length) {
+                    r.createCell(0).setCellValue(ipas[i]);
+                }if (i < mwfys.length) {
+                    r.createCell(1).setCellValue(mwfys[i]);
+                }if (i < spells.length) {
+                    r.createCell(2).setCellValue(spells[i]);
+                }if (i < words.length) {
+                    r.createCell(3).setCellValue(words[i]);
+                }if (i < frees.length) {
+                    r.createCell(4).setCellValue(frees[i]);
+                }if (i < notes.length) {
+                    r.createCell(5).setCellValue(notes[i]);
+                }if (i < englishs.length) {
+                    r.createCell(6).setCellValue(englishs[i]);
+                }
+            }
+
+            try {
+                FileOutputStream outputStream = new FileOutputStream(saveFile);
+                workbook.write(outputStream);
+                outputStream.flush();
+                outputStream.close();
+                ToastUtil.show("导出成功");
+            } catch (IOException e) {
+                e.printStackTrace();
+                ToastUtil.show("导出失败");
+            }
+        }else {
+            File saveFile = DialogUtil.exportDBDZDialog(false);
+            String saveType = saveFile.getName().substring(saveFile.getName().lastIndexOf(".") + 1);
+
+            StringBuilder thSb = new StringBuilder();
+            StringBuilder trSb = new StringBuilder();
+
+            thSb.append("<th>"+"音标注音"+"</th>");
+            thSb.append("<th>"+"民文方言"+"</th>");
+            thSb.append("<th>"+"拼音"+"</th>");
+            thSb.append("<th>"+"普通话对译"+"</th>");
+            thSb.append("<th>"+"普通话意译"+"</th>");
+            thSb.append("<th>"+"注释"+"</th>");
+            thSb.append("<th>"+"英语"+"</th>");
+
+            for (int i = 0; i < maxLengh; i++) {
+                trSb.append("<tr>");
+                if (i < ipas.length) {
+                    trSb.append("<td>" + ipas[i] + "</td>");
+                }else {
+                    trSb.append("<td></td>");
+                }
+                if (i < mwfys.length) {
+                    trSb.append("<td>" + mwfys[i] + "</td>");
+                }else {
+                    trSb.append("<td></td>");
+                }if (i < spells.length) {
+                    trSb.append("<td>" + spells[i] + "</td>");
+                }else {
+                    trSb.append("<td></td>");
+                }if (i < words.length) {
+                    trSb.append("<td>" + words[i] + "</td>");
+                }else {
+                    trSb.append("<td></td>");
+                }if (i < frees.length) {
+                    trSb.append("<td>" + frees[i] + "</td>");
+                }else {
+                    trSb.append("<td></td>");
+                }if (i < notes.length) {
+                    trSb.append("<td>" + notes[i] + "</td>");
+                }else {
+                    trSb.append("<td></td>");
+                }if (i < englishs.length) {
+                    trSb.append("<td>" + englishs[i] + "</td>");
+                }else {
+                    trSb.append("<td></td>");
+                }
+                trSb.append("</tr>");
+            }
+
+            String html = String.format(htmlWithYDBase,"提取句子","提取句子",String.format(contentHtml,thSb,trSb),"1");
+            saveContentToFile(saveFile.getAbsolutePath(),
+                    html);
+        }
+    }
 
 
     private static void exportTopic2Html(List<Topic> topics,File savePath){
@@ -1084,6 +1414,313 @@ public class ExportUtil {
 
             writer.flush();
             writer.close();
+            ToastUtil.show("导出成功");
+        } catch (IOException e) {
+            e.printStackTrace();
+            ToastUtil.show("导出失败");
+        }
+    }
+
+    public static void exportQYJ(ObservableList<Table> tbls, ExportTemplate tmp){
+        File saveDir = DialogUtil.dirChooses(new Stage());
+        Workbook workbook = null;
+        try {
+            workbook = new HSSFWorkbook(new FileInputStream(new File(Constant.ROOT_FILE_DIR + "/qyjTmp.xls")));
+            Sheet sheet = workbook.getSheetAt(0);
+            for (Table tbl : tbls) {
+                ObservableList<Record> rs = DbHelper.getInstance().searchTempRecordKeepAndDone(tbl.getId());
+                for (int i = 0;i<rs.size();i++) {
+                    int index = sheet.getLastRowNum()+1;
+                    Record r = rs.get(i);
+                    Row r1 = sheet.createRow(index);
+                    r1.createCell(0).setCellValue(tmp.getLearnLang());
+                    r1.createCell(1).setCellValue(tmp.getAppKind());
+                    r1.createCell(2).setCellValue(tmp.getMediaKind());
+                    r1.createCell(3).setCellValue(tmp.getDifficult());
+                    r1.createCell(4).setCellValue(Integer.parseInt(tbl.datatype)<2?"单词":"对话");
+                    r1.createCell(5).setCellValue(tmp.getLessonName());
+                    r1.createCell(6).setCellValue(tmp.getfDir());
+                    r1.createCell(7).setCellValue(tmp.getsDir());
+                    r1.createCell(8).setCellValue(i+1);
+                    r1.createCell(9).setCellValue("");
+
+
+                    r1.createCell(10).setCellValue(getContent(r1));
+
+                    r1.createCell(11).setCellValue(r.getMWFY());
+                    r1.createCell(12).setCellValue(r.getIPA());
+                    r1.createCell(13).setCellValue("");
+
+                    Row r2 = sheet.createRow(index+1);
+                    r2.createCell(0).setCellValue(tmp.getLearnLang());
+                    r2.createCell(1).setCellValue(tmp.getAppKind());
+                    r2.createCell(2).setCellValue(tmp.getMediaKind());
+                    r2.createCell(3).setCellValue(tmp.getDifficult());
+                    r2.createCell(4).setCellValue(Integer.parseInt(tbl.datatype)<2?"单词":"对话");
+                    r2.createCell(5).setCellValue(tmp.getLessonName());
+                    r2.createCell(6).setCellValue(tmp.getfDir());
+                    r2.createCell(7).setCellValue(tmp.getsDir());
+                    r2.createCell(8).setCellValue(i+1);
+                    r2.createCell(9).setCellValue("zho");
+                    r2.createCell(10).setCellValue(getContent(r2));
+                    r2.createCell(11).setCellValue(r.getContent());
+                    r2.createCell(12).setCellValue("");
+                    r2.createCell(13).setCellValue("");
+
+                    File f = new File(Constant.ROOT_FILE_DIR+"/audio/"+tbl.getId()+"/"+r.getUuid()+".wav");
+                    File vDir = new File(saveDir.getAbsolutePath()+"/voice");
+                    if (!vDir.exists()) vDir.mkdirs();
+                    if (f.exists()) {
+                        FileUtil.fileCopy(f.getAbsolutePath(),vDir.getAbsolutePath()+"/"+getContent(r2)+".wav");
+                    }
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            FileOutputStream outputStream = new FileOutputStream(saveDir.getAbsolutePath()+"/千语街.xls");
+            workbook.write(outputStream);
+            outputStream.flush();
+            outputStream.close();
+            ToastUtil.show("导出成功");
+        } catch (IOException e) {
+            e.printStackTrace();
+            ToastUtil.show("导出失败");
+        }
+    }
+
+    private static String getContent(Row r){
+        r.getCell(0).setCellType(Cell.CELL_TYPE_STRING);
+        r.getCell(1).setCellType(Cell.CELL_TYPE_STRING);
+        r.getCell(2).setCellType(Cell.CELL_TYPE_STRING);
+        r.getCell(3).setCellType(Cell.CELL_TYPE_STRING);
+        r.getCell(4).setCellType(Cell.CELL_TYPE_STRING);
+        r.getCell(5).setCellType(Cell.CELL_TYPE_STRING);
+        r.getCell(6).setCellType(Cell.CELL_TYPE_STRING);
+        r.getCell(7).setCellType(Cell.CELL_TYPE_STRING);
+        r.getCell(8).setCellType(Cell.CELL_TYPE_STRING);
+        r.getCell(9).setCellType(Cell.CELL_TYPE_STRING);
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(r.getCell(0).getStringCellValue()+"_");
+        sb.append(PinYin.cn2py(r.getCell(1).getStringCellValue())+"_");
+        sb.append(PinYin.cn2py(r.getCell(2).getStringCellValue())+"_");
+        sb.append(PinYin.cn2py(r.getCell(3).getStringCellValue())+"_");
+        sb.append(PinYin.cn2py(r.getCell(4).getStringCellValue())+"_");
+        sb.append(PinYin.cn2py(r.getCell(5).getStringCellValue())+"_");
+        sb.append(PinYin.cn2py(r.getCell(6).getStringCellValue())+"_");
+
+        if (r.getCell(7).getStringCellValue().length() != 0){
+            sb.append(PinYin.cn2py(r.getCell(7).getStringCellValue())+"_");
+        }
+        sb.append(PinYin.cn2py(r.getCell(8).getStringCellValue()));
+        if (r.getCell(9).getStringCellValue().length() != 0){
+            sb.append("_zho");
+        }
+        return sb.toString();
+    }
+
+    public static String export2DescHtml(String str){
+        String htmlStr = "<html>\n" +
+                "  \n" +
+                "  <head>\n" +
+                "    <title>概况</title></head>\n" +
+                "  \n" +
+                "  <body>\n" +
+                "    <div class='wrapper'>\n" +
+                "      <h1 align='center'>概况</h1>\n" +
+                "      <p class='autop'>%s</p>\n" +
+                "      <p align='right'></p></div>\n" +
+                "  </body>\n" +
+                "\n" +
+                "</html>";
+
+        File tempFir = new File(Constant.TEMP_DIR);
+        if (!tempFir.exists()){
+            tempFir.mkdirs();
+        }
+
+        saveContentToFile(Constant.TEMP_DIR + "/tempGK.html",
+                String.format(htmlStr,str));
+        return tempFir.getAbsolutePath() + "/tempGK.html";
+    }
+
+    public static void exportYD(String ydbh,String ydmc,String cjr,String gxr,String cjrq,String cjdd,String rjgj,String gcjg,String urlLink,String xyms,String gk,String fyzb,String chb,String jzb,String yxb,String dzdzb,String chdzb,String jzdzb,String wbwy){
+        String mainHtmlStr = "\n" +
+                "<html><head>\n" +
+                "<title>%s</title>\n" +
+                "<meta http-equiv='content-type' content='text/html;charset=utf-8'>\n" +
+                "<script src=\"voice/jquery.min.js\"></script><script src=\"voice/playwav.js\"></script><style type='text/css'>\n" +
+                "table{background-color:#5382BB;margin-top:5px; }\n" +
+                "table.sm{font-size:12px; }\n" +
+                "table  tr{background-color: #FFFFFF;}\n" +
+                "table  tr.title{background-color: #5382BB;color:#FFFFFF;}\n" +
+                "table  td.tdtitle{font-weight:700; background-color: #AEEEEE;color:#000;}\n" +
+                "a {\ttext-decoration: none;}\n" +
+                ".autop { text-indent:2em }\n" +
+                "audio {\tdisplay: none;}\n" +
+                "div[f]{float:left1;display:inline;overflow:hidden}\n" +
+                "#maskdiv{z-index: 1;width:320;height:250px;background: #cccccc;  position:fixed;right: 0px; top: 100px; border-radius:10px; }\n" +
+                "#maskdiv #video{ z-index: 2;margin-top:-10px; }\n" +
+                "#maskdiv a{text-decoration:none;float:right;margin:5px;}\n" +
+                "</style></head><body><div class='wrapper'><h1 align='center'>%s</h1><table width='100%%' border='0' cellspacing='1' cellpadding='5'><tr><td class='tdtitle'>语档编号</td>\n" +
+                "<td>%s</td>\n" +
+                "</tr><tr><td class='tdtitle'>创建人</td>\n" +
+                "<td>%s</td>\n" +
+                "</tr><tr><td class='tdtitle'>贡献人</td>\n" +
+                "<td>%s</td>\n" +
+                "</tr><tr><td class='tdtitle'>创建日期</td>\n" +
+                "<td>%s</td>\n" +
+                "</tr><tr><td class='tdtitle'>创建地点</td>\n" +
+                "<td>%s</td>\n" +
+                "</tr><tr><td class='tdtitle'>资源描述</td>\n" +
+                "<td>%s</td>\n" +
+                "</tr><tr><td class='tdtitle'>软件工具</td>\n" +
+                "<td>%s</td>\n" +
+                "</tr><tr><td class='tdtitle'>馆藏机构</td>\n" +
+                "<td>%s</td>\n" +
+                "</tr><tr><td class='tdtitle'>概况</td>\n" +
+                "<td>%s</td>\n" +
+                "</tr><tr><td class='tdtitle'>方言字表</td>\n" +
+                "<td>%s</td>\n" +
+                "</tr><tr><td class='tdtitle'>词汇表</td>\n" +
+                "<td>%s</td>\n" +
+                "</tr><tr><td class='tdtitle'>句子表</td>\n" +
+                "<td>%s</td>\n" +
+                "</tr><tr><td class='tdtitle'>音系表</td>\n" +
+                "<td>%s</td>\n" +
+                "</tr><tr><td class='tdtitle'>单子对照</td>\n" +
+                "<td>%s</td>\n" +
+                "</tr><tr><td class='tdtitle'>词汇对照</td>\n" +
+                "<td>%s</td>\n" +
+                "</tr><tr><td class='tdtitle'>句子对照</td>\n" +
+                "<td>%s</td>\n" +
+                "</tr><tr><td class='tdtitle'>外部网页文件</td>\n" +
+                "<td>%s</td>\n" +
+                "</tr></table>\n" +
+                "</div></body></html>";
+
+
+        File saveDir = DialogUtil.dirChooses(new Stage());
+        String result = String.format(mainHtmlStr,ydmc,ydmc,ydbh,cjr,gxr,cjrq,cjdd,rjgj,gcjg,urlLink,xyms,
+                filePathCpy2Real(saveDir.getAbsolutePath(),gk,"gk"),
+                filePathCpy2Real(saveDir.getAbsolutePath(),fyzb,"fyzb"),
+                filePathCpy2Real(saveDir.getAbsolutePath(),chb,"chb"),
+                filePathCpy2Real(saveDir.getAbsolutePath(),jzb,"jzb"),
+                filePathCpy2Real(saveDir.getAbsolutePath(),yxb,"yxb"),
+                filePathCpy2Real(saveDir.getAbsolutePath(),dzdzb,"dzdzb"),
+                filePathCpy2Real(saveDir.getAbsolutePath(),chdzb,"chdzb"),
+                filePathCpy2Real(saveDir.getAbsolutePath(),jzdzb,"jzdzb"),
+                filePathCpy2Real(saveDir.getAbsolutePath(),wbwy,"wbwy"));
+        saveContentToFile(saveDir+"/index.html",result);
+    }
+
+    private static String filePathCpy2Real(String basePath,String paths,String extra) {
+        StringBuilder sb = new StringBuilder();
+        String[] ps = paths.split(";");
+        for (int i = 0; i < ps.length; i++) {
+            File f = new File(ps[i]);
+            if (f.exists() && f.isFile()) {
+                String desPath = extra + "-" + i + "/" + f.getName();
+                File df = new File(basePath + "/" + extra + "-" + i);
+                if (!df.exists()) {
+                    df.mkdir();
+                }
+
+                File[] vFiles = f.getParentFile().listFiles(new FilenameFilter() {
+                    @Override
+                    public boolean accept(File dir, String name) {
+                        if (dir.isDirectory() && name.equalsIgnoreCase("voice")) {
+                            return true;
+                        }
+                        return false;
+                    }
+                });
+
+                if (vFiles.length >= 1) {
+                    FileUtil.copy(vFiles[0].getAbsolutePath(), df + "/voice");
+                }
+                FileUtil.fileCopy(f.getAbsolutePath(), basePath + "/" + desPath);
+                sb.append("<a href='" + desPath + "'>" + f.getName() + "</a>\n");
+            }
+        }
+        return sb.toString();
+    }
+
+    public static void exportSFY(ObservableList<Table> tbls,String account){
+        File saveFile = DialogUtil.saveFileDialog("选择保存路径");
+        File vDir = new File(saveFile.getParent() + "/voice");
+        if (!vDir.exists()){
+            vDir.mkdir();
+        }
+
+        Workbook workbook = null;
+
+        if (saveFile.getName().contains(".xlsx")) {
+               workbook = new XSSFWorkbook();
+        } else {
+            workbook = new HSSFWorkbook();
+        }
+
+
+        Sheet sheet = workbook.createSheet();
+        Row head = sheet.createRow(0);
+        head.createCell(0).setCellValue("条目ID");
+        head.createCell(1).setCellValue("条目类别");
+        head.createCell(2).setCellValue("条目");
+        head.createCell(3).setCellValue("录音状态");
+        head.createCell(4).setCellValue("编码");
+        head.createCell(5).setCellValue("分级");
+        head.createCell(6).setCellValue("音韵");
+        head.createCell(7).setCellValue("民族文字或方言字");
+        head.createCell(8).setCellValue("音标注音");
+        head.createCell(9).setCellValue("普通话词对译");
+        head.createCell(10).setCellValue("拼音");
+        head.createCell(11).setCellValue("英语");
+        head.createCell(12).setCellValue("注释");
+
+        for (Table t:tbls){
+            ObservableList<Record> rs = DbHelper.getInstance().searchTempRecordKeep("",t.getId());
+            for (Record r : rs) {
+                Row row = sheet.createRow(sheet.getLastRowNum()+1);
+                row.createCell(0).setCellValue(r.getUuid());
+
+                String typeStr = "";
+                if (t.datatype.equalsIgnoreCase("0")){
+                    typeStr = "字表";
+                }else if (t.datatype.equalsIgnoreCase("1")){
+                    typeStr = "词表";
+                }else if (t.datatype.equalsIgnoreCase("2")){
+                    typeStr = "句表";
+                }
+
+                row.createCell(1).setCellValue(typeStr);
+                row.createCell(2).setCellValue(r.getContent());
+                row.createCell(3).setCellValue(r.getDone().equals("0")?"未录":"已录");
+                row.createCell(4).setCellValue(r.getBaseCode());
+                row.createCell(5).setCellValue(r.getRank());
+                row.createCell(6).setCellValue(r.getYun());
+                row.createCell(7).setCellValue(r.getMWFY());
+                row.createCell(8).setCellValue(r.getIPA());
+                row.createCell(9).setCellValue(r.getFree_trans());
+                row.createCell(10).setCellValue(r.getSpell());
+                row.createCell(11).setCellValue(r.getEnglish());
+                row.createCell(12).setCellValue(r.getNote());
+
+                File vFile = new File(Constant.ROOT_FILE_DIR + "/audio/" + t.getId() +"/"+r.getUuid()+".wav");
+                if (vFile.exists()){
+                    FileUtil.fileCopy(vFile.getAbsolutePath(),vDir.getAbsolutePath() + "/" + r.getBaseCode()+"_"+r.getUuid()+"_"+account+".wav");
+                }
+            }
+        }
+
+        try {
+            FileOutputStream outputStream = new FileOutputStream(saveFile);
+            workbook.write(outputStream);
+            outputStream.flush();
+            outputStream.close();
             ToastUtil.show("导出成功");
         } catch (IOException e) {
             e.printStackTrace();

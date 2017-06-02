@@ -92,6 +92,7 @@ public class VideoPlayer extends VBox implements Initializable {
 
     public void setMediaPath(String path){
         this.path = FileUtil.mp4Copy2Temp(path);
+        System.out.println("media path:"+this.path);
         Platform.runLater(new Runnable() {
                               @Override
                               public void run() {
@@ -100,18 +101,17 @@ public class VideoPlayer extends VBox implements Initializable {
                     mediaPlayer.stop();
                 }
 
-                        btn_play.setGraphic(new ImageView(new Image(Main.class.getResourceAsStream("/sample/resource/img/播放.png"))));
+                btn_play.setGraphic(new ImageView(new Image(Main.class.getResourceAsStream("/sample/resource/img/播放.png"))));
+            }
 
-                    }
-
-                mediaPlayer=null;
-                mv_mediaView.setMediaPlayer(null);
+//                mediaPlayer=null;
+//                mv_mediaView.setMediaPlayer(null);
             }
         });
 
 
 
-        File file = new File(path);
+        File file = new File(this.path);
         if (file.exists()){
             bCanPlay = true;
             init = true;
@@ -120,14 +120,22 @@ public class VideoPlayer extends VBox implements Initializable {
         }else {
             bCanPlay = false;
             init = false;
+            if (mediaPlayer != null){
+                mediaPlayer.stop();
+                mediaPlayer = null;
+                mv_mediaView.setMediaPlayer(null);
+            }
+
             return;
         }
     }
 
     public void reset(){
-        mediaPlayer.dispose();
-        media = null;
-        setMediaPath("");
+        if (mediaPlayer != null){
+            mediaPlayer.dispose();
+            media = null;
+            setMediaPath("");
+        }
     }
 
     @FXML

@@ -224,7 +224,7 @@ public class RewriteViewController extends BaseController {
         showYBZF.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                YBZFController vc = ((YBZFController) ViewUtil.getInstance().showView("view/ybzfView.fxml", "音标字符", -1, -1, ""));
+                YBZFController vc = ((YBZFController) ViewUtil.getInstance().showView("view/ybzfView.fxml", "音标面板", -1, -1, ""));
                 vc.setListener(new YBZFListener() {
                     @Override
                     public void btnClickWithText(String str) {

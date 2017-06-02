@@ -213,9 +213,9 @@ public class NewTableView extends BaseController {
                             String inputText = controller.getInputText();
                             boolean isAccurate = controller.isChecked();
                             int index = controller.getSelTableTitleIndex();
-                            System.out.println(inputText);
-                            System.out.println(isAccurate);
-                            System.out.println(index);
+
+                            Pattern pattern = Pattern.compile("[,，;；]");
+                            String[] ips = pattern.split(inputText);
 
                             TableColumn col = ((TableColumn) tableView.getColumns().get(index));
 
@@ -225,13 +225,19 @@ public class NewTableView extends BaseController {
                                 YBCCBean bean = ((YBCCBean) tableDatas.get(i));
                                 String colData = ((StringProperty) col.getCellValueFactory().call(new TableColumn.CellDataFeatures<>(tableView, col, tableDatas.get(i)))).get();
                                 if (isAccurate){
-                                    if (colData.contains(inputText)){
-                                        temp.add(bean);
+                                    for (String s : ips) {
+                                        if (colData.contains(s)){
+                                            temp.add(bean);
+                                            break;
+                                        }
                                     }
                                 }else{
-                                    Pattern p = Pattern.compile(getMHSearRegEx(inputText));
-                                    if (p.matcher(colData).find()){
-                                        temp.add(bean);
+                                    for (String s : ips) {
+                                        Pattern p = Pattern.compile(getMHSearRegEx(s));
+                                        if (p.matcher(colData).find()){
+                                            temp.add(bean);
+                                            break;
+                                        }
                                     }
                                 }
                             }
@@ -348,7 +354,7 @@ public class NewTableView extends BaseController {
         showYBZF.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                YBZFController vc = ((YBZFController) ViewUtil.getInstance().showView("view/ybzfView.fxml", "音标字符", -1, -1, ""));
+                YBZFController vc = ((YBZFController) ViewUtil.getInstance().showView("view/ybzfView.fxml", "音标面板", -1, -1, ""));
                 vc.setListener(new YBZFListener() {
                     @Override
                     public void btnClickWithText(String str) {

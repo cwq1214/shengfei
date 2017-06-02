@@ -7,6 +7,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
+import sample.util.ExportUtil;
 import sample.util.ViewUtil;
 
 import java.io.IOException;
@@ -54,11 +55,49 @@ public class CreateHTMLFileController extends BaseController {
             createHTML2Controller = ViewUtil.getInstance().openCreateHTML2View();
             createHTML3Controller = ViewUtil.getInstance().openCreateHTML3View();
             createHTML4Controller = ViewUtil.getInstance().openCreateHTML4View();
+            createHTML4Controller.setListener(new CreateHTML4Controller.Html4Listener() {
+                @Override
+                public void onClickCreateAndShow() {
+                    createYD();
+                }
+
+                @Override
+                public void onClickCreate() {
+                    createYD();
+                }
+
+                @Override
+                public void onClickCancel() {
+                    mStage.close();
+                }
+            });
         } catch (IOException e) {
             e.printStackTrace();
         }
 
         borderPane.setCenter(createHTML1Controller.getmParent());
+    }
+
+    private void createYD(){
+        ExportUtil.exportYD(createHTML1Controller.ydbh.getText(),
+                createHTML1Controller.ydmc.getText(),
+                createHTML1Controller.cjr.getText(),
+                createHTML1Controller.gxr.getText(),
+                createHTML1Controller.cjrq.getText(),
+                createHTML1Controller.cjdd.getText(),
+                createHTML1Controller.rjgj.getText(),
+                createHTML1Controller.gcjg.getText(),
+                createHTML1Controller.urlLink.getText(),
+                createHTML1Controller.zyms.getText(),
+                createHTML3Controller.gkTF.getText(),
+                createHTML3Controller.zbTF.getText(),
+                createHTML3Controller.chTF.getText(),
+                createHTML3Controller.jzTF.getText(),
+                createHTML3Controller.yxTF.getText(),
+                createHTML3Controller.dzdzTF.getText(),
+                createHTML3Controller.chdzTF.getText(),
+                createHTML3Controller.jzdzTF.getText(),
+                createHTML3Controller.wbwyTF.getText());
     }
 
     @FXML

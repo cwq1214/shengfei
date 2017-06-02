@@ -22,6 +22,10 @@ public class AfterAnalyViewController extends BaseController {
     @FXML
     private TableView tableView;
 
+    public TableView getTableView() {
+        return tableView;
+    }
+
     private ObservableList<MutiAnalyBean> resultDatas;
 
     public void setResultDatas(ObservableList resultDatas, List<Table> tbls,int type) {

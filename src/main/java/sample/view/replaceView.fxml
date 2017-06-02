@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-
 <?import javafx.geometry.Insets?>
-<GridPane xmlns="http://javafx.com/javafx"
-          xmlns:fx="http://javafx.com/fxml"
-          fx:controller="sample.controller.ReplaceViewController"
-          vgap="8" hgap="8" stylesheets="@css/sf.css">
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+
+<GridPane hgap="8" stylesheets="@css/sf.css" vgap="8" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.controller.ReplaceViewController">
     <padding>
         <Insets>
             <top>8</top>
@@ -20,25 +21,40 @@
         </Insets>
     </padding>
     <children>
-        <Label styleClass="colorText" text="字段" GridPane.rowIndex="0" GridPane.columnIndex="0"></Label>
+        <Label styleClass="colorText" text="字段" GridPane.columnIndex="2" />
 
-        <Label styleClass="colorText" text="查询内容" GridPane.rowIndex="0" GridPane.columnIndex="1"></Label>
+        <Label styleClass="colorText" text="查询内容" GridPane.columnIndex="3" />
 
-        <TextField GridPane.rowIndex="0" GridPane.columnIndex="2" fx:id="input_searchContent"></TextField>
+        <TextField fx:id="input_searchContent" GridPane.columnIndex="4" />
 
-        <ChoiceBox GridPane.rowIndex="1" GridPane.columnIndex="0" fx:id="choiceBox"></ChoiceBox>
+        <ChoiceBox fx:id="choiceBox" GridPane.columnIndex="2" GridPane.rowIndex="1" />
 
-        <Label styleClass="colorText" text="替换为" GridPane.rowIndex="1" GridPane.columnIndex="1"></Label>
+        <Label styleClass="colorText" text="替换为" GridPane.columnIndex="3" GridPane.rowIndex="1" />
 
-        <TextField GridPane.rowIndex="1" GridPane.columnIndex="2" fx:id="input_replaceContent"></TextField>
+        <TextField fx:id="input_replaceContent" GridPane.columnIndex="4" GridPane.rowIndex="1" />
 
-        <CheckBox styleClass="colorText" text="全字匹配" GridPane.rowIndex="1" GridPane.columnIndex="3"
-                  fx:id="checkBox"></CheckBox>
+        <CheckBox fx:id="checkBox" styleClass="colorText" text="全字匹配" GridPane.columnIndex="5" GridPane.rowIndex="1" />
+      <Button mnemonicParsing="false" onAction="#ybmbClick" text="音标面板" GridPane.columnIndex="2" GridPane.rowIndex="2" />
 
-        <HBox GridPane.rowIndex="2" GridPane.columnIndex="0" GridPane.columnSpan="4" alignment="CENTER" spacing="8">
-            <Button styleClass="colorText" text="替换" fx:id="btn_replace" onMouseClicked="#onReplaceBtnClick"></Button>
-            <Button styleClass="colorText" text="关闭" fx:id="btn_close" onMouseClicked="#onCloseBtnClick"></Button>
+        <HBox alignment="CENTER" spacing="8" GridPane.columnIndex="3" GridPane.columnSpan="4" GridPane.rowIndex="2">
+            <Button fx:id="btn_replace" onMouseClicked="#onReplaceBtnClick" styleClass="colorText" text="替换" />
+            <Button fx:id="btn_close" onMouseClicked="#onCloseBtnClick" styleClass="colorText" text="关闭" />
         </HBox>
     </children>
+   <columnConstraints>
+      <ColumnConstraints />
+      <ColumnConstraints />
+      <ColumnConstraints />
+      <ColumnConstraints />
+      <ColumnConstraints />
+      <ColumnConstraints />
+      <ColumnConstraints />
+   </columnConstraints>
+   <rowConstraints>
+      <RowConstraints />
+      <RowConstraints />
+      <RowConstraints />
+      <RowConstraints />
+   </rowConstraints>
 
 </GridPane>

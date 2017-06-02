@@ -10,6 +10,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.web.WebView;
 import javafx.stage.Modality;
+import org.sqlite.util.StringUtils;
 import sample.controller.ImportExcel.ImportExcelBindViewController;
 import sample.controller.MutiAnaly.AfterAnalyViewController;
 import sample.controller.MutiAnaly.MutiAnalyBean;
@@ -31,6 +32,8 @@ import java.io.*;
 import java.net.URL;
 import java.util.*;
 import java.util.function.Predicate;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class MainController extends BaseController {
     @FXML
@@ -39,6 +42,22 @@ public class MainController extends BaseController {
     public TabPane contentPane;
     @FXML
     public Label changeLanguage;
+
+    @FXML
+    public void onCreateSfyFileClick(){
+        ExportSFYController vc = ((ExportSFYController) ViewUtil.getInstance().showView("view/exportSFY.fxml", "导出声飞云", -1, -1, ""));
+        vc.mStage.initModality(Modality.APPLICATION_MODAL);
+        vc.mStage.setResizable(false);
+        vc.mStage.show();
+    }
+
+    @FXML
+    public void onCreateQyjFileClick(){
+        ExportQyjViewController vc = ((ExportQyjViewController) ViewUtil.getInstance().showView("view/exportQyjView.fxml", "导出千语街", -1, -1, ""));
+        vc.mStage.initModality(Modality.APPLICATION_MODAL);
+        vc.mStage.setResizable(false);
+        vc.mStage.show();
+    }
 
     @FXML
     public void tqjzchClick(){
@@ -72,13 +91,62 @@ public class MainController extends BaseController {
     }
 
     @FXML
-    public void tqjzClick(){
+    public void tqjzClick() {
+        int index = contentPane.getSelectionModel().getSelectedIndex();
+        if (index != -1) {
+            Tab tab = contentPane.getTabs().get(index);
+            if (tab.getUserData() != null && tab.getUserData() instanceof NewTopicEditController) {
+                NewTopicEditController vc = ((NewTopicEditController) tab.getUserData());
+                TextInputDialog dialog = new TextInputDialog();
+                dialog.setTitle("提示");
+                dialog.setHeaderText("");
+                dialog.setContentText("请输入要导出的说话人：");
+                Optional<String> result = dialog.showAndWait();
+                if (result.isPresent()) {
+                    try {
+                        int eIndex = Integer.valueOf(result.get());
+                        if (eIndex <= vc.getTopics().size() && eIndex>=1){
+                            ExportUtil.exportTQJz(vc.getTopics().get(eIndex - 1));
+                        }else {
+                            ToastUtil.show("超出说话人列表长度");
+                        }
 
+                    }catch (Exception e){
+                        e.printStackTrace();
+                        ToastUtil.show("请输入数字");
+                    }
+                }
+            }
+        }
     }
 
     @FXML
     public void tqchClick(){
+        int index = contentPane.getSelectionModel().getSelectedIndex();
+        if (index != -1) {
+            Tab tab = contentPane.getTabs().get(index);
+            if (tab.getUserData() != null && tab.getUserData() instanceof NewTopicEditController) {
+                NewTopicEditController vc = ((NewTopicEditController) tab.getUserData());
+                TextInputDialog dialog = new TextInputDialog();
+                dialog.setTitle("提示");
+                dialog.setHeaderText("");
+                dialog.setContentText("请输入要导出的说话人：");
+                Optional<String> result = dialog.showAndWait();
+                if (result.isPresent()) {
+                    try {
+                        int eIndex = Integer.valueOf(result.get());
+                        if (eIndex <= vc.getTopics().size() && eIndex>=1){
+                            ExportUtil.exportTQCh(vc.getTopics().get(eIndex - 1));
+                        }else {
+                            ToastUtil.show("超出说话人列表长度");
+                        }
 
+                    }catch (Exception e){
+                        ToastUtil.show("请输入数字");
+                    }
+                }
+            }
+        }
     }
 
     public void openImpExcelBindWithType(int type){
@@ -350,6 +418,13 @@ public class MainController extends BaseController {
             }else if (t.getUserData()!=null&&t.getUserData() instanceof NewTopicEditController){
                 NewTopicEditController newTopicEditController  = (NewTopicEditController) t.getUserData();
                 ExportUtil.exportTopic(newTopicEditController.getTopics());
+            }else if (t.getUserData()!=null && t.getUserData() instanceof AfterAnalyViewController){
+                int diaResult = DialogUtil.exportDBDZDialog();
+                AfterAnalyViewController vc = ((AfterAnalyViewController) t.getUserData());
+
+                if (diaResult != -1){
+                    ExportUtil.exportDBDZTable(vc.getTableView(),diaResult);
+                }
             }
         }
     }
