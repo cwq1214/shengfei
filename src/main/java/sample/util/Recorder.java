@@ -279,6 +279,9 @@ public class Recorder extends Thread {
 
         } catch (Exception e) {
             e.printStackTrace();
+            ToastUtil.show(e.getMessage());
+
+            throw new RuntimeException("");
         }
     }
 

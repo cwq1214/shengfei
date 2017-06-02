@@ -51,12 +51,14 @@
             </HBox>
 
             <GridPane hgap="8" styleClass="showBorder" vgap="8">
-                <ChoiceBox GridPane.columnIndex="0" GridPane.rowIndex="0" fx:id="cb_importAudio">
+                <ChoiceBox GridPane.columnIndex="0" GridPane.rowIndex="0" fx:id="cb_importAudio" value="导入音频">
+                    <String fx:value="导入音频"/>
                     <String fx:value="导入单个音频" />
                     <String fx:value="按编号批量导入" />
                     <String fx:value="按条目批量导入" />
                 </ChoiceBox>
-                <ChoiceBox GridPane.columnIndex="1" GridPane.rowIndex="0" fx:id="cb_exportAudio">
+                <ChoiceBox GridPane.columnIndex="1" GridPane.rowIndex="0" fx:id="cb_exportAudio" value="导出音频">
+                    <String fx:value="导出音频"/>
                     <String fx:value="以编码导出选中条目" />
                     <String fx:value="以中文导出选中条目" />
                     <String fx:value="以英文导出选中条目" />
@@ -66,7 +68,8 @@
                     <String fx:value="以英文导出全部条目" />
                     <String fx:value="以编码+中文导出全部条目" />
                 </ChoiceBox>
-                <ChoiceBox GridPane.columnIndex="2" GridPane.rowIndex="0" fx:id="cb_delAudio">
+                <ChoiceBox GridPane.columnIndex="2" GridPane.rowIndex="0" fx:id="cb_delAudio" value="删除音频">
+                    <String fx:value="删除音频"/>
                     <String fx:value="删除选中条目录音" />
                     <String fx:value="删除全部条目录音" />
                 </ChoiceBox>
@@ -75,12 +78,14 @@
                     <String fx:value="显示已录" />
                     <String fx:value="显示未录" />
                 </ChoiceBox>
-                <ChoiceBox GridPane.columnIndex="0" GridPane.rowIndex="1" fx:id="cb_importVideo">
+                <ChoiceBox GridPane.columnIndex="0" GridPane.rowIndex="1" fx:id="cb_importVideo" value="导入视频">
+                    <String fx:value="导入视频"/>
                     <String fx:value="导入单个视频" />
                     <String fx:value="按编号批量导入视频" />
                     <String fx:value="按条目批量导入视频" />
                 </ChoiceBox>
-                <ChoiceBox GridPane.columnIndex="1" GridPane.rowIndex="1" fx:id="cb_exportVideo">
+                <ChoiceBox GridPane.columnIndex="1" GridPane.rowIndex="1" fx:id="cb_exportVideo" value="导出视频">
+                    <String fx:value="导出视频"/>
                     <String fx:value="以编码导出选中条目" />
                     <String fx:value="以中文导出选中条目" />
                     <String fx:value="以英文导出选中条目" />
@@ -88,7 +93,8 @@
                     <String fx:value="以中文导出全部条目" />
                     <String fx:value="以英文导出全部条目" />
                 </ChoiceBox>
-                <ChoiceBox GridPane.columnIndex="2" GridPane.rowIndex="1" fx:id="cb_delVideo">
+                <ChoiceBox GridPane.columnIndex="2" GridPane.rowIndex="1" fx:id="cb_delVideo" value="删除视频">
+                    <String fx:value="删除视频"/>
                     <String fx:value="删除选中条目视频" />
                     <String fx:value="删除全部条目视频" />
                 </ChoiceBox>
@@ -105,7 +111,7 @@
             </GridPane>
 
             <HBox alignment="CENTER" spacing="8.0" styleClass="showBorder">
-                <Button>
+                <Button onAction="#refresh">
                     <graphic>
                         <ImageView fitHeight="16.0" fitWidth="16.0" rotate="180">
                             <image>
@@ -145,6 +151,7 @@
                     <Label text="位深度" />
                     <ChoiceBox fx:id="cb_bit" value="16">
                         <String fx:value="16"></String>
+                        <String fx:value="24"></String>
                     </ChoiceBox>
                 </HBox>
 
@@ -160,6 +167,10 @@
                         <String fx:value="2"></String>
                         <String fx:value="4"></String>
                         <String fx:value="6"></String>
+                        <String fx:value="8"></String>
+                        <String fx:value="10"></String>
+                        <String fx:value="12"></String>
+                        <String fx:value="14"></String>
                     </ChoiceBox>
                 </HBox>
             <columnConstraints>

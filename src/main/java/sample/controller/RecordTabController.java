@@ -120,7 +120,7 @@ public class RecordTabController extends BaseController {
     boolean isSelRow = false;
 
     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("mm:ss.SSS");
-
+    SimpleDateFormat record_simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 //    VideoRecorder recordVideoThread;
 //    AudioRecorder recordAudioThread;
@@ -210,6 +210,23 @@ public class RecordTabController extends BaseController {
         recordDatas = DbHelper.getInstance().searchTempRecordKeep(tableType,t.getId());
 
         tableView.setItems(recordDatas);
+    }
+
+    public void refresh(){
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                recordDatas = DbHelper.getInstance().searchTempRecordKeep(tableType,t.getId());
+                try {
+                    tableView.getItems().clear();
+
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+                tableView.setItems(recordDatas);
+            }
+        });
+
     }
 
     private void defaultSetting(){
@@ -322,18 +339,10 @@ public class RecordTabController extends BaseController {
         cb_recordSpace.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                switch (newValue.intValue()){
-                    case 0:
-                        recordTImeSpace = 2;
-                        break;
-                    case 1:
-                        recordTImeSpace = 4;
+                if(newValue.intValue()!=-1){
+                    recordTImeSpace = newValue.intValue()*2+2;
+                }else {
 
-                        break;
-                    case 2:
-                        recordTImeSpace = 6;
-
-                        break;
                 }
             }
         });
@@ -343,7 +352,7 @@ public class RecordTabController extends BaseController {
         cb_delAudio.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                if (newValue.intValue()==0){//删除选中条目
+                if (newValue.intValue()==1){//删除选中条目
                     List<Record> selItems = tableView.getSelectionModel().getSelectedItems();
                     if (selItems!=null&&selItems.size()!=0){
                         for (Record r :
@@ -354,7 +363,7 @@ public class RecordTabController extends BaseController {
                         }
                         DbHelper.getInstance().updateRecord(selItems);
                     }
-                }else if (newValue.intValue()==1){//删除全部
+                }else if (newValue.intValue()==2){//删除全部
                     List<Record> records = tableView.getItems();
                     if (records!=null&&records.size()!=0){
                         for (Record r :
@@ -375,7 +384,7 @@ public class RecordTabController extends BaseController {
         cb_delVideo.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                if (newValue.intValue()==0){//删除选中条目
+                if (newValue.intValue()==1){//删除选中条目
                     List<Record> selItems = tableView.getSelectionModel().getSelectedItems();
                     if (selItems!=null&&selItems.size()!=0){
                         for (Record r :
@@ -385,7 +394,7 @@ public class RecordTabController extends BaseController {
                         }
 //                        DbHelper.getInstance().updateRecord(selItems);
                     }
-                }else if (newValue.intValue()==1){//删除全部
+                }else if (newValue.intValue()==2){//删除全部
                     List<Record> records = tableView.getItems();
                     if (records!=null&&records.size()!=0){
                         for (Record r :
@@ -411,7 +420,6 @@ public class RecordTabController extends BaseController {
                     recorder.setResolution(imageWidth,imageHeight);
             }
         });
-
         //位深度
         cb_bit.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener() {
             @Override
@@ -497,10 +505,11 @@ public class RecordTabController extends BaseController {
         cb_importAudio.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener() {
             @Override
             public void changed(ObservableValue observable, Object oldValue, Object newValue) {
-                if (newValue.toString().equals("-1")){
+                if (newValue.toString().equals("-1")
+                        ||newValue.toString().endsWith("0")){
                     return;
                 }
-                List<File> files = DialogUtil.chooseAudio(!newValue.toString().equals("0"));
+                List<File> files = DialogUtil.chooseAudio(!newValue.toString().equals("1"));
                 if (files==null||files.size()==0){
                     return;
                 }
@@ -513,10 +522,11 @@ public class RecordTabController extends BaseController {
         cb_importVideo.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                if (newValue.toString().equals("-1")){
+                if (newValue.toString().equals("-1")
+                        ||newValue.toString().equals("0")){
                     return;
                 }
-                List<File> files = DialogUtil.chooseVideo(!newValue.toString().equals("0"));
+                List<File> files = DialogUtil.chooseVideo(!newValue.toString().equals("1"));
                 if (files==null||files.size()==0){
                     return;
                 }
@@ -595,11 +605,20 @@ public class RecordTabController extends BaseController {
         });
     }
 
+    private void onRecordFinish(Record record){
+
+        record.createDate= record_simpleDateFormat.format(new Date());
+        record.done = "1";
+        DbHelper.getInstance().updateRecord(record);
+        tableView.refresh();
+    }
+
     private void importMedia(List<Record> records,List<File> files,int type,boolean audio){
         if (type == 0){
             Record record = records.get(0);
             if (audio) {
                 copyFile(files.get(0).getPath(), Constant.getAudioPath(record.baseId + "", record.uuid));
+                onRecordFinish(record);
             }else {
                 copyFile(files.get(0).getPath(), Constant.getVideoPath(record.baseId + "", record.uuid));
             }
@@ -607,12 +626,13 @@ public class RecordTabController extends BaseController {
                 ||type==2){
             for (int i=0,max=files.size();i<max;i++){
                 for (int j=0,max2 = records.size();j<max2;j++){
-                    if (type==1&&records.get(j).investCode.equals(files.get(i).getName().split(".")[0])
-                            ||type==2&&records.get(j).content.equals(files.get(i).getName().split(".")[0])
+                    if (type==1&&records.get(j).investCode.equals(files.get(i).getName().split("\\.")[0])
+                            ||type==2&&records.get(j).content.equals(files.get(i).getName().split("\\.")[0])
                             ) {
                         String path;
                         if (audio){
                             path = Constant.getAudioPath(records.get(j).baseId + "", records.get(j).uuid);
+                            onRecordFinish(records.get(j));
                         }else {
                             path = Constant.getVideoPath(records.get(j).baseId + "", records.get(j).uuid);
                         }
@@ -897,12 +917,12 @@ public class RecordTabController extends BaseController {
 
 
     private void resetChoiceBox(){
-        cb_importAudio.setValue(null);
-        cb_exportAudio.setValue(null);
-        cb_delAudio.setValue(null);
-        cb_importVideo.setValue(null);
-        cb_exportVideo.setValue(null);
-        cb_delVideo.setValue(null);
+        cb_importAudio.setValue("导入音频");
+        cb_exportAudio.setValue("导出音频");
+        cb_delAudio.setValue("删除音频");
+        cb_importVideo.setValue("导入视频");
+        cb_exportVideo.setValue("导出视频");
+        cb_delVideo.setValue("删除视频");
     }
 
     //录制一条音频
@@ -930,10 +950,7 @@ public class RecordTabController extends BaseController {
             recorder.stopRecordAudio();
             System.out.println("停止录音 recordOneAudio");
 
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            selRecord.createDate= simpleDateFormat.format(new Date());
-            selRecord.done = "1";
-            DbHelper.getInstance().updateRecord(selRecord);
+            onRecordFinish(selRecord);
             tableView.refresh();
             image = new Image(Main.class.getResourceAsStream("/sample/resource/img/b1.png"));
             setBtnDisable(btn,false,false);
@@ -991,8 +1008,12 @@ public class RecordTabController extends BaseController {
             startRecordTimes = 0;
             recordingVideo = false;
             recorder.stopRecord();
-            DbHelper.getInstance().updateRecord(selRecord);
+//            DbHelper.getInstance().updateRecord(selRecord);
             tableView.refresh();
+
+            videoPlayer.setMediaPath(getSelItemVideoPath(selRecord));
+
+
             image = new Image(Main.class.getResourceAsStream("/sample/resource/img/b6.png"));
             setBtnDisable(btn,false,false);
         }
@@ -1000,6 +1021,7 @@ public class RecordTabController extends BaseController {
         imageView.setFitWidth(24);
         imageView.setFitHeight(24);
         btn_recordVideo.graphicProperty().setValue(imageView);
+
     }
 
     //第一行
@@ -1263,7 +1285,13 @@ public class RecordTabController extends BaseController {
 //        File desFile = new File(desPath+"/"+sourceFile.getName());
 
         try {
-            Files.copy(sourceFile.toPath(),new File(desPath).toPath(), StandardCopyOption.REPLACE_EXISTING);
+            File desFile = new File(desPath);
+            File desParent = desFile.getParentFile();
+            if (!desParent.exists()){
+                desParent.mkdirs();
+            }
+
+            Files.copy(sourceFile.toPath(),desFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
             e.printStackTrace();
         }

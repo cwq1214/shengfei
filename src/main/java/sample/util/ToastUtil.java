@@ -1,5 +1,6 @@
 package sample.util;
 
+import javafx.application.Platform;
 import javafx.stage.Stage;
 import sample.view.Toast;
 
@@ -9,6 +10,11 @@ import sample.view.Toast;
 public class ToastUtil {
 
     public static void show(String message) {
-        Toast.makeText(new Stage(), message, 2000, 500, 500);
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(new Stage(), message, 2000, 500, 500);
+            }
+        });
     }
 }
