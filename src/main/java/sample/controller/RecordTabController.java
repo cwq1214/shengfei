@@ -354,14 +354,15 @@ public class RecordTabController extends BaseController {
                     return;
                 }
                 System.out.println(selRecord);
-                if (mediaPlayer!=null){
-                    if (mediaPlayer.getStatus()== MediaPlayer.Status.PLAYING){
-                        mediaPlayer.stop();
-                        ((ImageView) btn_playAudio.getGraphic()).setImage(new Image(Main.class.getResourceAsStream("resource/img/b3.png")));
-
-                    }
-                    mediaPlayer = null;
-                }
+//                if (mediaPlayer!=null){
+//                    if (mediaPlayer.getStatus()== MediaPlayer.Status.PLAYING){
+//                        mediaPlayer.stop();
+//                        ((ImageView) btn_playAudio.getGraphic()).setImage(new Image(Main.class.getResourceAsStream("resource/img/b3.png")));
+//
+//                    }
+//                    mediaPlayer = null;
+//                }
+                System.out.println(getSelItemVideoPath(selRecord));
                 videoPlayer.setMediaPath(getSelItemVideoPath(selRecord));
 
                 resetChoiceBox();
@@ -437,9 +438,8 @@ public class RecordTabController extends BaseController {
                         for (Record r :
                                 selItems) {
                             FileUtil.deleteFile(getSelItemVideoPath(r));
-
+                            tableView.refresh();
                         }
-//                        DbHelper.getInstance().updateRecord(selItems);
                     }
                 }else if (newValue.intValue()==2){//删除全部
                     List<Record> records = tableView.getItems();
@@ -448,7 +448,7 @@ public class RecordTabController extends BaseController {
                                 records) {
                             FileUtil.deleteFile(getSelItemVideoPath(r));
                         }
-//                        DbHelper.getInstance().updateRecord(records);
+                        tableView.refresh();
 
                     }
                 }
@@ -661,7 +661,7 @@ public class RecordTabController extends BaseController {
     }
 
     private void importMedia(List<Record> records,List<File> files,int type,boolean audio){
-        if (type == 0){
+        if (type == 1){
             Record record = records.get(0);
             if (audio) {
                 copyFile(files.get(0).getPath(), Constant.getAudioPath(record.baseId + "", record.uuid));
@@ -669,12 +669,13 @@ public class RecordTabController extends BaseController {
             }else {
                 copyFile(files.get(0).getPath(), Constant.getVideoPath(record.baseId + "", record.uuid));
             }
-        }else if (type == 1
-                ||type==2){
+        }else if (type==2||type==3){
             for (int i=0,max=files.size();i<max;i++){
                 for (int j=0,max2 = records.size();j<max2;j++){
-                    if (type==1&&records.get(j).investCode.equals(files.get(i).getName().split("\\.")[0])
-                            ||type==2&&records.get(j).content.equals(files.get(i).getName().split("\\.")[0])
+                    System.out.println("record code:"+records.get(j).investCode);
+                    System.out.println("file name:"+files.get(i).getName().split("\\.")[0]);
+                    if (type==2&&records.get(j).investCode.equalsIgnoreCase(files.get(i).getName().split("\\.")[0])
+                            ||type==3&&records.get(j).content.equalsIgnoreCase(files.get(i).getName().split("\\.")[0])
                             ) {
                         String path;
                         if (audio){

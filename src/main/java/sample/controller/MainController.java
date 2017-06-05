@@ -848,6 +848,7 @@ public class MainController extends BaseController {
                     vc.saveBtnClick();
 
                     controller.t = ((Table) vc.preData);
+                    controller.preData = controller.t;
                     controller.tableType = ((Table) vc.preData).getDatatype();
                 }else{
                     RewriteViewController vc = ((RewriteViewController) t.getUserData());

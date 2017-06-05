@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.StackPane?>
 
-<BorderPane prefHeight="238.0" prefWidth="469.0" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.controller.MainController">
+<BorderPane prefHeight="238.0" prefWidth="469.0" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.controller.MainController" stylesheets="@css/main.css,@css/fontTimeNewRoman.css">
     <top>
         <StackPane alignment="CENTER_RIGHT">
       <MenuBar BorderPane.alignment="CENTER">
