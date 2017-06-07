@@ -296,6 +296,22 @@ public class DbHelper {
             e.printStackTrace();
         }
     }
+
+
+    public Record searchRecordWithContent(String content){
+        try {
+            Dao<Record,String> recordDao = DaoManager.createDao(connectionSource,Record.class);
+            List<Record> result = recordDao.queryForEq("content",content);
+            if (result.size() == 0){
+                return null;
+            }
+            return result.get(0);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     /**
      * 根据codeBase获取相应分类的数据，并转换成相应的Record类，组装成ObservableList
      * @param dataType 数据分类：字表，词表，句表

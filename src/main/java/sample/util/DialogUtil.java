@@ -26,6 +26,7 @@ public class DialogUtil {
     public static final int FILE_CHOOSE_TYPE_AC = 7;
     public static final int FILE_CHOOSE_TYPE_WAV = 8;
     public static final int FILE_CHOOSE_TYPE_HTML = 9;
+    public static final int FILE_CHOOSE_TYPE_TXT = 10;
 
     public static Alert showDialog(String content) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION, null);
@@ -81,6 +82,10 @@ public class DialogUtil {
         }else if (fileType == FILE_CHOOSE_TYPE_HTML){
             fileChooser.getExtensionFilters().addAll(
                     new FileChooser.ExtensionFilter("html", "*.html")
+            );
+        }else if (fileType == FILE_CHOOSE_TYPE_TXT){
+            fileChooser.getExtensionFilters().addAll(
+                    new FileChooser.ExtensionFilter("txt", "*.txt")
             );
         }
         Stage stage = new Stage();

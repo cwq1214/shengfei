@@ -245,7 +245,7 @@ public class MainController extends BaseController {
 
                 contentPane.getTabs().remove(nowIndex);
 
-                Tab tab = WidgetUtil.createNewTab("转写模式", rvc.getmParent());
+                Tab tab = WidgetUtil.createNewTab(t.getText() + "-转写模式", rvc.getmParent());
                 WidgetUtil.addTabToTabPane(contentPane, tab,true,rvc);
                 WidgetUtil.selectTab(tab);
             }
@@ -815,6 +815,7 @@ public class MainController extends BaseController {
     @FXML
     private void onTableMetadataInfoClick() throws IOException {
         TableMetadataInfoController controller = ViewUtil.getInstance().openTableMetadataInfoView();
+        controller.preData = MainController.this;
 
         Tab tab = WidgetUtil.createNewTab("调查表元数据信息", controller.getmParent());
         WidgetUtil.addTabToTabPane(contentPane, tab, true);
@@ -860,7 +861,7 @@ public class MainController extends BaseController {
 
                 contentPane.getTabs().remove(nowIndex);
 
-                Tab tab = WidgetUtil.createNewTab("录制", controller.getmParent());
+                Tab tab = WidgetUtil.createNewTab(t.getText() + "-录制", controller.getmParent());
 
                 tab.setOnClosed(new EventHandler<Event>() {
                     @Override

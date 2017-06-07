@@ -237,6 +237,7 @@ public class AudoCityHelper {
 
                 record.createDate =simpleDateFormat.format(new Date());
                 record.done = "1";
+                record.autoSupple();
 
                 WAVUtil.AudioAttr audioAttr = audioAttrs.get(k);
                 audioAttr.path = Constant.getAudioPath(record.baseId+"",record.uuid);

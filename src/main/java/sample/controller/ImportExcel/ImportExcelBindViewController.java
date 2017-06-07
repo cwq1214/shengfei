@@ -126,6 +126,7 @@ public class ImportExcelBindViewController extends BaseController {
                     record.setUuid(UUID.randomUUID().toString());
                     record.setInvestCode(record.getBaseCode());
                     record.setBaseId(t.getId());
+                    record.autoSupple();
                     impDatas.add(record);
                 }
             }

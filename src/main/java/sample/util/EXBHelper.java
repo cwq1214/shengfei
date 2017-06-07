@@ -685,7 +685,7 @@ public class EXBHelper {
 
                 records.get(i).createDate =simpleDateFormat.format(new Date());
                 records.get(i).done = "1";
-
+                records.get(i).autoSupple();
 
                 audioAttrs.get(i).path = Constant.getAudioPath(records.get(i).baseId+"",records.get(i).uuid);
             }

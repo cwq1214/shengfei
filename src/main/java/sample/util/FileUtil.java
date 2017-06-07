@@ -159,6 +159,10 @@ public class FileUtil {
      * 文件拷贝的方法
      */
     public static void fileCopy(String src, String des) {
+        File desParent = new File(des).getParentFile();
+        if (!desParent.exists()){
+            desParent.mkdirs();
+        }
         try {
             Files.copy(new File(src).toPath(),new File(des).toPath(), StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
@@ -174,16 +178,12 @@ public class FileUtil {
 
         String fileName = oFile.getName();
 
-        String result = Constant.TEMP_DIR + "/" + fileName;
-        File file = new File(result);
-        if (!file.exists()) {
-            File dir = new File(Constant.TEMP_DIR);
-            if (!dir.exists()) {
-                dir.mkdirs();
-            }
-
-            fileCopy(src, result);
+        String result = Constant.TEMP_DIR + "/" + System.currentTimeMillis() + "-" +fileName;
+        File dir = new File(Constant.TEMP_DIR);
+        if (!dir.exists()) {
+            dir.mkdirs();
         }
+        fileCopy(src, result);
         return result;
     }
 

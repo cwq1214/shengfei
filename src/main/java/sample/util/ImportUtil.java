@@ -1,5 +1,8 @@
 package sample.util;
 
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
+import javafx.stage.Stage;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.usermodel.Cell;
@@ -19,12 +22,31 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
  * Created by Bee on 2017/5/14.
  */
 public class ImportUtil {
+
+    private static void impAV(File vDir,Record r,Table t){
+        if (vDir != null){
+            String wavName = r.getBaseCode() + (r.getContent().length() > 4?r.getContent().substring(0,4):r.getContent()) + ".wav";
+            String mp4Name = r.getBaseCode() + (r.getContent().length() > 4?r.getContent().substring(0,4):r.getContent()) + ".mp4";
+
+            File[] fs = vDir.listFiles();
+            for (File f : fs) {
+                if (f.getName().contains(wavName)){
+                    FileUtil.fileCopy(f.getAbsolutePath(),Constant.ROOT_FILE_DIR + "/audio/" + t.getId() + "/" + r.getUuid() + ".wav");
+                    r.setDone("1");
+                }else if (f.getName().contains(mp4Name)){
+                    FileUtil.fileCopy(f.getAbsolutePath(),Constant.ROOT_FILE_DIR + "/video/" + t.getId() + "/" + r.getUuid() + ".mp4");
+                }
+            }
+        }
+    }
+
     /**
      * 导入语保模板
      * @param type 0字 1词 2句
@@ -43,13 +65,24 @@ public class ImportUtil {
             Table t = new Table("",Integer.toString(type),"","","","","","","","","","","","","","","");
             DbHelper.getInstance().insertNewTable(t);
 
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("提示");
+            alert.setHeaderText("");
+            alert.setContentText("是否同时导入音视频");
+
+            Optional<ButtonType> result = alert.showAndWait();
+            File vDir = null;
+            if (result.get() == ButtonType.OK){
+                vDir = DialogUtil.dirChooses(new Stage());
+            }
+
             Sheet sheet = workbook.getSheetAt(0);
             if (type == 0){
-                importYbWord(sheet,t);
+                importYbWord(sheet,t,vDir);
             }else if (type == 1){
-                importYbCi(sheet,t);
+                importYbCi(sheet,t,vDir);
             }else if (type == 2){
-                importYbSentence(sheet,t);
+                importYbSentence(sheet,t,vDir);
             }
 
             mainController.openTable(t);
@@ -61,7 +94,7 @@ public class ImportUtil {
     }
 
 
-    private static void importYbCi(Sheet sheet,Table t){
+    private static void importYbCi(Sheet sheet,Table t,File vDir){
         List<Record> impDatas = new ArrayList<>();
 
         for (int i = 1; i <= sheet.getLastRowNum(); i++) {
@@ -119,8 +152,12 @@ public class ImportUtil {
 
             Cell contentCell = row.getCell(1);
             r.setContent(contentCell.getStringCellValue());
+            r.autoSupple();
+
+            impAV(vDir,r,t);
 
             impDatas.add(r);
+
         }
 
         ProgressViewController pvc = ViewUtil.getInstance().showProgressView("导入数据中，请稍等");
@@ -131,7 +168,7 @@ public class ImportUtil {
             }
         });
     }
-    private static void importYbSentence(Sheet sheet,Table t){
+    private static void importYbSentence(Sheet sheet,Table t,File vDir){
         List<Record> impDatas = new ArrayList<>();
 
         for (int i = 1; i <= sheet.getLastRowNum(); i++) {
@@ -189,6 +226,9 @@ public class ImportUtil {
 
             Cell contentCell = row.getCell(1);
             r.setContent(contentCell.getStringCellValue());
+            r.autoSupple();
+
+            impAV(vDir,r,t);
 
             impDatas.add(r);
         }
@@ -203,7 +243,7 @@ public class ImportUtil {
     }
 
 
-    private static void importYbWord(Sheet sheet,Table t){
+    private static void importYbWord(Sheet sheet,Table t,File vDir){
         List<Record> impDatas = new ArrayList<>();
 
         for (int i = 1; i <= sheet.getLastRowNum(); i++) {
@@ -264,6 +304,9 @@ public class ImportUtil {
 
             Cell contentCell = row.getCell(1);
             r.setContent(contentCell.getStringCellValue());
+            r.autoSupple();
+
+            impAV(vDir,r,t);
 
             impDatas.add(r);
         }

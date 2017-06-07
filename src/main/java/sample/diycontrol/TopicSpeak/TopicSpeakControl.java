@@ -6,19 +6,17 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.Label;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import sample.Main;
 import sample.entity.Topic;
+import sample.util.DialogUtil;
 
 
-import java.io.IOException;
+import java.io.*;
 
 /**
  * Created by Bee on 2017/4/28.
@@ -26,25 +24,25 @@ import java.io.IOException;
 public class TopicSpeakControl extends VBox {
 
     @FXML
-    private TextField ipaTF;
+    private TextArea ipaTF;
 
     @FXML
-    private TextField mwfyTF;
+    private TextArea mwfyTF;
 
     @FXML
-    private TextField spellTF;
+    private TextArea spellTF;
 
     @FXML
-    private TextField wordTranTF;
+    private TextArea wordTranTF;
 
     @FXML
-    private TextField freeTranTF;
+    private TextArea freeTranTF;
 
     @FXML
-    private TextField noteTF;
+    private TextArea noteTF;
 
     @FXML
-    private TextField englishTF;
+    private TextArea englishTF;
     @FXML
     Label ipaLB;
     @FXML
@@ -61,7 +59,7 @@ public class TopicSpeakControl extends VBox {
     Label englishLB;
 
 
-
+    private TextArea lastActive;
     private ContextMenu contextMenu;
     private TopicSpeakCtlListener listener;
 
@@ -107,7 +105,46 @@ public class TopicSpeakControl extends VBox {
             }
         });
 
-        contextMenu.getItems().addAll(addSpeaker,delSpeaker);
+        MenuItem tqjzItem = new MenuItem("提取此层句子");
+        tqjzItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                listener.tqjzClick(TopicSpeakControl.this);
+            }
+        });
+
+        MenuItem tqchItem = new MenuItem("提取此层词汇");
+        tqchItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                listener.tqchClick(TopicSpeakControl.this);
+            }
+        });
+
+        MenuItem impTxt = new MenuItem("导入文本");
+        impTxt.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                File f = DialogUtil.fileChoiceDialog("选择文件",DialogUtil.FILE_CHOOSE_TYPE_TXT);
+                if (f != null){
+                    StringBuilder sb = new StringBuilder();
+                    try {
+                        BufferedReader br = new BufferedReader(new FileReader(f));
+                        String line = null;
+                        while ((line = br.readLine()) != null){
+                            sb.append(line+"\r\n");
+                        }
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    lastActive.setText(sb.toString());
+                }
+            }
+        });
+
+        contextMenu.getItems().addAll(addSpeaker,delSpeaker,impTxt,tqjzItem,tqchItem);
         setOnContextMenuRequested(new EventHandler<ContextMenuEvent>() {
             @Override
             public void handle(ContextMenuEvent event) {
@@ -138,42 +175,49 @@ public class TopicSpeakControl extends VBox {
         ipaTF.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
+                lastActive = ipaTF;
                 listener.textFieldActive(ipaTF, TopicSpeakCtlListener.TextFieldType.IPATF);
             }
         });
         mwfyTF.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
+                lastActive = mwfyTF;
                 listener.textFieldActive(mwfyTF, TopicSpeakCtlListener.TextFieldType.MWFYTF);
             }
         });
         spellTF.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
+                lastActive = spellTF;
                 listener.textFieldActive(spellTF, TopicSpeakCtlListener.TextFieldType.SPELLTF);
             }
         });
         wordTranTF.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
+                lastActive = wordTranTF;
                 listener.textFieldActive(wordTranTF, TopicSpeakCtlListener.TextFieldType.WORDTRANTF);
             }
         });
         freeTranTF.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
+                lastActive = freeTranTF;
                 listener.textFieldActive(freeTranTF, TopicSpeakCtlListener.TextFieldType.FREETRANTF);
             }
         });
         noteTF.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
+                lastActive = noteTF;
                 listener.textFieldActive(noteTF, TopicSpeakCtlListener.TextFieldType.NOTETF);
             }
         });
         englishTF.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
+                lastActive = englishTF;
                 listener.textFieldActive(englishTF, TopicSpeakCtlListener.TextFieldType.ENGLISHTF);
             }
         });

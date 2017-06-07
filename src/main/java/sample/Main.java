@@ -2,6 +2,7 @@ package sample;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
+import sample.controller.AV.TestController;
 import sample.controller.RecordTabController;
 import sample.entity.Record;
 import sample.util.Constant;
@@ -20,6 +21,9 @@ public class Main extends Application {
 //        RecordTabController controller = (RecordTabController) ViewUtil.getInstance().openRecordTab();
 //        controller.startPreview();
 //        controller.show();
+
+//        TestController vc = ((TestController) ViewUtil.getInstance().showView("view/testView.fxml", "测试", -1, -1, ""));
+//        vc.mStage.show();
 
         ViewUtil.getInstance().openMainView();
         DbHelper.getInstance();

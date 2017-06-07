@@ -5,6 +5,7 @@ import com.j256.ormlite.table.DatabaseTable;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import sample.controller.ImportExcel.ImpTitleBean;
+import sample.util.DbHelper;
 
 import java.util.HashMap;
 import java.util.UUID;
@@ -73,6 +74,7 @@ public class Record {
             new ImpTitleBean("普通话对译","setFree_trans"),
             new ImpTitleBean("注释","setNote"),
             new ImpTitleBean("英语","setEnglish"));
+
     public Record() {
     }
 
@@ -226,6 +228,15 @@ public class Record {
 
     public void setCreateDate(String createDate) {
         this.createDate = createDate;
+    }
+
+    public void autoSupple(){
+        Record r = DbHelper.getInstance().searchRecordWithContent(content);
+        if (r != null){
+            rank = r.rank;
+            english = r.english;
+            yun = r.yun;
+        }
     }
 
     @Override

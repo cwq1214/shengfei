@@ -33,9 +33,13 @@ import java.util.function.Predicate;
 
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
+import javafx.scene.text.Font;
 import javafx.util.Callback;
 import org.apache.poi.xwpf.usermodel.TOC;
+import org.bytedeco.javacv.FFmpegFrameRecorder;
 import sample.Main;
+import sample.controller.AV.BeeAudioRecord;
+import sample.controller.AV.BeeVideoRecord;
 import sample.controller.YBCC.YBCCBean;
 import sample.controller.widget.VideoPlayer;
 import sample.entity.Record;
@@ -46,6 +50,11 @@ import sample.util.*;
  * Created by chenweiqi on 2017/4/18.
  */
 public class RecordTabController extends BaseController {
+
+    private BeeVideoRecord vRecord;
+    private BeeAudioRecord aRecord;
+    private Record selectRecord;
+    private boolean isRecordVideo;
 
     public Table t;
 
@@ -108,6 +117,11 @@ public class RecordTabController extends BaseController {
     @FXML
     private VideoPlayer demoVideoPlayer;
 
+    @FXML
+    private TextArea tipTextArea;
+    @FXML
+    private Slider fontSizeSlider;
+
     //录音时间间隔
     int recordTImeSpace = 2;
 
@@ -168,6 +182,16 @@ public class RecordTabController extends BaseController {
         startPreviewAudio();
 
         setupTablView();
+
+        tipTextArea.setEditable(false);
+        System.out.println(tipTextArea.getFont().getSize());
+        fontSizeSlider.valueProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                double fontSize = (1 - newValue.doubleValue() / 100.0) * (48 - 12) + 12;
+                tipTextArea.setFont(new Font(fontSize));
+            }
+        });
     }
 
     public void setupTablView(){
@@ -320,55 +344,51 @@ public class RecordTabController extends BaseController {
             public void changed(ObservableValue observable, Record oldValue, Record newValue) {
                 selRecord = newValue;
                 int selIndex = tableView.getSelectionModel().getSelectedIndex();
-                Record r = tableView.getItems().get(selIndex);
+                if (selIndex != -1){
+                    Record r = tableView.getItems().get(selIndex);
 
-                File demoPFile = FileUtil.searchFile( Constant.DEMO_PIC_DIR + "/",r.getUuid());
-                File demoVFile = FileUtil.searchFile(Constant.DEMO_Video_DIR + "/",r.getUuid());
-                String demoP = null;
-                String demoV = null;
-                if (demoPFile != null) demoP = demoPFile.getAbsolutePath();
-                if (demoVFile != null) demoV = demoVFile.getAbsolutePath();
+                    tipTextArea.setText(r.getContent());
+
+                    File demoPFile = FileUtil.searchFile( Constant.DEMO_PIC_DIR + "/",r.getUuid());
+                    File demoVFile = FileUtil.searchFile(Constant.DEMO_Video_DIR + "/",r.getUuid());
+                    String demoP = null;
+                    String demoV = null;
+                    if (demoPFile != null) demoP = demoPFile.getAbsolutePath();
+                    if (demoVFile != null) demoV = demoVFile.getAbsolutePath();
 
 
-                if (demoP != null && demoP.length() != 0){
-                    try {
-                        FileInputStream fip = new FileInputStream(demoP);
-                        Image img = new Image(fip);
-                        demoImgView.setImage(img);
-                        fip.close();
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                    if (demoP != null && demoP.length() != 0){
+                        try {
+                            FileInputStream fip = new FileInputStream(demoP);
+                            Image img = new Image(fip);
+                            demoImgView.setImage(img);
+                            fip.close();
+                        } catch (FileNotFoundException e) {
+                            e.printStackTrace();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }else {
+                        demoImgView.setImage(null);
                     }
-                }else {
-                    demoImgView.setImage(null);
-                }
-                if (demoV != null && demoV.length() != 0){
-                    demoVideoPlayer.setMediaPath(demoV);
-                }else {
-                    demoVideoPlayer.setMediaPath("");
-                }
+                    if (demoV != null && demoV.length() != 0){
+                        demoVideoPlayer.setMediaPath(demoV);
+                    }else {
+                        demoVideoPlayer.setMediaPath("");
+                    }
 
-                if (selRecord==null){
-                    return;
+                    if (selRecord==null){
+                        return;
+                    }
+//                    System.out.println(selRecord);
+//                    System.out.println(getSelItemVideoPath(selRecord));
+                    videoPlayer.setMediaPath(getSelItemVideoPath(selRecord));
+
+                    resetChoiceBox();
+
+                    isSelRow = true;
+                    input_number.setText(selIndex+1+"");
                 }
-                System.out.println(selRecord);
-//                if (mediaPlayer!=null){
-//                    if (mediaPlayer.getStatus()== MediaPlayer.Status.PLAYING){
-//                        mediaPlayer.stop();
-//                        ((ImageView) btn_playAudio.getGraphic()).setImage(new Image(Main.class.getResourceAsStream("resource/img/b3.png")));
-//
-//                    }
-//                    mediaPlayer = null;
-//                }
-                System.out.println(getSelItemVideoPath(selRecord));
-                videoPlayer.setMediaPath(getSelItemVideoPath(selRecord));
-
-                resetChoiceBox();
-
-                isSelRow = true;
-                input_number.setText(selIndex+1+"");
             }
         });
         //录音模式
@@ -817,34 +837,34 @@ public class RecordTabController extends BaseController {
     //录音
     @FXML
     private void onAudioClick(Event event){
-        if (autoRecordNext){
-            if (!looperThread.isRecording) {
-                int maxIndex = getTableViewItems().size()-1;
-                if (maxIndex<=0){
-                    return;
-                }
-                looperThread.maxIndex = getLastCount();
-                looperThread.isRecording = true;
-                Thread thread =new Thread(looperThread);
-                thread.setName("自动录音线程");
-                thread.start();
-
-            }else {
-                looperThread.stopRecord();
+        isRecordVideo = false;
+        if (!aRecord.isRecording()){
+            if (tableView.getSelectionModel().getSelectedItems().size() == 1){
+                selectRecord = tableView.getSelectionModel().getSelectedItem();
+                aRecord.setRecorders(new FFmpegFrameRecorder[]{aRecord.setupRecorderWithRecorder(getSelItemAudioPath(tableView.getSelectionModel().getSelectedItem()))},true);
             }
         }else {
-            recordOneAudio((Button) event.getSource());
+            aRecord.stopRecorder(true);
         }
 
     }
     //录像
     @FXML
     private void onVideoClick(Event event){
-
-
-        recordOneVideo((Button) event.getSource());
-
-
+        isRecordVideo = true;
+        if (!vRecord.isRecording()){
+            if (tableView.getSelectionModel().getSelectedItems().size() == 1){
+                selectRecord = tableView.getSelectionModel().getSelectedItem();
+                vRecord.setupRecorder(getSelItemVideoPath(tableView.getSelectionModel().getSelectedItem()),800,600);
+                if (cb_cover.isSelected()){
+                    aRecord.setRecorders(new FFmpegFrameRecorder[]{vRecord.getRecorder(),aRecord.setupRecorderWithRecorder(getSelItemAudioPath(tableView.getSelectionModel().getSelectedItem()))},false);
+                }else{
+                    aRecord.setRecorders(new FFmpegFrameRecorder[]{vRecord.getRecorder()},false);
+                }
+            }
+        }else {
+            vRecord.stopRecorder();
+        }
     }
 
     //获取tableview 选中行
@@ -885,73 +905,112 @@ public class RecordTabController extends BaseController {
 
 
     private void startPreviewVideo(){
-//        recordVideoThread = new VideoRecorder();
-//        recordVideoThread.setPreviewImageView(img);
-//        recordVideoThread.setTimeCallback(new VideoRecorder.RecordTimeCallback() {
-//            @Override
-//            public void recordTime(long timeMS) {
-//                showTimeOnLabel(timeMS);
-//            }
-//        });
-//        recordVideoThread.start();
-
-        recorder = new Recorder();
-        recorder.setName("录音线程");
-        recorder.setPreviewImageView(img);
-        recorder.setTimeCallback(new Recorder.RecordTimeCallback() {
+        vRecord = new BeeVideoRecord(img);
+        vRecord.setListener(new BeeVideoRecord.VideoRecordListener() {
             @Override
-            public void recordTime(long timeMS) {
-                showTimeOnLabel(timeMS);
+            public void beginRecord() {
+                System.out.println("begin record video");
             }
-        });
-        recorder.setVolumeCallback(new Recorder.RecordVolumeCallback() {
+
             @Override
-            public void callback(int volume) {
+            public void onRecording(long startTime, long nowRecordTime) {
+                System.out.println("recording:"+nowRecordTime);
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
-                        pgb_pg1.setProgress(volume*1f/100);
-                        pgb_pg2.setProgress(volume*1f/100);
+                        label_recordTime.setText(simpleDateFormat.format(nowRecordTime/1000));
                     }
                 });
+                if (nowRecordTime >= 2 * 1000 * 1000){
+                    vRecord.stopRecorder();
+                    aRecord.stopRecorder(false);
+                    videoPlayer.setMediaPath(getSelItemVideoPath(selectRecord));
+                }
+            }
+
+            @Override
+            public void finishRecord() {
+                System.out.println("finish record video");
+                tableView.refresh();
+            }
+
+            @Override
+            public void errorRecord() {
+                aRecord.stopRecorder(false);
             }
         });
-
-        recorder.start();
-
     }
 
     private void startPreviewAudio(){
-//        recordAudioThread = new AudioRecorder();
-//        recordAudioThread.setTimeCallback(new AudioRecorder.RecordTimeCallback() {
-//            @Override
-//            public void callback(long times) {
-//                showTimeOnLabel(times);
-//            }
-//        });
-//        recordAudioThread.setVolumeCallback(new AudioRecorder.RecordVolumeCallback() {
-//            @Override
-//            public void callback(int volume) {
-//                Platform.runLater(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        pgb_pg1.setProgress(volume*1f/100);
-//                        pgb_pg2.setProgress(volume*1f/100);
-//                    }
-//                });
-//            }
-//        });
-//        recordAudioThread.start();
+        aRecord = new BeeAudioRecord();
+        aRecord.setListener(new BeeAudioRecord.AudioRecordListener() {
+            @Override
+            public void voiceDB(double db) {
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        pgb_pg1.setProgress(db/100.0);
+                        pgb_pg2.setProgress(db/100.0);
+                    }
+                });
+            }
+
+            @Override
+            public void beginRecording() {
+                System.out.println("begin record audio");
+            }
+
+            @Override
+            public void onRecording(long recordTime) {
+                System.out.println("recording audio:"+recordTime);
+                if (!vRecord.isRecording()){
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            label_recordTime.setText(simpleDateFormat.format(recordTime/1000));
+                        }
+                    });
+
+                    if (recordTime >= Integer.parseInt(cb_recordSpace.getSelectionModel().getSelectedItem().toString()) * 1000 * 1000){
+                        aRecord.stopRecorder(false);
+                    }
+                }
+            }
+
+            @Override
+            public void finishRecording(boolean isStopFromUser) {
+                System.out.println("finish record audio:"+isStopFromUser);
+                if (!isRecordVideo){
+                    selectRecord.setDone("1");
+                    DbHelper.getInstance().updateRecord(selectRecord);
+                    tableView.refresh();
+
+                    if (autoRecordNext && !isStopFromUser){
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                int index = tableView.getSelectionModel().getSelectedIndex();
+                                if (index != -1 && index != tableView.getItems().size() - 1){
+                                    try {
+                                        Thread.sleep(2000);
+                                        tableView.getSelectionModel().clearSelection();
+                                        tableView.getSelectionModel().select(index + 1);
+                                        onAudioClick(null);
+                                    } catch (InterruptedException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }
+                        }).start();
+                    }
+                }
+            }
+        });
     }
 
     public void stopPreview(){
-//        if (recordAudioThread!=null)
-//            recordAudioThread.stopPreview();
-//        if (recordVideoThread!=null)
-//            recordVideoThread.stopPreview();
-        if (recorder!=null){
-            recorder.stopPreview();
-        }
+        vRecord.destroyRecorder();
+        aRecord.destroyRecorder();
     }
 
     private void showTimeOnLabel(long time){

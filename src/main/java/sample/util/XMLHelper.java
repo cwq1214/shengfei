@@ -199,6 +199,7 @@ public class XMLHelper {
                 }
                 records.get(i).baseCode =records.get(i).investCode;
                 records.get(i).uuid = UUID.randomUUID().toString();
+                records.get(i).autoSupple();
             }
             ToastUtil.show("导入成功");
             return records;

@@ -68,6 +68,11 @@ public class TableMetadataInfoController extends BaseController {
 
     boolean isAsc;
 
+    @FXML
+    public void seeCodeBtnClick(){
+        ((MainController) preData).onZGYYDMClick();
+    }
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         super.initialize(location, resources);

@@ -1,5 +1,6 @@
 package sample.diycontrol.TopicSpeak;
 
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 
 /**
@@ -11,9 +12,11 @@ public interface TopicSpeakCtlListener {
       IPATF, MWFYTF,SPELLTF,WORDTRANTF,FREETRANTF,NOTETF,ENGLISHTF
     };
 
-    public void textFieldActive(TextField tf,TextFieldType type);
-    public void textFieldChange(TextField tf,TextFieldType type);
+    public void textFieldActive(TextArea tf, TextFieldType type);
+    public void textFieldChange(TextArea tf,TextFieldType type);
 
     public void addSpeakerClick();
     public void delSpeakerClick(TopicSpeakControl ctl);
+    public void tqjzClick(TopicSpeakControl ctl);
+    public void tqchClick(TopicSpeakControl ctl);
 }

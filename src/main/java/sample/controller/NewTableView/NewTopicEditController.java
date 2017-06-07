@@ -3,14 +3,12 @@ package sample.controller.NewTableView;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.Separator;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -20,6 +18,7 @@ import sample.diycontrol.TopicSpeak.TopicSpeakCtlListener;
 import sample.entity.Record;
 import sample.entity.Topic;
 import sample.util.DbHelper;
+import sample.util.ExportUtil;
 import sample.util.TextUtil;
 
 import java.util.ArrayList;
@@ -36,10 +35,10 @@ public class NewTopicEditController extends BaseController {
     private int baseId;
 
     private ObservableList<Topic> topics;
-
-    private TextField nowEditTF;
-
+    private TextArea nowEditTF;
     private Matcher searchM;
+
+    private String biaoDian = "。，、：∶；‘’“”〝〞ˆˇ﹕︰﹔﹖﹑·¨.¸,.´？！!～—｜‖＂〃｀@﹫¡¿﹏﹋︴々﹟#﹩$﹠&﹪%﹡﹢×﹦‐￣¯―﹨˜﹍﹎＿~（）〈〉‹›﹛﹜『』〖〗［］《》〔〕{}「」【】︵︷︿︹︽_︶︸﹀︺︾ˉ﹂﹄︼﹁﹃︻▲●□…→";
 
     @FXML
     private ScrollPane scrollView;
@@ -58,6 +57,9 @@ public class NewTopicEditController extends BaseController {
 
     @FXML
     private TextField replaceWordTF;
+
+
+    private ContextMenu topMenu;
 
     @FXML
     public void searchBtnClick(){
@@ -140,11 +142,45 @@ public class NewTopicEditController extends BaseController {
         this.baseId = baseId;
         topics = DbHelper.getInstance().searchTopicData(kindCode,baseId);
 
+        setupTopMenu();
         setupTopTextArea();
         setupScrollViewContent();
     }
 
+    private void setupTopMenu(){
+        MenuItem nowBreak = new MenuItem("此处断句");
+        MenuItem pointBreak = new MenuItem("标点断句");
+        nowBreak.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                int index = topTextArea.getCaretPosition();
+                if (index != -1){
+                    StringBuilder sb = new StringBuilder(topTextArea.getText());
+                    sb.insert(index,"╟");
+                    topTextArea.setText(sb.toString());
+                }
+            }
+        });
+        pointBreak.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                StringBuilder sb = new StringBuilder(topTextArea.getText());
+                for (int i = topTextArea.getText().length() - 1; i >= 0 ; i--) {
+                    Character c = topTextArea.getText().charAt(i);
+                    if (biaoDian.contains(c.toString())){
+                        sb.insert(i+1,"\r\n╟");
+                    }
+                }
+                topTextArea.setText(sb.toString());
+            }
+        });
+
+        topMenu = new ContextMenu(nowBreak,pointBreak);
+        topTextArea.setContextMenu(topMenu);
+    }
+
     private void setupTopTextArea(){
+        topTextArea.setWrapText(true);
         topTextArea.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
@@ -154,6 +190,7 @@ public class NewTopicEditController extends BaseController {
         topTextArea.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                System.out.println(newValue);
                 nowEditTF.setText(newValue);
             }
         });
@@ -190,13 +227,13 @@ public class NewTopicEditController extends BaseController {
         ctl.setUserData(t);
         ctl.setListener(new TopicSpeakCtlListener() {
             @Override
-            public void textFieldActive(TextField tf, TextFieldType type) {
+            public void textFieldActive(TextArea tf, TextFieldType type) {
                 nowEditTF = tf;
                 topTextArea.setText(tf.getText());
             }
 
             @Override
-            public void textFieldChange(TextField tf, TextFieldType type) {
+            public void textFieldChange(TextArea tf, TextFieldType type) {
                 nowEditTF = tf;
                 topTextArea.setText(tf.getText());
             }
@@ -221,6 +258,18 @@ public class NewTopicEditController extends BaseController {
                     }
                 }
                 scrollVBox.getChildren().remove(ctl);
+            }
+
+            @Override
+            public void tqjzClick(TopicSpeakControl ctl) {
+                int ctlIndex = scrollVBox.getChildren().indexOf(ctl);
+                ExportUtil.exportTQJz(topics.get(ctlIndex));
+            }
+
+            @Override
+            public void tqchClick(TopicSpeakControl ctl) {
+                int ctlIndex = scrollVBox.getChildren().indexOf(ctl);
+                ExportUtil.exportTQCh(topics.get(ctlIndex));
             }
         });
         return ctl;

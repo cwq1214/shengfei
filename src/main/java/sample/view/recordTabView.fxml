@@ -26,6 +26,8 @@
 <?import javafx.scene.media.MediaView?>
 <?import sample.controller.widget.VideoPlayer?>
 <?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.Slider?>
 <AnchorPane prefHeight="600" prefWidth="800" stylesheets="@css/sf.css,@css/recordTabView.css" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.controller.RecordTabController">
     <VBox AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0">
         <!---->
@@ -130,6 +132,10 @@
                     </graphic>
                 </Button>
             </HBox>
+            <HBox>
+                <TextArea fx:id="tipTextArea"></TextArea>
+                <Slider orientation="VERTICAL" value="100" fx:id="fontSizeSlider"></Slider>
+            </HBox>
         </HBox>
         <!---->
         <Label />
@@ -155,10 +161,10 @@
                     </ChoiceBox>
                 </HBox>
 
-                <RadioButton fx:id="rbtn_manualRecordAudio" text="手动录音" GridPane.columnIndex="1" GridPane.rowIndex="0" toggleGroup="$recordMode" selected="true">
+                <RadioButton text="手动录音" GridPane.columnIndex="1" GridPane.rowIndex="0" toggleGroup="$recordMode" selected="true">
                     <toggleGroup><ToggleGroup fx:id="recordMode"></ToggleGroup></toggleGroup>
                 </RadioButton>
-                <RadioButton fx:id="rbtn_automaticRecordAudio" text="自动录音" GridPane.columnIndex="1" GridPane.rowIndex="1" toggleGroup="$recordMode" />
+                <RadioButton text="自动录音" GridPane.columnIndex="1" GridPane.rowIndex="1" toggleGroup="$recordMode" />
 
 
                 <HBox alignment="CENTER" GridPane.columnIndex="2" GridPane.rowIndex="1">
