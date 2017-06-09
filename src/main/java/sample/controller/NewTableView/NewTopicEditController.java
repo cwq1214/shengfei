@@ -263,13 +263,13 @@ public class NewTopicEditController extends BaseController {
             @Override
             public void tqjzClick(TopicSpeakControl ctl) {
                 int ctlIndex = scrollVBox.getChildren().indexOf(ctl);
-                ExportUtil.exportTQJz(topics.get(ctlIndex));
+                ExportUtil.exportTQJz(getTopics().get(ctlIndex));
             }
 
             @Override
             public void tqchClick(TopicSpeakControl ctl) {
                 int ctlIndex = scrollVBox.getChildren().indexOf(ctl);
-                ExportUtil.exportTQCh(topics.get(ctlIndex));
+                ExportUtil.exportTQCh(getTopics().get(ctlIndex));
             }
         });
         return ctl;

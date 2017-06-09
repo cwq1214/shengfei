@@ -18,6 +18,11 @@
     -fx-font-size: 10pt;
     -fx-font-family: "Times New Roman";
 }
+
+#test{
+    -fx-font-size: 20pt;
+}
+
 .tab-pane {
     -fx-font-size: 10pt;
     -fx-font-family: "Times New Roman";

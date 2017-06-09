@@ -797,6 +797,9 @@ public class NewTableView extends BaseController {
         Callback<TableColumn<YBCCBean,String>,TableCell<YBCCBean,String>> callback = (TableColumn<YBCCBean,String> col) -> new MyTFCell(new DefaultStringConverter());
 
 
+        IPACol.setId("test");
+
+
         //设置header contextMenu
         hideCol.setContextMenu(setupHeaderMenu(true,true,true,true,true));
         doneCol.setContextMenu(setupHeaderMenu(true,false,true,false,false));

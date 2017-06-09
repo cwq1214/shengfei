@@ -1206,14 +1206,40 @@ public class ExportUtil {
             rTitle.createCell(5).setCellValue("注释");
             rTitle.createCell(6).setCellValue("英语");
 
-            Row rContent = sheet.createRow(1);
-            rContent.createCell(0).setCellValue(topic.getIpa());
-            rContent.createCell(1).setCellValue(topic.getMwfy());
-            rContent.createCell(2).setCellValue(topic.getSpell());
-            rContent.createCell(3).setCellValue(topic.getWord_trans());
-            rContent.createCell(4).setCellValue(topic.getFree_trans());
-            rContent.createCell(5).setCellValue(topic.getNote());
-            rContent.createCell(6).setCellValue(topic.getEnglish());
+            String[] ipas = topic.getIpa().split("╟");
+            String[] mwfys = topic.getMwfy().split("╟");
+            String[] spells = topic.getSpell().split("╟");
+            String[] words = topic.getWord_trans().split("╟");
+            String[] frees = topic.getFree_trans().split("╟");
+            String[] notes = topic.getNote().split("╟");
+            String[] englishs = topic.getEnglish().split("╟");
+
+            int maxLengh = ipas.length;
+            maxLengh = mwfys.length>maxLengh?mwfys.length:maxLengh;
+            maxLengh = spells.length>maxLengh?spells.length:maxLengh;
+            maxLengh = words.length>maxLengh?words.length:maxLengh;
+            maxLengh = frees.length>maxLengh?frees.length:maxLengh;
+            maxLengh = notes.length>maxLengh?notes.length:maxLengh;
+            maxLengh = englishs.length>maxLengh?englishs.length:maxLengh;
+
+            for (int i = 0; i < maxLengh; i++) {
+                Row r = sheet.createRow(i + 1);
+                if (i < ipas.length) {
+                    r.createCell(0).setCellValue(ipas[i]);
+                }if (i < mwfys.length) {
+                    r.createCell(1).setCellValue(mwfys[i]);
+                }if (i < spells.length) {
+                    r.createCell(2).setCellValue(spells[i]);
+                }if (i < words.length) {
+                    r.createCell(3).setCellValue(words[i]);
+                }if (i < frees.length) {
+                    r.createCell(4).setCellValue(frees[i]);
+                }if (i < notes.length) {
+                    r.createCell(5).setCellValue(notes[i]);
+                }if (i < englishs.length) {
+                    r.createCell(6).setCellValue(englishs[i]);
+                }
+            }
 
             try {
                 FileOutputStream outputStream = new FileOutputStream(saveFile);

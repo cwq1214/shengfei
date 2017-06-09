@@ -105,6 +105,7 @@ public class TableMetadataInfoController extends BaseController {
             @Override
             public void changed(ObservableValue<? extends Table> observable, Table oldValue, Table newValue) {
                 table = newValue;
+                System.out.println("table"+table);
                 if (table!=null)
                 showTableInfo(table);
             }
@@ -120,7 +121,7 @@ public class TableMetadataInfoController extends BaseController {
                 lv_table.getSelectionModel().select(0);
             }
         }
-        table = null;
+//        table = null;
 
 
     }

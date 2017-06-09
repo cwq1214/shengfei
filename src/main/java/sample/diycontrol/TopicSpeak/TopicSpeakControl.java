@@ -129,7 +129,7 @@ public class TopicSpeakControl extends VBox {
                 if (f != null){
                     StringBuilder sb = new StringBuilder();
                     try {
-                        BufferedReader br = new BufferedReader(new FileReader(f));
+                        BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(f),"utf-8"));
                         String line = null;
                         while ((line = br.readLine()) != null){
                             sb.append(line+"\r\n");
@@ -295,13 +295,13 @@ public class TopicSpeakControl extends VBox {
     }
 
     public Topic makeTopicMsg(Topic t){
-        t.setIpa(ipaTF.getText());
-        t.setMwfy(mwfyTF.getText());
-        t.setSpell(spellTF.getText());
-        t.setWord_trans(wordTranTF.getText());
-        t.setFree_trans(freeTranTF.getText());
-        t.setNote(noteTF.getText());
-        t.setEnglish(englishTF.getText());
+        t.setIpa(ipaTF.getText() == null?"":ipaTF.getText());
+        t.setMwfy(mwfyTF.getText()== null?"":mwfyTF.getText());
+        t.setSpell(spellTF.getText()== null?"":spellTF.getText());
+        t.setWord_trans(wordTranTF.getText()== null?"":wordTranTF.getText());
+        t.setFree_trans(freeTranTF.getText()== null?"":freeTranTF.getText());
+        t.setNote(noteTF.getText()== null?"":noteTF.getText());
+        t.setEnglish(englishTF.getText()== null?"":englishTF.getText());
         return t;
     }
 }

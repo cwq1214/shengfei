@@ -209,6 +209,8 @@ public class RecordTabController extends BaseController {
         TableColumn<Record,String> mwfyCol = new TableColumn<>("民族文字或方言字");
         TableColumn<Record,String> freeTran = new TableColumn<>("普通话词对译");
 
+        IPACol.setId("test");
+
         doneCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Record, String>, ObservableValue<String>>() {
             @Override
             public ObservableValue<String> call(TableColumn.CellDataFeatures<Record, String> param) {
@@ -239,6 +241,8 @@ public class RecordTabController extends BaseController {
         contentCol.setCellValueFactory(new PropertyValueFactory<>("content"));
         mwfyCol.setCellValueFactory(new PropertyValueFactory<>("MWFY"));
         freeTran.setCellValueFactory(new PropertyValueFactory<>("free_trans"));
+
+        System.out.println("123"+IPACol.getStyle());
 
         if (tableType.equals("0")) {
             tableView.getColumns().addAll(codeCol, doneCol,videoDoneCol, contentCol, englishCol, yunCol, noteCol, rankCol, spellCol, IPACol, recordDateCol);
@@ -711,6 +715,7 @@ public class RecordTabController extends BaseController {
         }
 
         ToastUtil.show("导入完成");
+        tableView.refresh();
     }
 
     private void exportMedia(List<Record> records,File dir,int type,boolean audio) throws NoSuchFieldException, IllegalAccessException {
@@ -809,7 +814,8 @@ public class RecordTabController extends BaseController {
                     mediaPlayer.stop();
                     ((ImageView) btn.getGraphic()).setImage(new Image(Main.class.getResourceAsStream(norResourcePath)));
 //                    if (playAfterRelease){
-                        mediaPlayer = null;
+                    mediaPlayer.dispose();
+                    mediaPlayer = null;
 //                    }
                 }
             });
@@ -864,6 +870,7 @@ public class RecordTabController extends BaseController {
             }
         }else {
             vRecord.stopRecorder();
+            aRecord.stopRecorder(false);
         }
     }
 
@@ -905,7 +912,8 @@ public class RecordTabController extends BaseController {
 
 
     private void startPreviewVideo(){
-        vRecord = new BeeVideoRecord(img);
+        vRecord = BeeVideoRecord.getInstance();
+        vRecord.addImgView(img);
         vRecord.setListener(new BeeVideoRecord.VideoRecordListener() {
             @Override
             public void beginRecord() {
@@ -921,16 +929,20 @@ public class RecordTabController extends BaseController {
                         label_recordTime.setText(simpleDateFormat.format(nowRecordTime/1000));
                     }
                 });
-                if (nowRecordTime >= 2 * 1000 * 1000){
-                    vRecord.stopRecorder();
-                    aRecord.stopRecorder(false);
-                    videoPlayer.setMediaPath(getSelItemVideoPath(selectRecord));
-                }
+//                if (nowRecordTime >= 2 * 1000 * 1000){
+//                    vRecord.stopRecorder();
+//                    aRecord.stopRecorder(false);
+//                    videoPlayer.setMediaPath(getSelItemVideoPath(selectRecord));
+//                }
             }
 
             @Override
             public void finishRecord() {
                 System.out.println("finish record video");
+                if (cb_cover.isSelected()){
+                    selectRecord.setCreateDate(record_simpleDateFormat.format(new Date()));
+                }
+                videoPlayer.setMediaPath(getSelItemVideoPath(selectRecord));
                 tableView.refresh();
             }
 
@@ -971,7 +983,7 @@ public class RecordTabController extends BaseController {
                         }
                     });
 
-                    if (recordTime >= Integer.parseInt(cb_recordSpace.getSelectionModel().getSelectedItem().toString()) * 1000 * 1000){
+                    if (autoRecordNext && recordTime >= Integer.parseInt(cb_recordSpace.getSelectionModel().getSelectedItem().toString()) * 1000 * 1000){
                         aRecord.stopRecorder(false);
                     }
                 }
@@ -982,6 +994,7 @@ public class RecordTabController extends BaseController {
                 System.out.println("finish record audio:"+isStopFromUser);
                 if (!isRecordVideo){
                     selectRecord.setDone("1");
+                    selectRecord.setCreateDate(record_simpleDateFormat.format(new Date()));
                     DbHelper.getInstance().updateRecord(selectRecord);
                     tableView.refresh();
 
@@ -1009,8 +1022,9 @@ public class RecordTabController extends BaseController {
     }
 
     public void stopPreview(){
-        vRecord.destroyRecorder();
+//        vRecord.destroyRecorder();
         aRecord.destroyRecorder();
+        vRecord.removeImgView(img);
     }
 
     private void showTimeOnLabel(long time){

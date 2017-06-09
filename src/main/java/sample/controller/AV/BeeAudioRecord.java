@@ -3,6 +3,7 @@ package sample.controller.AV;
 import org.bytedeco.javacv.FFmpegFrameRecorder;
 import org.bytedeco.javacv.FrameRecorder;
 import sample.Main;
+import sample.util.ToastUtil;
 import sun.audio.AudioPlayer;
 import sun.audio.AudioStream;
 
@@ -23,7 +24,6 @@ import static org.bytedeco.javacpp.FlyCapture2.FRAME_RATE;
  * Created by Bee on 2017/6/5.
  */
 public class BeeAudioRecord {
-
     private FFmpegFrameRecorder[] recorders;
     private long startTime = 0;
     private boolean isStop = true;
@@ -169,8 +169,6 @@ public class BeeAudioRecord {
                 listener.finishRecording(isStopFromUser);
             }
         }
-
-
     }
 
     public void destroyRecorder(){
@@ -180,28 +178,38 @@ public class BeeAudioRecord {
     }
 
     public void setRecorders(FFmpegFrameRecorder[] recorders,boolean playSound) {
+        System.out.println("set record");
         this.recorders = recorders;
-        if (playSound){
-            try {
-                AudioPlayer.player.start(new AudioStream(Main.class.getResourceAsStream("resource/sound/14.wav")));
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
+        try {
+            AudioPlayer.player.start(new AudioStream(Main.class.getResourceAsStream("resource/sound/14.wav")));
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    if (playSound){
                         try {
                             Thread.sleep(500);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
-                        isStop = false;
+                    }else{
+                        while (!BeeVideoRecord.getInstance().isRecording()){
+
+                        }
                     }
-                }).start();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+                    isStop = false;
+                }
+            }).start();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
     public FFmpegFrameRecorder setupRecorderWithRecorder(String fileName){
+        File oFile = new File(fileName).getParentFile();
+        if (!oFile.exists()){
+            oFile.mkdirs();
+        }
+
         FFmpegFrameRecorder rc = new FFmpegFrameRecorder(fileName,2);
         rc.setFormat("wav");
         try {

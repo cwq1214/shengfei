@@ -9,36 +9,66 @@ import sample.Main;
 import sun.audio.AudioPlayer;
 import sun.audio.AudioStream;
 
-import javax.sound.sampled.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.ShortBuffer;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-
-import static org.bytedeco.javacpp.FlyCapture2.FRAME_RATE;
+import java.util.ArrayList;
 
 /**
  * Created by Bee on 2017/6/5.
  */
 public class BeeVideoRecord {
-    private ImageView nowImgView;
+    static BeeVideoRecord record;
+
+    private ArrayList<ImageView> imgViews;
     private Java2DFrameConverter converter = new Java2DFrameConverter();
-    private Boolean isStop = false;
-    private boolean isDestroy = false;
+    private boolean isStop = false;
     private Boolean canRecordVideo = false;
-    private Boolean canRecordAudio = false;
-    private Thread thread;
 
     private FrameGrabber grabber;
     private FFmpegFrameRecorder recorder;
+    private Runnable runnable;
 
     private long startTime = 0;
     private long videoTS = 0;
 
     private VideoRecordListener listener;
+
+    public static synchronized BeeVideoRecord getInstance(){
+        if (record == null){
+            record = new BeeVideoRecord();
+        }
+        return record;
+    }
+
+    public boolean isUsedNow(){
+        return imgViews.size() != 0;
+    }
+
+    public void addImgView(ImageView iv){
+        if (imgViews.size() == 0){
+            try {
+                if (grabber == null){
+                    grabber = FrameGrabber.createDefault(0);
+                    grabber.start();
+                }else{
+                    grabber.restart();
+                }
+                isStop = false;
+                new Thread(runnable).start();
+            } catch (FrameGrabber.Exception e) {
+                e.printStackTrace();
+            }
+        }
+        imgViews.add(iv);
+    }
+
+    public void removeImgView(ImageView iv){
+        imgViews.remove(iv);
+        if (imgViews.size() == 0){
+            isStop = true;
+        }
+    }
 
     public FFmpegFrameRecorder getRecorder() {
         return recorder;
@@ -53,21 +83,26 @@ public class BeeVideoRecord {
     }
 
     public void destroyRecorder(){
-        isDestroy = true;
+        isStop = true;
         stopRecorder();
     }
 
-    public BeeVideoRecord(ImageView nowImgView) {
-        this.nowImgView = nowImgView;
-        new Thread(new Runnable() {
+    public BeeVideoRecord() {
+        imgViews = new ArrayList<>();
+        runnable = new Runnable() {
             @Override
             public void run() {
                 init();
             }
-        }).start();
+        };
     }
 
     public void setupRecorder(String outPutFile,int width,int height){
+        File oFile = new File(outPutFile).getParentFile();
+        if (!oFile.exists()){
+            oFile.mkdirs();
+        }
+
         try {
             recorder = FFmpegFrameRecorder.createDefault(outPutFile,width,height);
             recorder.setVideoCodec(avcodec.AV_CODEC_ID_H264);
@@ -130,7 +165,11 @@ public class BeeVideoRecord {
     }
 
     private void videoRecording(Frame frame,BufferedImage img) {
-        nowImgView.setImage(SwingFXUtils.toFXImage(img,null));
+        if (imgViews != null){
+            for (ImageView iv : imgViews) {
+                iv.setImage(SwingFXUtils.toFXImage(img,null));
+            }
+        }
         if (canRecordVideo){
             if (startTime == 0) {
                 startTime = System.currentTimeMillis();
@@ -156,24 +195,14 @@ public class BeeVideoRecord {
 
     private void init() {
         try {
-            isDestroy = false;
-            grabber = FrameGrabber.createDefault(0);
-            grabber.start();
-
-            System.out.println("new:"+grabber);
-
             Frame frame;
-            while (!isDestroy && nowImgView != null && (frame = grabber.grab()) != null) {
+            while (!isStop && (frame = grabber.grab()) != null) {
                 BufferedImage img = converter.convert(frame);
                 videoRecording(frame, img);
             }
-            stopRecorder();
-            grabber.stop();
             grabber.close();
-            grabber.release();
         } catch (FrameGrabber.Exception e) {
-            System.out.println("wrong:"+this);
-//            e.printStackTrace();
+            e.printStackTrace();
         }
     }
 

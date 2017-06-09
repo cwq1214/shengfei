@@ -11,6 +11,7 @@ import javafx.scene.control.*;
 import javafx.scene.web.WebView;
 import javafx.stage.Modality;
 import org.sqlite.util.StringUtils;
+import sample.controller.AV.BeeVideoRecord;
 import sample.controller.ImportExcel.ImportExcelBindViewController;
 import sample.controller.MutiAnaly.AfterAnalyViewController;
 import sample.controller.MutiAnaly.MutiAnalyBean;
@@ -840,41 +841,44 @@ public class MainController extends BaseController {
         if (nowIndex != -1){
             Tab t = contentPane.getTabs().get(nowIndex);
             if (t.getUserData() !=  null && ((t.getUserData() instanceof NewTableView) || t.getUserData() instanceof RewriteViewController)) {
+                if (!BeeVideoRecord.getInstance().isUsedNow()){
+                    RecordTabController controller = (RecordTabController) ViewUtil.getInstance().openRecordTab();
 
-                RecordTabController controller = (RecordTabController) ViewUtil.getInstance().openRecordTab();
+                    if (t.getUserData() instanceof NewTableView){
+                        //获取controller，先保存数据，然后关闭
+                        NewTableView vc = ((NewTableView) t.getUserData());
+                        vc.saveBtnClick();
 
-                if (t.getUserData() instanceof NewTableView){
-                    //获取controller，先保存数据，然后关闭
-                    NewTableView vc = ((NewTableView) t.getUserData());
-                    vc.saveBtnClick();
+                        controller.t = ((Table) vc.preData);
+                        controller.preData = controller.t;
+                        controller.tableType = ((Table) vc.preData).getDatatype();
+                    }else{
+                        RewriteViewController vc = ((RewriteViewController) t.getUserData());
+                        vc.saveBtnClick();
 
-                    controller.t = ((Table) vc.preData);
-                    controller.preData = controller.t;
-                    controller.tableType = ((Table) vc.preData).getDatatype();
-                }else{
-                    RewriteViewController vc = ((RewriteViewController) t.getUserData());
-                    vc.saveBtnClick();
-
-                    controller.t = ((Table) vc.preData);
-                    controller.tableType = ((Table) vc.preData).getDatatype();
-                }
-
-                contentPane.getTabs().remove(nowIndex);
-
-                Tab tab = WidgetUtil.createNewTab(t.getText() + "-录制", controller.getmParent());
-
-                tab.setOnClosed(new EventHandler<Event>() {
-                    @Override
-                    public void handle(Event event) {
-                        System.out.println("close");
-                        controller.stopPreview();
+                        controller.t = ((Table) vc.preData);
+                        controller.tableType = ((Table) vc.preData).getDatatype();
                     }
-                });
 
-                WidgetUtil.addTabToTabPane(contentPane, tab, true,controller);
-                WidgetUtil.selectTab(tab);
+                    contentPane.getTabs().remove(nowIndex);
 
-                controller.startPreview();
+                    Tab tab = WidgetUtil.createNewTab(t.getText() + "-录制", controller.getmParent());
+
+                    tab.setOnClosed(new EventHandler<Event>() {
+                        @Override
+                        public void handle(Event event) {
+                            System.out.println("close");
+                            controller.stopPreview();
+                        }
+                    });
+
+                    WidgetUtil.addTabToTabPane(contentPane, tab, true,controller);
+                    WidgetUtil.selectTab(tab);
+
+                    controller.startPreview();
+                }else {
+                    ToastUtil.show("只能同时打开一个录音模式");
+                }
             }
 
         }

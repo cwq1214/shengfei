@@ -30,38 +30,41 @@ public class TestController extends BaseController {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                vRecord = new BeeVideoRecord(imgView);
-                aRecord = new BeeAudioRecord();
+                vRecord = BeeVideoRecord.getInstance();
+//                vRecord.addImgView(imgView);
             }
         });
     }
 
     @FXML
     public void recordBtnClick(){
+        vRecord.addImgView(imgView);
+
 //        aRecord.setupRecorder("d://test.wav");
-//        vRecord.setupRecorder("d://output.mp4",800,600);
-//        aRecord.setupRecorder(vRecord.getRecorder());
-        aRecord.setListener(new BeeAudioRecord.AudioRecordListener() {
-            @Override
-            public void voiceDB(double db) {
 
-            }
-
-            @Override
-            public void beginRecording() {
-                System.out.println("begin record audio");
-            }
-
-            @Override
-            public void onRecording(long recordTime) {
-                System.out.println(recordTime);
-            }
-
-            @Override
-            public void finishRecording(boolean isStopFromUser) {
-                System.out.println("finish record audio");
-            }
-        });
+        vRecord.setupRecorder("d://output.mp4",800,600);
+////        aRecord.setupRecorder(vRecord.getRecorder());
+//        aRecord.setListener(new BeeAudioRecord.AudioRecordListener() {
+//            @Override
+//            public void voiceDB(double db) {
+//
+//            }
+//
+//            @Override
+//            public void beginRecording() {
+//                System.out.println("begin record audio");
+//            }
+//
+//            @Override
+//            public void onRecording(long recordTime) {
+//                System.out.println(recordTime);
+//            }
+//
+//            @Override
+//            public void finishRecording(boolean isStopFromUser) {
+//                System.out.println("finish record audio");
+//            }
+//        });
         vRecord.setListener(new BeeVideoRecord.VideoRecordListener() {
             @Override
             public void beginRecord() {
@@ -73,7 +76,6 @@ public class TestController extends BaseController {
                 System.out.println(startTime+"====="+nowRecordTime);
                 if (nowRecordTime >= 2 * 1000 * 1000){
                     vRecord.stopRecorder();
-//                    aRecord.stopRecorder();
                 }
             }
 
@@ -93,6 +95,7 @@ public class TestController extends BaseController {
     public void stopBtnClick(){
 //        vRecord.stopRecorder();
 //        aRecord.stopRecorder();
+        vRecord.removeImgView(imgView);
     }
 
 }
