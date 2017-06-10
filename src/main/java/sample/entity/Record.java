@@ -207,7 +207,7 @@ public class Record {
     }
 
     public String getRank() {
-        return rank;
+        return rank == null?"":rank;
     }
 
     public void setRank(String rank) {

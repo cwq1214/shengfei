@@ -79,9 +79,19 @@ public class TopicSpeakControl extends VBox {
         }
 
         setupContextMenu();
-
+        setupTextFieldContextMenu();
         setupTextFieldChange();
         setupTextFieldActive();
+    }
+
+    private void setupTextFieldContextMenu(){
+        ipaTF.setContextMenu(contextMenu);
+        mwfyTF.setContextMenu(contextMenu);
+        spellTF.setContextMenu(contextMenu);
+        wordTranTF.setContextMenu(contextMenu);
+        freeTranTF.setContextMenu(contextMenu);
+        noteTF.setContextMenu(contextMenu);
+        englishTF.setContextMenu(contextMenu);
     }
 
     private void setupContextMenu(){

@@ -194,13 +194,13 @@ public class TempTableView {
         tableView.getColumns().clear();
         if (newType == 0){
             contentCol.setText("单字");
-            tableView.getColumns().addAll(hideCol,doneCol,codeCol,rankCol,contentCol,yunCol,IPACol,spellCol,englishCol,noteCol,recordDateCol);
+            tableView.getColumns().addAll(codeCol,rankCol,contentCol,yunCol,IPACol,spellCol,englishCol,noteCol);
         }else if (newType == 1){
             contentCol.setText("词条");
-            tableView.getColumns().addAll(hideCol,doneCol,codeCol,rankCol,contentCol,mwfyCol,IPACol,spellCol,englishCol,noteCol,recordDateCol);
+            tableView.getColumns().addAll(codeCol,rankCol,contentCol,mwfyCol,IPACol,spellCol,englishCol,noteCol);
         }else if (newType == 2){
             contentCol.setText("句子");
-            tableView.getColumns().addAll(hideCol,doneCol,codeCol,rankCol,contentCol,mwfyCol,IPACol,duiyiCol,noteCol,englishCol,recordDateCol);
+            tableView.getColumns().addAll(codeCol,rankCol,contentCol,mwfyCol,IPACol,duiyiCol,noteCol,englishCol);
         }else if (newType == 3){
 
         }
