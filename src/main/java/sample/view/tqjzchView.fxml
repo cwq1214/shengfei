@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.controller.NewTableView.TqjzchViewController">
+<BorderPane xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.controller.NewTableView.TqjzchViewController" stylesheets="@css/fontTimeNewRoman.css">
    <center>
       <VBox prefHeight="100.0" prefWidth="100.0" spacing="10.0" BorderPane.alignment="CENTER">
          <children>

@@ -13,7 +13,7 @@
 <?import javafx.scene.image.ImageView?>
 <?import sample.controller.widget.VideoPlayer?>
 <?import javafx.scene.control.Label?>
-<BorderPane prefHeight="800" prefWidth="600" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.controller.NewTableView.NewTableView">
+<BorderPane stylesheets="@css/fontTimeNewRoman.css" prefHeight="800" prefWidth="600" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.controller.NewTableView.NewTableView">
    <center>
       <TableView fx:id="tableView" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
         <columns>

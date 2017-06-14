@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<GridPane alignment="CENTER" hgap="8" stylesheets="@css/sf.css" vgap="8" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.controller.SearchViewController">
+<GridPane alignment="CENTER" hgap="8" stylesheets="@css/sf.css,@css/fontTimeNewRoman.css" vgap="8" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.controller.SearchViewController">
     <padding>
         <Insets>
             <top>8</top>

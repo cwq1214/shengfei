@@ -21,6 +21,7 @@
 
 #test{
     -fx-font-size: 20pt;
+    -fx-font-family: "Times New Roman";
 }
 
 .tab-pane {

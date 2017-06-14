@@ -11,7 +11,7 @@
 <?import javafx.scene.image.Image?>
 
 
-<fx:root type="javafx.scene.layout.VBox" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" >
+<fx:root type="javafx.scene.layout.VBox" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" stylesheets="@css/fontTimeNewRoman.css">
     <MediaView fitWidth="300" fitHeight="300" fx:id="mv_mediaView">
 
     </MediaView>

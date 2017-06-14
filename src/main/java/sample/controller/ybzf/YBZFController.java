@@ -88,16 +88,36 @@ public class YBZFController extends BaseController {
         for (int i = 0; i < temp.size(); i++) {
             CodeIPABase ipaBase = temp.get(i);
             Button tempBtn = new Button(ipaBase.getContent());
+            tempBtn.setUserData(ipaBase.getCode());
             tempBtn.setMinSize(50,50);
             tempBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
                 @Override
                 public void handle(MouseEvent event) {
                     if (listener != null){
-                        listener.btnClickWithText(tempBtn.getText());
+                        String str = ((String) tempBtn.getUserData());
+                        listener.btnClickWithText(unicode2String("\\u"+str));
                     }
                 }
             });
             flowPane.getChildren().add(tempBtn);
         }
+    }
+
+    public static String unicode2String(String unicode) {
+
+        StringBuffer string = new StringBuffer();
+
+        String[] hex = unicode.split("\\\\u");
+
+        for (int i = 1; i < hex.length; i++) {
+
+            // 转换出每一个代码点
+            int data = Integer.parseInt(hex[i], 16);
+
+            // 追加成string
+            string.append((char) data);
+        }
+
+        return string.toString();
     }
 }

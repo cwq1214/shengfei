@@ -18,7 +18,7 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane stylesheets="@css/dbTableView.css" xmlns="http://javafx.com/javafx/8.0.112"
+<BorderPane stylesheets="@css/dbTableView.css,@css/fontTimeNewRoman.css" xmlns="http://javafx.com/javafx/8.0.112"
             xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.controller.DbTableController">
 
     <top>

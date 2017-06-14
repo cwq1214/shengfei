@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="CENTER" prefHeight="150.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.diycontrol.ProgressView.ProgressViewController">
+<VBox alignment="CENTER" prefHeight="150.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.diycontrol.ProgressView.ProgressViewController" stylesheets="@css/fontTimeNewRoman.css">
    <children>
       <Label fx:id="tipL" text="Label">
          <VBox.margin>

@@ -41,7 +41,7 @@ public class YBCCController extends BaseController {
 
     private String biaoDian = "。，、：∶；‘’“”〝〞ˆˇ﹕︰﹔﹖﹑·¨.¸´？！～—｜‖＂〃｀@﹫¡¿﹏﹋︴々﹟#﹩$﹠&﹪%﹡﹢×﹦‐￣¯―﹨˜﹍﹎＿~（）〈〉‹›﹛﹜『』〖〗［］《》〔〕{}「」【】︵︷︿︹︽_︶︸﹀︺︾ˉ﹂﹄︼﹁﹃︻▲●□…→";
     private String baseYuan = "əɛɿʮʅʯiɪʏeøᴇɛεɛœæaɶɑɒʌɔɤoɷʊƜɯuɨʉɘɵəǝɚɜɝɞɐᴀɩϊàáâãäåḁèéêëḙḛẽìíîïòóôõöùúûüṵṷāăēĕěĩīĭōŏőũūŭůűǎǐǒǔǖǘǚǜǣȁȅȇȉȋȍȗ";
-    private String doubleYuan = "ai ei ui ao ou iu ie ue";
+    private String doubleYuan = "ai ei ui ao ou iu ie ue uo";
     private String wrongSD = "111 222 333 444 555 123 124 125 234 235 345 543 542 541 432 431 321";
     private String currectZeroSD = "01 02 03 04 05";
 
@@ -230,19 +230,19 @@ public class YBCCController extends BaseController {
                     }
 
                     //判断连续元音
-                    for (int j = i + 1 ;j < sy.length(); j++){
-                        Character afterC = sy.charAt(j);
-                        String tempStr = sy.substring(i,j+1);
-                        if (baseYuan.contains(afterC.toString()) && !tempStr.matches("[0-5]+")){
-                            //判断两个原因字母是否相连,且为复韵母
-                            if(i + 1 == j && doubleYuan.contains(tempStr)){
-                                continue;
-                            }
-
-                            bean.setWrongReason("声调错漏");
-                            return false;
-                        }
-                    }
+//                    for (int j = i + 1 ;j < sy.length(); j++){
+//                        Character afterC = sy.charAt(j);
+//                        String tempStr = sy.substring(i,j+1);
+//                        if (baseYuan.contains(afterC.toString()) && !tempStr.matches("[0-5]+")){
+//                            //判断两个原因字母是否相连,且为复韵母
+//                            if(i + 1 == j && doubleYuan.contains(tempStr)){
+//                                continue;
+//                            }
+//
+//                            bean.setWrongReason("声韵错漏");
+//                            return false;
+//                        }
+//                    }
                 }else {
                     if (tempSMCount > maxSMCount){
                         maxSMCount = tempSMCount;
@@ -278,7 +278,7 @@ public class YBCCController extends BaseController {
 
             //声韵为空
             if (sm.equals("") && ym.equals("")){
-                bean.setWrongReason("声韵错漏");
+                bean.setWrongReason("声韵错漏" );
                 return false;
             }
 
@@ -319,6 +319,7 @@ public class YBCCController extends BaseController {
         ipa = ipa.replaceAll(" ","");
 
         System.out.println("****************************");
+        System.out.println("Code:"+bean.getRecord().getBaseCode());
         System.out.println("IPA:"+ipa);
 
         if (!ipa.matches(".*[0-5]+.*")){

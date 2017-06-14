@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 
-<BorderPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.controller.NewTableView.NewTopicKindSelectController">
+<BorderPane stylesheets="@css/fontTimeNewRoman.css" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.controller.NewTableView.NewTopicKindSelectController">
    <top>
       <Label text="请选择一个话题" BorderPane.alignment="CENTER_LEFT">
          <BorderPane.margin>

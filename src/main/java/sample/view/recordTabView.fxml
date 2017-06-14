@@ -28,7 +28,7 @@
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.Slider?>
-<AnchorPane prefHeight="600" prefWidth="800" stylesheets="@css/sf.css,@css/recordTabView.css" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.controller.RecordTabController">
+<AnchorPane prefHeight="600" prefWidth="800" stylesheets="@css/sf.css,@css/recordTabView.css,@css/fontTimeNewRoman.css" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.controller.RecordTabController">
     <VBox AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0">
         <!---->
         <HBox spacing="8">

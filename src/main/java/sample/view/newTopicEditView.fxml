@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.controller.NewTableView.NewTopicEditController">
+<BorderPane stylesheets="@css/fontTimeNewRoman.css" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.controller.NewTableView.NewTopicEditController">
    <top>
       <VBox prefHeight="150.0" prefWidth="100.0" BorderPane.alignment="CENTER">
          <children>
