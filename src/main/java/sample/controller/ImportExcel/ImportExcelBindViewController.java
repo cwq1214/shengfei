@@ -209,13 +209,13 @@ public class ImportExcelBindViewController extends BaseController {
         }));
         resultListView.setItems(impBindData);
 
-        if (excelType == 0){
-            impTitleData = FXCollections.observableArrayList(Record.wordTilteData);
-        }else if (excelType == 1){
-            impTitleData = FXCollections.observableArrayList(Record.ciTilteData);
-        }else if (excelType == 2){
-            impTitleData = FXCollections.observableArrayList(Record.sentenceTilteData);
-        }
+//        if (excelType == 0){
+//            impTitleData = FXCollections.observableArrayList(Record.wordTilteData);
+//        }else if (excelType == 1){
+//            impTitleData = FXCollections.observableArrayList(Record.ciTilteData);
+//        }else if (excelType == 2){
+//            impTitleData = FXCollections.observableArrayList(Record.sentenceTilteData);
+//        }
         impTitleListView.setItems(impTitleData);
     }
 

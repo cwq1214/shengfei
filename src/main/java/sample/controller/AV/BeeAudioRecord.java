@@ -40,9 +40,9 @@ public class BeeAudioRecord {
         AudioFormat audioFormat = new AudioFormat(44100.0F, 16, 2, true, false);
 
         // 通过AudioSystem获取本地音频混合器信息
-        Mixer.Info[] minfoSet = AudioSystem.getMixerInfo();
-        // 通过AudioSystem获取本地音频混合器
-        Mixer mixer = AudioSystem.getMixer(minfoSet[4]);
+//        Mixer.Info[] minfoSet = AudioSystem.getMixerInfo();
+//        // 通过AudioSystem获取本地音频混合器
+//        Mixer mixer = AudioSystem.getMixer(minfoSet[4]);
         // 通过设置好的音频编解码器获取数据线信息
         DataLine.Info dataLineInfo = new DataLine.Info(TargetDataLine.class, audioFormat);
         try {
@@ -82,14 +82,7 @@ public class BeeAudioRecord {
                         ShortBuffer sBuff = ShortBuffer.wrap(samples, 0, nSamplesRead);
                         // 按通道录制shortBuffer
 
-                        if (caculateDeltaTime < collectTime){
-                            if (caculateDeltaTime > 9){
-                                deltaDB += caculateVoiceDB(audioBytes,nBytesRead);
-                            }
-                            caculateDeltaTime++;
-                        }else{
-                            listener.voiceDB(caculateVoiceDB(audioBytes,nBytesRead));
-                        }
+                        listener.voiceDB(caculateVoiceDB(audioBytes,nBytesRead));
 
                         if (!isStop){
                             if (startTime == 0){
@@ -132,11 +125,8 @@ public class BeeAudioRecord {
                 rms = 10;
             }
             double db = Math.log10(rms)*20;
-            if (caculateDeltaTime < collectTime){
-                return db == Double.NEGATIVE_INFINITY?34:db;
-            }else {
-                return db + (db - deltaDB / ((collectTime - 10) * 1.0))*15;
-            }
+            db = db==Double.NEGATIVE_INFINITY?34:db;
+            return db + (Math.abs(db - 34)<=3?(db -34) * 10 : 0);
         }
         return 0;
     }
@@ -210,14 +200,23 @@ public class BeeAudioRecord {
             oFile.mkdirs();
         }
 
-        FFmpegFrameRecorder rc = new FFmpegFrameRecorder(fileName,2);
-        rc.setFormat("wav");
         try {
+            FFmpegFrameRecorder rc = new FFmpegFrameRecorder(fileName,2);
+            rc.setFormat("wav");
+
             rc.start();
+            return rc;
         } catch (FrameRecorder.Exception e) {
             e.printStackTrace();
+        } catch (Error e){
+            System.out.println("启动音频失败");
+            ToastUtil.show("内存不足，启动音频录制失败");
+            if (listener != null){
+                listener.errorRecord();
+            }
+            stopRecorder(false);
         }
-        return rc;
+        return null;
     }
 
     public interface AudioRecordListener{
@@ -225,5 +224,6 @@ public class BeeAudioRecord {
         public void onRecording (long recordTime);
         public void finishRecording(boolean isStopFromUser);
         public void voiceDB(double db);
+        public void errorRecord();
     }
 }

@@ -6,6 +6,7 @@ import org.bytedeco.javacpp.avcodec;
 import org.bytedeco.javacpp.avutil;
 import org.bytedeco.javacv.*;
 import sample.Main;
+import sample.util.ToastUtil;
 import sun.audio.AudioPlayer;
 import sun.audio.AudioStream;
 
@@ -98,49 +99,61 @@ public class BeeVideoRecord {
     }
 
     public void setupRecorder(String outPutFile,int width,int height){
-        File oFile = new File(outPutFile).getParentFile();
-        if (!oFile.exists()){
-            oFile.mkdirs();
-        }
-
-        try {
-            recorder = FFmpegFrameRecorder.createDefault(outPutFile,width,height);
-            recorder.setVideoCodec(avcodec.AV_CODEC_ID_H264);
-            recorder.setFrameRate(30);
-            recorder.setVideoQuality(20);
-            recorder.setPixelFormat(avutil.AV_PIX_FMT_YUV420P);
-            recorder.setAudioCodec(avcodec.AV_CODEC_ID_AAC);
-            recorder.setAudioBitrate(192000);
-            recorder.setSampleRate(44100);
-            recorder.setAudioChannels(2);
-            recorder.start();
-
-            try {
-                AudioPlayer.player.start(new AudioStream(Main.class.getResourceAsStream("resource/sound/14.wav")));
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            Thread.sleep(500);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        canRecordVideo = true;
-                        if (listener != null){
-                            listener.beginRecord();
-                        }
-                    }
-                }).start();
-            } catch (IOException e) {
-                e.printStackTrace();
+        if (recorder != null){
+            stopRecorder();
+        }else {
+            File oFile = new File(outPutFile).getParentFile();
+            if (!oFile.exists()){
+                oFile.mkdirs();
             }
 
-        } catch (FrameRecorder.Exception e) {
-            e.printStackTrace();
-            stopRecorder();
+            try {
+                recorder = FFmpegFrameRecorder.createDefault(outPutFile,width,height);
+                recorder.setVideoCodec(avcodec.AV_CODEC_ID_H264);
+                recorder.setFrameRate(30);
+                recorder.setVideoQuality(20);
+                recorder.setPixelFormat(avutil.AV_PIX_FMT_YUV420P);
+                recorder.setAudioCodec(avcodec.AV_CODEC_ID_AAC);
+                recorder.setAudioBitrate(192000);
+                recorder.setSampleRate(44100);
+                recorder.setAudioChannels(2);
+                recorder.start();
 
-            if (listener != null){
-                listener.errorRecord();
+                try {
+                    AudioPlayer.player.start(new AudioStream(Main.class.getResourceAsStream("resource/sound/14.wav")));
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                Thread.sleep(500);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                            canRecordVideo = true;
+                            if (listener != null){
+                                listener.beginRecord();
+                            }
+                        }
+                    }).start();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            } catch (FrameRecorder.Exception e) {
+//                e.printStackTrace();
+                stopRecorder();
+
+                if (listener != null){
+                    listener.errorRecord();
+                }
+            } catch (Error e){
+                System.out.println("启动视频失败");
+                ToastUtil.show("内存不足，启动视频录制失败");
+                stopRecorder();
+
+                if (listener != null){
+                    listener.errorRecord();
+                }
             }
         }
     }
@@ -170,7 +183,7 @@ public class BeeVideoRecord {
                 iv.setImage(SwingFXUtils.toFXImage(img,null));
             }
         }
-        if (canRecordVideo){
+        if (canRecordVideo && recorder != null){
             if (startTime == 0) {
                 startTime = System.currentTimeMillis();
             }

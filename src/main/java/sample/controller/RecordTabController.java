@@ -2,11 +2,15 @@ package sample.controller;
 
 import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyStringWrapper;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
@@ -30,6 +34,7 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Predicate;
+import java.util.regex.Pattern;
 
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
@@ -55,6 +60,20 @@ public class RecordTabController extends BaseController {
     private BeeAudioRecord aRecord;
     private Record selectRecord;
     private boolean isRecordVideo;
+
+    TableColumn<Record,String> doneCol = new TableColumn<>("录音状态");
+    TableColumn<Record,String> videoDoneCol = new TableColumn<>("录像状态");
+    TableColumn<Record,String> codeCol = new TableColumn<>("编码");
+    TableColumn<Record,String> rankCol = new TableColumn<>("分级");
+    TableColumn<Record,String> yunCol = new TableColumn<>("音韵");
+    TableColumn<Record,String> IPACol = new TableColumn<>("音标注音");
+    TableColumn<Record,String> spellCol = new TableColumn<>("拼音");
+    TableColumn<Record,String> englishCol = new TableColumn<>("英语");
+    TableColumn<Record,String> noteCol = new TableColumn<>("注释");
+    TableColumn<Record,String> recordDateCol = new TableColumn<>("录音日期");
+    TableColumn<Record,String> contentCol = new TableColumn<>("内容");
+    TableColumn<Record,String> mwfyCol = new TableColumn<>("民族文字或方言字");
+    TableColumn<Record,String> freeTran = new TableColumn<>("普通话词对译");
 
     public Table t;
 
@@ -171,20 +190,19 @@ public class RecordTabController extends BaseController {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         super.initialize(location, resources);
-
-
         tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
     }
 
     public void startPreview(){
         defaultSetting();
+        setupTablView();
+
         startPreviewVideo();
         startPreviewAudio();
 
-        setupTablView();
+
 
         tipTextArea.setEditable(false);
-        System.out.println(tipTextArea.getFont().getSize());
         fontSizeSlider.valueProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
@@ -195,20 +213,6 @@ public class RecordTabController extends BaseController {
     }
 
     public void setupTablView(){
-        TableColumn<Record,String> doneCol = new TableColumn<>("录音状态");
-        TableColumn<Record,String> videoDoneCol = new TableColumn<>("录像状态");
-        TableColumn<Record,String> codeCol = new TableColumn<>("编码");
-        TableColumn<Record,String> rankCol = new TableColumn<>("分级");
-        TableColumn<Record,String> yunCol = new TableColumn<>("音韵");
-        TableColumn<Record,String> IPACol = new TableColumn<>("音标注音");
-        TableColumn<Record,String> spellCol = new TableColumn<>("拼音");
-        TableColumn<Record,String> englishCol = new TableColumn<>("英语");
-        TableColumn<Record,String> noteCol = new TableColumn<>("注释");
-        TableColumn<Record,String> recordDateCol = new TableColumn<>("录音日期");
-        TableColumn<Record,String> contentCol = new TableColumn<>("内容");
-        TableColumn<Record,String> mwfyCol = new TableColumn<>("民族文字或方言字");
-        TableColumn<Record,String> freeTran = new TableColumn<>("普通话词对译");
-
         IPACol.setId("test");
 
         doneCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Record, String>, ObservableValue<String>>() {
@@ -230,19 +234,90 @@ public class RecordTabController extends BaseController {
                 return new ReadOnlyStringWrapper("未录");
             }
         });
-        codeCol.setCellValueFactory(new PropertyValueFactory<>("investCode"));
-        rankCol.setCellValueFactory(new PropertyValueFactory<>("rank"));
-        yunCol.setCellValueFactory(new PropertyValueFactory<>("yun"));
-        IPACol.setCellValueFactory(new PropertyValueFactory<>("IPA"));
-        spellCol.setCellValueFactory(new PropertyValueFactory<>("spell"));
-        englishCol.setCellValueFactory(new PropertyValueFactory<>("english"));
-        noteCol.setCellValueFactory(new PropertyValueFactory<>("note"));
-        recordDateCol.setCellValueFactory(new PropertyValueFactory<>("createDate"));
-        contentCol.setCellValueFactory(new PropertyValueFactory<>("content"));
-        mwfyCol.setCellValueFactory(new PropertyValueFactory<>("MWFY"));
-        freeTran.setCellValueFactory(new PropertyValueFactory<>("free_trans"));
+        codeCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Record, String>, ObservableValue<String>>() {
+            @Override
+            public ObservableValue<String> call(TableColumn.CellDataFeatures<Record, String> param) {
+                return new SimpleStringProperty(param.getValue().getInvestCode());
+            }
+        });
+        rankCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Record, String>, ObservableValue<String>>() {
+            @Override
+            public ObservableValue<String> call(TableColumn.CellDataFeatures<Record, String> param) {
+                return new SimpleStringProperty(param.getValue().getRank());
+            }
+        });
+        yunCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Record, String>, ObservableValue<String>>() {
+            @Override
+            public ObservableValue<String> call(TableColumn.CellDataFeatures<Record, String> param) {
+                return new SimpleStringProperty(param.getValue().getYun());
+            }
+        });
+        IPACol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Record, String>, ObservableValue<String>>() {
+            @Override
+            public ObservableValue<String> call(TableColumn.CellDataFeatures<Record, String> param) {
+                return new SimpleStringProperty(param.getValue().getIPA());
+            }
+        });
+        spellCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Record, String>, ObservableValue<String>>() {
+            @Override
+            public ObservableValue<String> call(TableColumn.CellDataFeatures<Record, String> param) {
+                return new SimpleStringProperty(param.getValue().getSpell());
+            }
+        });
+        englishCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Record, String>, ObservableValue<String>>() {
+            @Override
+            public ObservableValue<String> call(TableColumn.CellDataFeatures<Record, String> param) {
+                return new SimpleStringProperty(param.getValue().getEnglish());
+            }
+        });
+        noteCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Record, String>, ObservableValue<String>>() {
+            @Override
+            public ObservableValue<String> call(TableColumn.CellDataFeatures<Record, String> param) {
+                return new SimpleStringProperty(param.getValue().getNote());
+            }
+        });
+        recordDateCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Record, String>, ObservableValue<String>>() {
+            @Override
+            public ObservableValue<String> call(TableColumn.CellDataFeatures<Record, String> param) {
+                return new SimpleStringProperty(param.getValue().getCreateDate());
+            }
+        });
+        contentCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Record, String>, ObservableValue<String>>() {
+            @Override
+            public ObservableValue<String> call(TableColumn.CellDataFeatures<Record, String> param) {
+                return new SimpleStringProperty(param.getValue().getContent());
+            }
+        });
+        mwfyCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Record, String>, ObservableValue<String>>() {
+            @Override
+            public ObservableValue<String> call(TableColumn.CellDataFeatures<Record, String> param) {
+                return new SimpleStringProperty(param.getValue().getMWFY());
+            }
+        });
+        freeTran.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Record, String>, ObservableValue<String>>() {
+            @Override
+            public ObservableValue<String> call(TableColumn.CellDataFeatures<Record, String> param) {
+                return new SimpleStringProperty(param.getValue().getFree_trans());
+            }
+        });
 
-        System.out.println("123"+IPACol.getStyle());
+        //设置header contextMenu
+        doneCol.setContextMenu(setupHeaderMenu(true,false,true,true,true));
+        codeCol.setContextMenu(setupHeaderMenu(true,true,true,true,true));
+        rankCol.setContextMenu(setupHeaderMenu(true,true,true,true,true));
+        contentCol.setContextMenu(setupHeaderMenu(true,true,true,true,true));
+        yunCol.setContextMenu(setupHeaderMenu(true,true,true,true,true));
+        IPACol.setContextMenu(setupHeaderMenu(true,true,true,true,true));
+        spellCol.setContextMenu(setupHeaderMenu(true,true,true,true,true));
+        englishCol.setContextMenu(setupHeaderMenu(true,true,true,true,true));
+        noteCol.setContextMenu(setupHeaderMenu(true,true,true,true,true));
+        recordDateCol.setContextMenu(setupHeaderMenu(true,true,true,true,true));
+        mwfyCol.setContextMenu(setupHeaderMenu(true,true,true,true,true));
+        freeTran.setContextMenu(setupHeaderMenu(true,true,true,true,true));
+        videoDoneCol.setContextMenu(setupHeaderMenu(true,true,true,true,true));
+
+        recordDatas = FXCollections.observableArrayList(DbHelper.getInstance().searchTempRecordKeep(tableType,t.getId()));
+        tableView.setItems(recordDatas);
 
         if (tableType.equals("0")) {
             tableView.getColumns().addAll(codeCol, doneCol,videoDoneCol, contentCol, englishCol, yunCol, noteCol, rankCol, spellCol, IPACol, recordDateCol);
@@ -252,16 +327,199 @@ public class RecordTabController extends BaseController {
             tableView.getColumns().addAll(doneCol,videoDoneCol, codeCol, rankCol, contentCol, mwfyCol, IPACol, freeTran, noteCol, englishCol, recordDateCol);
         }
 
-        recordDatas = DbHelper.getInstance().searchTempRecordKeep(tableType,t.getId());
 
-        tableView.setItems(recordDatas);
+    }
+
+    public ContextMenu setupHeaderMenu(boolean sort,boolean change,boolean hide,boolean search,boolean replace){
+        ContextMenu headerMenu = new ContextMenu();
+        MenuItem sortItem = new MenuItem("记录排序");
+        MenuItem changeItem = new MenuItem("修改列");
+        MenuItem hideItem = new MenuItem("隐藏列");
+        MenuItem searchItem = new MenuItem("在当前列查找");
+        MenuItem replaceItem = new MenuItem("在当前列替换");
+        MenuItem showHideItem = new MenuItem("显示隐藏列");
+
+        sortItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                TableColumn c = searchColumn(headerMenu);
+                if (tableView.getSortOrder().size() == 0){
+                    c.setSortType(TableColumn.SortType.ASCENDING);
+                    tableView.getSortOrder().setAll(c);
+                }else{
+                    if (tableView.getSortOrder().get(0).equals(c)){
+                        if (c.getSortType() == TableColumn.SortType.ASCENDING){
+                            c.setSortType(TableColumn.SortType.DESCENDING);
+                            tableView.getSortOrder().setAll(c);
+                        }else {
+                            tableView.getSortOrder().clear();
+                        }
+                    }else{
+                        c.setSortType(TableColumn.SortType.ASCENDING);
+                        tableView.getSortOrder().setAll(c);
+                    }
+                }
+                tableView.sort();
+            }
+        });
+        changeItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                TableColumn c = searchColumn(headerMenu);
+                System.out.println(c.getText());
+            }
+        });
+        hideItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                TableColumn c = searchColumn(headerMenu);
+                tableView.getColumns().remove(c);
+            }
+        });
+        searchItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                try {
+                    SearchViewController searchViewController = (SearchViewController) ViewUtil.getInstance().openSearchDialog();
+                    List columnsName = getTableColumnNameList();
+                    searchViewController.setSearchTableTitleName(columnsName);
+                    searchViewController.setSearchTableTitleShowIndex(tableView.getColumns().indexOf(searchColumn(headerMenu)));
+                    searchViewController.setOnDoneClickCallback(new SearchViewController.OnDoneClickCallback() {
+                        @Override
+                        public void onClick(SearchViewController controller) {
+                            String inputText = controller.getInputText();
+                            boolean isAccurate = controller.isChecked();
+                            int index = controller.getSelTableTitleIndex();
+
+                            Pattern pattern = Pattern.compile("[,，;；]");
+                            String[] ips = pattern.split(inputText);
+
+                            TableColumn col = ((TableColumn) tableView.getColumns().get(index));
+
+                            List<Record> temp = new ArrayList<>();
+
+                            for (int i = 0; i < recordDatas.size(); i++) {
+                                Record bean = recordDatas.get(i);
+                                String colData = ((StringProperty) col.getCellValueFactory().call(new TableColumn.CellDataFeatures<>(tableView, col, recordDatas.get(i)))).get();
+                                if (isAccurate){
+                                    for (String s : ips) {
+                                        if (colData.contains(s)){
+                                            temp.add(bean);
+                                            break;
+                                        }
+                                    }
+                                }else{
+                                    for (String s : ips) {
+                                        Pattern p = Pattern.compile(getMHSearRegEx(s));
+                                        if (p.matcher(colData).find()){
+                                            temp.add(bean);
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+
+                            recordDatas = FXCollections.observableArrayList(temp);
+                            tableView.setItems(recordDatas);
+                            tableView.refresh();
+                            searchViewController.close();
+                        }
+                    });
+                    searchViewController.show();
+                }catch (Exception e){
+
+                }
+
+            }
+        });
+        replaceItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                try{
+                    ReplaceViewController controller = (ReplaceViewController) ViewUtil.getInstance().openReplaceDialog();
+                    controller.setChoiceBoxItems(getTableColumnNameList());
+                    controller.setTableNameShowIndex(tableView.getColumns().indexOf(searchColumn(headerMenu)));
+                    controller.setOnDoneClickCallback(new ReplaceViewController.OnDoneClickCallback() {
+                        @Override
+                        public void click(ReplaceViewController controller) {
+                            String replaceContent = controller.getInputReplaceContent();
+                            String searchContent = controller.getInputSearchContent();
+                            boolean isChecked = controller.getIsSelCheckBox();
+                            int index = controller.getChoiceBoxSelItemIndex();
+
+                            TableColumn col = ((TableColumn) tableView.getColumns().get(index));
+
+                            for (int i = 0; i < recordDatas.size(); i++) {
+                                String colData = ((StringProperty) col.getCellValueFactory().call(new TableColumn.CellDataFeatures<>(tableView, col, recordDatas.get(i)))).get();
+                                if (isChecked){
+                                    if (!colData.equalsIgnoreCase(searchContent)){
+                                        continue;
+                                    }
+                                }
+                                col.getOnEditCommit().handle(new TableColumn.CellEditEvent<>(tableView,new TablePosition<>(tableView,i,col),TableColumn.editCommitEvent() ,colData.replaceAll(searchContent,replaceContent)));
+                            }
+
+                            tableView.refresh();
+
+                        }
+                    });
+                    controller.show();
+                }catch (Exception e){
+
+                }
+            }
+        });
+        showHideItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                setupAllColumn();
+            }
+        });
+
+        sortItem.setDisable(!sort);
+        changeItem.setDisable(!change);
+        hideItem.setDisable(!hide);
+        showHideItem.setDisable(!hide);
+        searchItem.setDisable(!search);
+        replaceItem.setDisable(!replace);
+
+        headerMenu.getItems().addAll(sortItem,hideItem,searchItem,showHideItem);
+        return headerMenu;
+    }
+
+    public void setupAllColumn(){
+        tableView.getColumns().clear();
+        if (tableType.equals("0")) {
+            tableView.getColumns().addAll(codeCol, doneCol,videoDoneCol, contentCol, englishCol, yunCol, noteCol, rankCol, spellCol, IPACol, recordDateCol);
+        }else if (tableType.equals("1")){
+            tableView.getColumns().addAll(doneCol,videoDoneCol, codeCol, rankCol, contentCol, mwfyCol, IPACol, spellCol,englishCol, noteCol, recordDateCol);
+        }else if (tableType.equals("2")){
+            tableView.getColumns().addAll(doneCol,videoDoneCol, codeCol, rankCol, contentCol, mwfyCol, IPACol, freeTran, noteCol, englishCol, recordDateCol);
+        }
+    }
+
+    public TableColumn searchColumn(ContextMenu menu){
+        for (int i = 0; i < tableView.getColumns().size(); i++) {
+            if (((TableColumn) tableView.getColumns().get(i)).contextMenuProperty().get().equals(menu)){
+                return ((TableColumn) tableView.getColumns().get(i));
+            }
+        }
+        return null;
+    }
+
+    private List getTableColumnNameList() {
+        List<String> columnsName = new ArrayList<>();
+        for (int i = 0;i<tableView.getColumns().size();i++){
+            columnsName.add(tableView.getColumns().get(i).getText());
+        }
+        return columnsName;
     }
 
     public void refresh(){
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                recordDatas = DbHelper.getInstance().searchTempRecordKeep(tableType,t.getId());
+                recordDatas = FXCollections.observableArrayList(DbHelper.getInstance().searchTempRecordKeep(tableType,t.getId()));
                 try {
                     tableView.getItems().clear();
 
@@ -342,6 +600,7 @@ public class RecordTabController extends BaseController {
                 }
             }
         });
+
         //点击表格 选中行
         tableView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Record>() {
             @Override
@@ -843,35 +1102,64 @@ public class RecordTabController extends BaseController {
     //录音
     @FXML
     private void onAudioClick(Event event){
-        isRecordVideo = false;
-        if (!aRecord.isRecording()){
-            if (tableView.getSelectionModel().getSelectedItems().size() == 1){
-                selectRecord = tableView.getSelectionModel().getSelectedItem();
-                aRecord.setRecorders(new FFmpegFrameRecorder[]{aRecord.setupRecorderWithRecorder(getSelItemAudioPath(tableView.getSelectionModel().getSelectedItem()))},true);
+        if (!vRecord.isRecording()){
+            isRecordVideo = false;
+            if (!aRecord.isRecording()){
+                if (tableView.getSelectionModel().getSelectedItems().size() == 1){
+                    selectRecord = tableView.getSelectionModel().getSelectedItem();
+                    FFmpegFrameRecorder tempR = aRecord.setupRecorderWithRecorder(getSelItemAudioPath(tableView.getSelectionModel().getSelectedItem()));
+                    if (tempR != null){
+                        aRecord.setRecorders(new FFmpegFrameRecorder[]{},true);
+                    }
+                }
+            }else {
+                aRecord.stopRecorder(true);
             }
-        }else {
-            aRecord.stopRecorder(true);
-        }
 
+        }
     }
     //录像
     @FXML
     private void onVideoClick(Event event){
-        isRecordVideo = true;
-        if (!vRecord.isRecording()){
-            if (tableView.getSelectionModel().getSelectedItems().size() == 1){
-                selectRecord = tableView.getSelectionModel().getSelectedItem();
-                vRecord.setupRecorder(getSelItemVideoPath(tableView.getSelectionModel().getSelectedItem()),800,600);
-                if (cb_cover.isSelected()){
-                    aRecord.setRecorders(new FFmpegFrameRecorder[]{vRecord.getRecorder(),aRecord.setupRecorderWithRecorder(getSelItemAudioPath(tableView.getSelectionModel().getSelectedItem()))},false);
-                }else{
-                    aRecord.setRecorders(new FFmpegFrameRecorder[]{vRecord.getRecorder()},false);
+        if (!aRecord.isRecording() || (aRecord.isRecording() && vRecord.isRecording())){
+            isRecordVideo = true;
+            if (!vRecord.isRecording()){
+                if (tableView.getSelectionModel().getSelectedItems().size() == 1){
+                    selectRecord = tableView.getSelectionModel().getSelectedItem();
+                    vRecord.setupRecorder(getSelItemVideoPath(tableView.getSelectionModel().getSelectedItem()),800,600);
+                    if (cb_cover.isSelected()){
+                        aRecord.setRecorders(new FFmpegFrameRecorder[]{vRecord.getRecorder(),aRecord.setupRecorderWithRecorder(getSelItemAudioPath(tableView.getSelectionModel().getSelectedItem()))},false);
+                    }else{
+                        aRecord.setRecorders(new FFmpegFrameRecorder[]{vRecord.getRecorder()},false);
+                    }
                 }
+            }else {
+                vRecord.stopRecorder();
+                aRecord.stopRecorder(false);
             }
-        }else {
-            vRecord.stopRecorder();
-            aRecord.stopRecorder(false);
         }
+    }
+
+    private void setBtnVisableChange(){
+        boolean isA = aRecord.isRecording();
+        boolean isV = vRecord.isRecording();
+
+        System.out.println(isA +"\t"+isV);
+
+        btn_playAudio.setDisable(isA || isV);
+        btn_playNextAudio.setDisable(isA || isV);
+
+        if (vRecord.isRecording()){
+            btn_recordVideo.setDisable(false);
+            btn_recordAudio.setDisable(true);
+        }else if (aRecord.isRecording()){
+            btn_recordAudio.setDisable(false);
+            btn_recordVideo.setDisable(true);
+        }else{
+            btn_recordAudio.setDisable(false);
+            btn_recordVideo.setDisable(false);
+        }
+
     }
 
     //获取tableview 选中行
@@ -918,11 +1206,12 @@ public class RecordTabController extends BaseController {
             @Override
             public void beginRecord() {
                 System.out.println("begin record video");
+                setBtnVisableChange();
             }
 
             @Override
             public void onRecording(long startTime, long nowRecordTime) {
-                System.out.println("recording:"+nowRecordTime);
+//                System.out.println("recording:"+nowRecordTime);
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
@@ -944,11 +1233,14 @@ public class RecordTabController extends BaseController {
                 }
                 videoPlayer.setMediaPath(getSelItemVideoPath(selectRecord));
                 tableView.refresh();
+                setBtnVisableChange();
             }
 
             @Override
             public void errorRecord() {
-                aRecord.stopRecorder(false);
+                if (aRecord!=null){
+                    aRecord.stopRecorder(false);
+                }
             }
         });
     }
@@ -956,6 +1248,14 @@ public class RecordTabController extends BaseController {
     private void startPreviewAudio(){
         aRecord = new BeeAudioRecord();
         aRecord.setListener(new BeeAudioRecord.AudioRecordListener() {
+
+            @Override
+            public void errorRecord() {
+//                if (aRecord!=null){
+//                    aRecord.stopRecorder(false);
+//                }
+            }
+
             @Override
             public void voiceDB(double db) {
                 Platform.runLater(new Runnable() {
@@ -970,11 +1270,12 @@ public class RecordTabController extends BaseController {
             @Override
             public void beginRecording() {
                 System.out.println("begin record audio");
+                setBtnVisableChange();
             }
 
             @Override
             public void onRecording(long recordTime) {
-                System.out.println("recording audio:"+recordTime);
+//                System.out.println("recording audio:"+recordTime);
                 if (!vRecord.isRecording()){
                     Platform.runLater(new Runnable() {
                         @Override
@@ -1017,6 +1318,8 @@ public class RecordTabController extends BaseController {
                         }).start();
                     }
                 }
+
+                setBtnVisableChange();
             }
         });
     }
@@ -1046,104 +1349,6 @@ public class RecordTabController extends BaseController {
         cb_delVideo.setValue("删除视频");
     }
 
-    //录制一条音频
-    private void recordOneAudio(Button btn){
-        Image image;
-        if (selRecord==null){
-            return;
-        }
-
-        if (!recordingAudio){
-            resetTimeLabel();
-            recordingAudio = true;
-//            recordAudioThread.startRecordAudio(selRecord.baseId+"/"+selRecord.uuid);
-            recorder.startRecordAudio(getAudioNameWithoutSuffix(selRecord));
-            image = new Image(Main.class.getResourceAsStream("/sample/resource/img/b5.png"));
-            setBtnDisable(btn,false,true);
-
-            System.out.println("开始录音 recordOneAudio");
-
-
-        }else {
-            startRecordTimes = 0;
-            recordingAudio = false;
-//            recordAudioThread.stopRecordAudio();
-            recorder.stopRecordAudio();
-            System.out.println("停止录音 recordOneAudio");
-
-            onRecordFinish(selRecord);
-            tableView.refresh();
-            image = new Image(Main.class.getResourceAsStream("/sample/resource/img/b1.png"));
-            setBtnDisable(btn,false,false);
-
-        }
-        ImageView imageView = new ImageView(image);
-        imageView.setFitWidth(24);
-        imageView.setFitHeight(24);
-
-        Platform.runLater(()->{
-            btn_recordAudio.graphicProperty().setValue(imageView);
-        });
-    }
-
-
-    Thread thread;
-    //录制一条视频
-    private void recordOneVideo(Button btn){
-        Image image;
-        if (selRecord==null){
-            return;
-        }
-        if (!recordingVideo){
-            recordingVideo = true;
-//            recordVideoThread.startRecordVideo(getSelItemVideoPath(),cb_cover.getState());
-            recorder.startRecordVideo(getVideoPathWithoutSuffix(selRecord),cb_cover.isSelected());
-            image = new Image(Main.class.getResourceAsStream("/sample/resource/img/b5.png"));
-            setBtnDisable(btn,false,true);
-            videoTimerThread = new VideoTimerThread();
-            videoTimerThread.setRecordFinishCallback(new RecordFinishCallback() {
-                @Override
-                public void finish() {
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            recordOneVideo(btn_recordVideo);
-                            if (thread!=null) {
-                                thread.stop();
-                            }
-                            thread = null;
-                        }
-                    });
-
-                }
-            });
-            thread = new Thread(videoTimerThread);
-            thread.start();
-
-        }else {
-            if (thread!=null){
-                thread.stop();
-            }
-            thread = null;
-
-            startRecordTimes = 0;
-            recordingVideo = false;
-            recorder.stopRecord();
-//            DbHelper.getInstance().updateRecord(selRecord);
-            tableView.refresh();
-
-            videoPlayer.setMediaPath(getSelItemVideoPath(selRecord));
-
-
-            image = new Image(Main.class.getResourceAsStream("/sample/resource/img/b6.png"));
-            setBtnDisable(btn,false,false);
-        }
-        ImageView imageView = new ImageView(image);
-        imageView.setFitWidth(24);
-        imageView.setFitHeight(24);
-        btn_recordVideo.graphicProperty().setValue(imageView);
-
-    }
 
     //第一行
     @FXML
@@ -1284,7 +1489,7 @@ public class RecordTabController extends BaseController {
                 @Override
                 public void run() {
                     super.run();
-                    recordOneAudio(btn_recordAudio);
+//                    recordOneAudio(btn_recordAudio);
                 }
             };
             t1.start();
@@ -1310,7 +1515,7 @@ public class RecordTabController extends BaseController {
                 @Override
                 public void run() {
                     super.run();
-                    recordOneAudio(btn_recordAudio);
+//                    recordOneAudio(btn_recordAudio);
                 }
             };
             t2.start();
@@ -1426,5 +1631,13 @@ public class RecordTabController extends BaseController {
                 label_recordTime.setText("00:00.000");
             }
         });
+    }
+
+    private String getMHSearRegEx(String str){
+        StringBuilder sb = new StringBuilder(str);
+        for (int i = str.length() - 1; i > 0; i--) {
+            sb.insert(i,".*");
+        }
+        return sb.toString();
     }
 }

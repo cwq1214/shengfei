@@ -129,20 +129,20 @@ public class NewTableView extends BaseController {
         this.afterAnalyDatas = FXCollections.observableArrayList(afterAnalyDatas);
     }
 
+    public void setSelectWithBean(YBCCBean bean){
+        for (int i = 0; i < tableDatas.size(); i++) {
+            YBCCBean b = ((YBCCBean) tableDatas.get(i));
+            if (b.getRecord().getBaseCode().equalsIgnoreCase(bean.getRecord().getBaseCode())){
+                tableView.getSelectionModel().select(i);
+                tableView.scrollTo(i);
+                break;
+            }
+        }
+    }
+
     public TableView getTableView() {
         return tableView;
     }
-
-//    public ObservableList<Record> getKeepAndHaveIPAOriginDatas(){
-//        List<Record> result = new ArrayList<>();
-//        for (int i = 0; i < originDatas.size(); i++) {
-//            YBCCBean bean = ((YBCCBean) originDatas.get(i));
-//            if (bean.getRecord().getHide().equals("0") && !(bean.getRecord().getIPA() == null || bean.getRecord().getIPA().equals(""))){
-//                result.add(bean.getRecord());
-//            }
-//        }
-//        return FXCollections.observableArrayList(result);
-//    }
 
     public TableColumn searchColumn(ContextMenu menu){
         for (int i = 0; i < tableView.getColumns().size(); i++) {

@@ -21,7 +21,7 @@ public class Main extends Application {
 //        RecordTabController controller = (RecordTabController) ViewUtil.getInstance().openRecordTab();
 //        controller.startPreview();
 //        controller.show();
-
+//
 //        TestController vc = ((TestController) ViewUtil.getInstance().showView("view/testView.fxml", "测试", -1, -1, ""));
 //        vc.mStage.show();
 

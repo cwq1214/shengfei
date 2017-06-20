@@ -1,12 +1,15 @@
 package sample.controller.YBCC;
 
 import javafx.beans.property.ReadOnlyStringWrapper;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.text.Font;
 import javafx.stage.WindowEvent;
 import javafx.util.Callback;
 import sample.controller.BaseController;
@@ -51,6 +54,12 @@ public class YBCCController extends BaseController {
 
     public void setTbVC(NewTableView tbVC) {
         this.tbVC = tbVC;
+        tableView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
+            @Override
+            public void changed(ObservableValue observable, Object oldValue, Object newValue) {
+                tbVC.setSelectWithBean(((YBCCBean) newValue));
+            }
+        });
     }
 
     public void setAnalyDatas(ObservableList<YBCCBean> analyDatas) {
@@ -107,6 +116,10 @@ public class YBCCController extends BaseController {
         Alert _alert = new Alert(Alert.AlertType.NONE,p_message,new ButtonType("继续查错"),new ButtonType("忽略本条"),
                 new ButtonType("忽略全部"),new ButtonType("取消"));
 //        设置窗口的标题
+
+//        _alert.getDialogPane().getChildren().get(1).setStyle("-fx-font-family: 'Times New Roman'");
+        ((Label) _alert.getDialogPane().getChildren().get(1)).setFont(Font.font("Times New Roman"));
+        ((Label) _alert.getDialogPane().getChildren().get(1)).setEllipsisString("");
         _alert.setTitle("确认");
         _alert.setHeaderText(p_header);
 //        设置对话框的 icon 图标，参数是主窗口的 stage
