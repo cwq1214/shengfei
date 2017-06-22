@@ -16,6 +16,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
@@ -214,6 +215,11 @@ public class RecordTabController extends BaseController {
 
     public void setupTablView(){
         IPACol.setId("test");
+
+        Callback<TableColumn<Record,String>,TableCell<Record,String>> callback = (TableColumn<Record,String> col) -> new MyCell();
+
+        videoDoneCol.setCellFactory(callback);
+        doneCol.setCellFactory(callback);
 
         doneCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Record, String>, ObservableValue<String>>() {
             @Override
@@ -1107,10 +1113,7 @@ public class RecordTabController extends BaseController {
             if (!aRecord.isRecording()){
                 if (tableView.getSelectionModel().getSelectedItems().size() == 1){
                     selectRecord = tableView.getSelectionModel().getSelectedItem();
-                    FFmpegFrameRecorder tempR = aRecord.setupRecorderWithRecorder(getSelItemAudioPath(tableView.getSelectionModel().getSelectedItem()));
-                    if (tempR != null){
-                        aRecord.setRecorders(new FFmpegFrameRecorder[]{},true);
-                    }
+                    aRecord.setRecorders(new FFmpegFrameRecorder[]{aRecord.setupRecorderWithRecorder(getSelItemAudioPath(tableView.getSelectionModel().getSelectedItem()))},true);
                 }
             }else {
                 aRecord.stopRecorder(true);
@@ -1326,8 +1329,8 @@ public class RecordTabController extends BaseController {
 
     public void stopPreview(){
 //        vRecord.destroyRecorder();
-        aRecord.destroyRecorder();
         vRecord.removeImgView(img);
+        aRecord.destroyRecorder();
     }
 
     private void showTimeOnLabel(long time){
@@ -1639,5 +1642,35 @@ public class RecordTabController extends BaseController {
             sb.insert(i,".*");
         }
         return sb.toString();
+    }
+
+    private class MyCell extends TextFieldTableCell{
+        @Override
+        public void updateItem(Object item, boolean empty) {
+            super.updateItem(item, empty);
+            super.updateItem(item, empty);
+            if (empty && getIndex()<0){
+
+            }else {
+                if (getTableRow() != null) {
+                    String colName = getTableColumn().getText();
+                    Record r = ((Record) getTableViewItems().get(getTableRow().getIndex()));
+                    if (colName.equalsIgnoreCase("录音状态")){
+                        if (r.getDone().equalsIgnoreCase("0")){
+                            setStyle("-fx-text-fill: #ff0000");
+                        }else {
+                            setStyle("-fx-text-fill: #000000");
+                        }
+                    }else if (colName.equalsIgnoreCase("录像状态")){
+                        File f = new File(Constant.ROOT_FILE_DIR+"/video/"+t.getId()+"/"+r.getUuid()+".mp4");
+                        if (!f.exists()){
+                            setStyle("-fx-text-fill: #ff0000");
+                        }else {
+                            setStyle("-fx-text-fill: #000000");
+                        }
+                    }
+                }
+            }
+        }
     }
 }

@@ -48,6 +48,9 @@ public class YBCCController extends BaseController {
     private String wrongSD = "111 222 333 444 555 123 124 125 234 235 345 543 542 541 432 431 321";
     private String currectZeroSD = "01 02 03 04 05";
 
+    public String[] base_auto_replace_2one = {  "ts", "ʦ", "tʃ", "ʧ", "tɕ", "ʨ", "dz", "ʣ", "dʒ", "ʤ", "dʑ", "ʥ", "ph", "pʰ", "th", "tʰ", "kh", "kʰ", "ȶh", "ȶʰ", "ʦh", "ʦʰ", "ʨh", "ʨʰ", "ʂh", "ʂʰ", "bh", "bʰ", "dh", "dʰ", "ɡh", "ɡʰ", "ʈ", "ʈʰ", "bɦ", "bʱ", "dɦ", "dʱ", "ȡɦ", "ȡʱ", "ɡɦ", "ɡʱ", "ʧh", "ʧʰ", "A", "ᴀ", "E", "ᴇ", "B", "ʙ", "G", "ɢ", "R", "ʀ", "N", "ɴ", "H", "ʜ", "Y", "ʏ", "Œ", "ɶ" };
+    public String[] base_auto_replace_2two = {  "ǝ", "ə", "ε", "ɛ", "ɷ", "ʊ", "α", "ᴀ", "ã", "ã", "ẽ", "ẽ", "ĩ", "ĩ", "õ", "õ", "ũ", "ũ", "ᾶ", "ɑ̃", "ỹ", "ỹ", "à", "à", "á", "á", "â", "â", "ä", "ä", "å", "å", "ȁ", "ȁ", "ā", "ā", "ă", "ă", "è", "è", "é", "é", "ê", "ê", "ē", "ē", "ĕ", "ĕ", "ë", "ë", "ě", "ě", "ȅ", "ȅ", "ȇ", "ȇ", "ì", "ì", "í", "í", "î", "î", "ī", "ī", "ĭ", "ĭ", "ï", "ï", "ǐ", "ǐ", "ȉ", "ȉ", "ȋ", "ȋ", "ò", "ò", "ó", "ó", "ô", "ô", "ō", "ō", "ŏ", "ŏ", "ö", "ö", "ő", "ő", "ǒ", "ǒ", "ȍ", "ȍ", "ù", "ù", "ú", "ú", "û", "û", "ü", "ü", "ȗ", "ȗ", "ū", "ū", "ŭ", "ŭ", "ů", "ů", "ű", "ű", "ǔ", "ǔ", "ǣ", "ǣ", "ə˞", "ɚ", "ɜ˞", "ɝ", "ᾱ", "ā", "ᾰ", "ă", "ᾰ", "ᾰ", "ά", "ά", "έ", "ɛ́" };
+
     public ObservableList<YBCCBean> getAnalyDatas() {
         return analyDatas;
     }
@@ -328,6 +331,8 @@ public class YBCCController extends BaseController {
     }
 
     public boolean hasWrong(YBCCBean bean){
+        autoReplace(bean);
+
         String ipa = bean.getRecord().getIPA();
         ipa = ipa.replaceAll(" ","");
 
@@ -370,6 +375,51 @@ public class YBCCController extends BaseController {
 
         }
         return false;
+    }
+
+    public boolean isNumeric(String str){
+        Pattern pattern = Pattern.compile("[0-9]*");
+        Matcher isNum = pattern.matcher(str);
+        if( !isNum.matches() ){
+            return false;
+        }
+        return true;
+    }
+
+    public void autoReplace(YBCCBean bean){
+        String ipa = bean.getRecord().getIPA();
+
+        int n = ipa.indexOf("/");
+        if (n>-1){
+            for (int i = 1; i < ipa.length() - 2; i++)
+            {
+                if (isNumeric(Character.toString(ipa.charAt(i - 1))) && isNumeric(Character.toString(ipa.charAt(i + 1))))
+                {
+                    ipa = ipa.substring(0, i ) + "-" + ipa.substring(i + 1);
+                }
+
+
+            }
+        }
+
+        ipa = ipa.replaceAll(",",";");
+        ipa = ipa.replaceAll("，",";");
+//        ipa = ipa.replaceAll("/",";");
+        ipa = ipa.replaceAll("；",";");
+        ipa = ipa.replaceAll("\\(",";");
+        ipa = ipa.replaceAll("\\)",";");
+        ipa = ipa.replaceAll("（",";");
+        ipa = ipa.replaceAll("）",";");
+
+        for (int i = 0; i < base_auto_replace_2one.length;i=i+2 )
+        {
+            ipa = ipa.replaceAll(base_auto_replace_2one[i],base_auto_replace_2one[i+1]);
+        }
+        for (int i = 0; i < base_auto_replace_2two.length; i = i + 2)
+        {
+            ipa = ipa.replaceAll(base_auto_replace_2two[i],base_auto_replace_2two[i+1]);
+        }
+        bean.getRecord().setIPA(ipa);
     }
 
     public void resetAllWrongReason(){

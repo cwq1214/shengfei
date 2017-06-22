@@ -822,7 +822,6 @@ public class NewTableView extends BaseController {
 //        codeCol.setEditable(false);
         recordDateCol.setEditable(false);
 
-
         //设置单元格类型
         hideCol.setCellFactory(new Callback<TableColumn<YBCCBean, String>, TableCell<YBCCBean, String>>() {
             @Override
@@ -964,7 +963,6 @@ public class NewTableView extends BaseController {
                 editNext(event.getTableColumn(),nowIndex + 1);
             }
         });
-
 
 
         //设置单元格数据
@@ -1150,6 +1148,14 @@ public class NewTableView extends BaseController {
                             getTableRow().setStyle("");
                         }else {
                             getTableRow().setStyle("-fx-background-color: deepskyblue");
+                        }
+
+                        if (getTableColumn().getText().equalsIgnoreCase("录音状态")){
+                            if (bean.getRecord().getDone().equalsIgnoreCase("0")){
+                                setStyle("-fx-text-fill: #ff0000");
+                            }else{
+                                setStyle("-fx-text-fill: #000000");
+                            }
                         }
 
                         String regEx = "^[A-Z0-9]*$";

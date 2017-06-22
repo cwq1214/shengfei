@@ -2,6 +2,7 @@ package sample.controller.AV;
 
 import org.bytedeco.javacv.FFmpegFrameRecorder;
 import org.bytedeco.javacv.FrameRecorder;
+import org.bytedeco.javacpp.avcodec;
 import sample.Main;
 import sample.util.ToastUtil;
 import sun.audio.AudioPlayer;
@@ -37,19 +38,11 @@ public class BeeAudioRecord {
     private AudioRecordListener listener;
 
     public BeeAudioRecord() {
-        AudioFormat audioFormat = new AudioFormat(44100.0F, 16, 2, true, false);
 
-        // 通过AudioSystem获取本地音频混合器信息
-//        Mixer.Info[] minfoSet = AudioSystem.getMixerInfo();
-//        // 通过AudioSystem获取本地音频混合器
-//        Mixer mixer = AudioSystem.getMixer(minfoSet[4]);
-        // 通过设置好的音频编解码器获取数据线信息
+        AudioFormat audioFormat = new AudioFormat(44100.0F, 16, 2, true, false);
         DataLine.Info dataLineInfo = new DataLine.Info(TargetDataLine.class, audioFormat);
+
         try {
-            // 打开并开始捕获音频
-            // 通过line可以获得更多控制权
-            // 获取设备：TargetDataLine line
-            // =(TargetDataLine)mixer.getLine(dataLineInfo);
             line = (TargetDataLine) AudioSystem.getLine(dataLineInfo);
             line.open(audioFormat);
             line.start();
@@ -92,8 +85,10 @@ public class BeeAudioRecord {
                                 }
                             }
 
-                            for (FFmpegFrameRecorder rc :recorders) {
-                                rc.recordSamples(sampleRate, numChannels, sBuff);
+                            if (recorders != null){
+                                for (FFmpegFrameRecorder rc :recorders) {
+                                    rc.recordSamples(sampleRate, numChannels, sBuff);
+                                }
                             }
 
                             if (listener != null){
@@ -144,6 +139,7 @@ public class BeeAudioRecord {
         startTime = 0;
         isStopFromUser = isFromUser;
 
+
         if (recorders != null){
             for (FFmpegFrameRecorder rc :recorders) {
                 try {
@@ -159,6 +155,7 @@ public class BeeAudioRecord {
                 listener.finishRecording(isStopFromUser);
             }
         }
+
     }
 
     public void destroyRecorder(){
@@ -202,6 +199,11 @@ public class BeeAudioRecord {
 
         try {
             FFmpegFrameRecorder rc = new FFmpegFrameRecorder(fileName,2);
+            rc.setAudioOption("crf", "0");
+            rc.setAudioQuality(0);
+            rc.setAudioBitrate(192000);
+            rc.setSampleRate(44100);
+            rc.setAudioChannels(2);
             rc.setFormat("wav");
 
             rc.start();

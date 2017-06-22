@@ -100,7 +100,7 @@ public class BeeVideoRecord {
 
     public void setupRecorder(String outPutFile,int width,int height){
         if (recorder != null){
-            stopRecorder();
+//            stopRecorder();
         }else {
             File oFile = new File(outPutFile).getParentFile();
             if (!oFile.exists()){
@@ -113,6 +113,7 @@ public class BeeVideoRecord {
                 recorder.setFrameRate(30);
                 recorder.setVideoQuality(20);
                 recorder.setPixelFormat(avutil.AV_PIX_FMT_YUV420P);
+                recorder.setAudioOption("crf","0");
                 recorder.setAudioCodec(avcodec.AV_CODEC_ID_AAC);
                 recorder.setAudioBitrate(192000);
                 recorder.setSampleRate(44100);
