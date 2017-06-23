@@ -31,10 +31,8 @@ import sample.entity.*;
 import java.awt.*;
 import java.io.*;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Date;
+import java.util.*;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Predicate;
 
 /**
@@ -174,33 +172,71 @@ public class ExportUtil {
             Sheet sheet = workbook.createSheet();
             String[] title = {"音标注音","民文或方言转写","拼音","普通话词对译","普通话意译","注释","英语"};
             String[] fieldName = {"ipa","mwfy","spell","word_trans","free_trans","note","english"};
-            for (int i=0,max = topics.size();i<max;i++){
+            for (int i=0,max = topics.size();i<=max;i++){
                 if (i == 0){
-                    Row row = sheet.createRow(i);
+                    Row row = sheet.createRow(0);
                     for (int j=0;j<title.length;j++){
                         Cell cell = row.createCell(j);
                         cell.setCellValue(title[j]);
                     }
+                    continue;
                 }
 
+                Topic topic = topics.get(i - 1);
 
-                Row row = sheet.createRow(i+1);
+                String[] ipas = topic.getIpa().split("╟");
+                String[] mwfys = topic.getMwfy().split("╟");
+                String[] spells = topic.getSpell().split("╟");
+                String[] words = topic.getWord_trans().split("╟");
+                String[] frees = topic.getFree_trans().split("╟");
+                String[] notes = topic.getNote().split("╟");
+                String[] englishs = topic.getEnglish().split("╟");
+
+                int maxLengh = ipas.length;
+                maxLengh = mwfys.length>maxLengh?mwfys.length:maxLengh;
+                maxLengh = spells.length>maxLengh?spells.length:maxLengh;
+                maxLengh = words.length>maxLengh?words.length:maxLengh;
+                maxLengh = frees.length>maxLengh?frees.length:maxLengh;
+                maxLengh = notes.length>maxLengh?notes.length:maxLengh;
+                maxLengh = englishs.length>maxLengh?englishs.length:maxLengh;
 
 
-                for (int j=0,max2=fieldName.length;j<max2;j++){
-                    Cell cell = row.createCell(j);
-                    try {
-                        Field field = Topic.class.getDeclaredField(fieldName[j]);
-                        Object o = field.get(topics.get(i));
-                        String value = o==null?"":o.toString();
-                        cell.setCellValue(value);
-                    } catch (NoSuchFieldException e) {
-                        e.printStackTrace();
-                    } catch (IllegalAccessException e) {
-                        e.printStackTrace();
+                for (int j = 0; j < maxLengh; j++) {
+                    Row r = sheet.createRow(sheet.getLastRowNum() + 1);
+                    if (j < ipas.length) {
+                        r.createCell(0).setCellValue(ipas[j]);
+                    }if (j < mwfys.length) {
+                        r.createCell(1).setCellValue(mwfys[j]);
+                    }if (j < spells.length) {
+                        r.createCell(2).setCellValue(spells[j]);
+                    }if (j < words.length) {
+                        r.createCell(3).setCellValue(words[j]);
+                    }if (j < frees.length) {
+                        r.createCell(4).setCellValue(frees[j]);
+                    }if (j < notes.length) {
+                        r.createCell(5).setCellValue(notes[j]);
+                    }if (j < englishs.length) {
+                        r.createCell(6).setCellValue(englishs[j]);
                     }
-
                 }
+
+//                Row row = sheet.createRow(i+1);
+//
+//
+//                for (int j=0,max2=fieldName.length;j<max2;j++){
+//                    Cell cell = row.createCell(j);
+//                    try {
+//                        Field field = Topic.class.getDeclaredField(fieldName[j]);
+//                        Object o = field.get(topics.get(i));
+//                        String value = o==null?"":o.toString();
+//                        cell.setCellValue(value);
+//                    } catch (NoSuchFieldException e) {
+//                        e.printStackTrace();
+//                    } catch (IllegalAccessException e) {
+//                        e.printStackTrace();
+//                    }
+//
+//                }
 
             }
             try {
@@ -836,12 +872,25 @@ public class ExportUtil {
             "%s"+
             "      </table>";
 
-    public static String tdHtml = "<td>%s</td><td><div f=%s></div>%s</td>";
+    public static String tdHtml = "<td>%s</td><td>%s</td>";
     public static String tdNoVoiceHtml = "<td>%s</td><td>%s</td>";
 
 
-    public static void exportTableHtml(List<Table> tbls,boolean isShowSpeaker,boolean isShowMeta,boolean isSplit,int line,int lineItemCount,int align){
-        File choiceDir = DialogUtil.dirChooses(new Stage());
+    public static List<Map> exportTableHtml(List<Table> tbls,boolean isShowSpeaker,boolean isShowMeta,boolean isSplit,int line,int lineItemCount,int align,boolean isSenV){
+//        File choiceDir = DialogUtil.dirChooses(new Stage());
+
+        List<Map> result = new ArrayList<>();
+
+        File ydDir = new File(Constant.EXPORT_YD);
+        if (!ydDir.exists()){
+            ydDir.mkdirs();
+        }
+
+        File choiceDir = new File(Constant.EXPORT_YD + "/clarc" + String.format("%04d",ydDir.list().length + 1));
+        if (!choiceDir.exists()){
+            choiceDir.mkdirs();
+        }
+
 
         for (Table t : tbls) {
             FileUtil.copy(Constant.ROOT_FILE_DIR + "/HtmlData/voice", choiceDir.getAbsolutePath() + "/"+ t.getTitle() + "/voice");
@@ -892,7 +941,16 @@ public class ExportUtil {
             //句表
             if (t.datatype.equalsIgnoreCase("2")){
                 StringBuilder thSb = new StringBuilder();
-                thSb.append("<th>编码</th><th>条目</th>");
+
+                if (isSenV){
+                    thSb.append("<th>编码</th><th>条目</th>");
+                }else {
+                    thSb.append("<th>编码</th>");
+                    thSb.append("<th>条目</th>");
+                    thSb.append("<th>民文方言</th>");
+                    thSb.append("<th>音标注音</th>");
+                    thSb.append("<th>普通话词对译</th>");
+                }
 
                 StringBuilder trSb = new StringBuilder();
                 int lineCount = tReocrds.size();
@@ -906,14 +964,31 @@ public class ExportUtil {
                     nowLine++;
 
                     Record r = tReocrds.get(i);
+
+                    StringBuilder contentSb = new StringBuilder();
+
                     File vFile = new File(Constant.ROOT_FILE_DIR + "/audio/" + t.getId() + "/" + r.getUuid() + ".wav");
                     if (vFile.exists()){
                         FileUtil.fileCopy(vFile.getAbsolutePath(),choiceDir.getAbsolutePath()+"/"+ t.getTitle() + "/voice/" + vFile.getName());
+                        contentSb.append("<div f='"+ r.getUuid() +"'></div>");
                     }
-                    trSb.append("<tr>"+ String.format(tdHtml,r.getBaseCode(),r.getUuid(),r.getContent()) +"</tr>");
-                    trSb.append("<tr>"+ String.format(tdNoVoiceHtml,r.getBaseCode(),r.getMWFY()) +"</tr>");
-                    trSb.append("<tr>"+ String.format(tdNoVoiceHtml,r.getBaseCode(),r.getIPA()) +"</tr>");
-                    trSb.append("<tr>"+ String.format(tdNoVoiceHtml,r.getBaseCode(),r.getFree_trans()) +"</tr>");
+
+                    File aFile = new File(Constant.ROOT_FILE_DIR + "/video/" + t.getId() + "/" + r.getUuid() + ".mp4");
+                    if (aFile.exists()){
+                        FileUtil.fileCopy(aFile.getAbsolutePath(),choiceDir.getAbsolutePath()+"/"+ t.getTitle() + "/voice/" + aFile.getName());
+                        contentSb.append("<div ='"+ r.getUuid() +"'></div>");
+                    }
+
+                    contentSb.append(r.getContent());
+
+                    if (isSenV){
+                        trSb.append("<tr>"+ String.format(tdHtml,r.getBaseCode(),contentSb) +"</tr>");
+                        trSb.append("<tr>"+ String.format(tdNoVoiceHtml,r.getBaseCode(),r.getMWFY()) +"</tr>");
+                        trSb.append("<tr>"+ String.format(tdNoVoiceHtml,r.getBaseCode(),r.getIPA()) +"</tr>");
+                        trSb.append("<tr>"+ String.format(tdNoVoiceHtml,r.getBaseCode(),r.getFree_trans()) +"</tr>");
+                    }else {
+                        trSb.append("<tr>"+ String.format("<td>%s</td>",r.getBaseCode()) + String.format("<td>%s</td>",contentSb) + String.format("<td>%s</td>",r.getMWFY()) + String.format("<td>%s</td>",r.getIPA()) + String.format("<td>%s</td>",r.getFree_trans()) +"</tr>");
+                    }
 
 
                     if (isSplit && nowLine == line){
@@ -969,12 +1044,24 @@ public class ExportUtil {
                         int index = i*lineItemCount+j;
                         if (index < tReocrds.size()){
                             Record r = tReocrds.get(index);
-                            tdSb.append(String.format(tdHtml,r.getBaseCode(),r.getUuid(),r.getContent()));
+
+                            StringBuilder contentSb = new StringBuilder();
 
                             File vFile = new File(Constant.ROOT_FILE_DIR + "/audio/" + t.getId() + "/" + r.getUuid() + ".wav");
                             if (vFile.exists()){
                                 FileUtil.fileCopy(vFile.getAbsolutePath(),choiceDir.getAbsolutePath()+"/"+ t.getTitle() + "/voice/" + vFile.getName());
+                                contentSb.append("<div f='"+r.getUuid()+"'></div>");
                             }
+
+                            File aFile = new File(Constant.ROOT_FILE_DIR + "/video/" + t.getId() + "/" + r.getUuid() + ".mp4");
+                            if (aFile.exists()){
+                                FileUtil.fileCopy(aFile.getAbsolutePath(),choiceDir.getAbsolutePath()+"/"+ t.getTitle() + "/voice/" + aFile.getName());
+                                contentSb.append("<div v='"+r.getUuid()+"'></div>");
+                            }
+
+                            tdSb.append(String.format(tdHtml,r.getBaseCode(),contentSb+r.getContent()));
+
+
                         }
                     }
 
@@ -1012,7 +1099,14 @@ public class ExportUtil {
                             String.format(htmlWithYDBase,t.getTitle(),t.getTitle(),contentSB,"1"));
                 }
             }
+
+            Map tempMap = new HashMap();
+            tempMap.put("location",choiceDir.getAbsolutePath() +"/"+ t.getTitle());
+            tempMap.put("type",t.getDatatype());
+            result.add(tempMap);
         }
+
+        return result;
 
     }
 
@@ -1686,7 +1780,7 @@ public class ExportUtil {
         return tempFir.getAbsolutePath() + "/tempGK.html";
     }
 
-    public static void exportYD(String ydbh,String ydmc,String cjr,String gxr,String cjrq,String cjdd,String rjgj,String gcjg,String urlLink,String xyms,String gk,String fyzb,String chb,String jzb,String yxb,String dzdzb,String chdzb,String jzdzb,String wbwy){
+    public static String exportYD(String ydbh,String ydmc,String cjr,String gxr,String cjrq,String cjdd,String rjgj,String gcjg,String urlLink,String xyms,String gk,String fyzb,String chb,String jzb,String yxb,String dzdzb,String chdzb,String jzdzb,String wbwy){
         String mainHtmlStr = "\n" +
                 "<html><head>\n" +
                 "<title>%s</title>\n" +
@@ -1754,6 +1848,7 @@ public class ExportUtil {
                 filePathCpy2Real(saveDir.getAbsolutePath(),jzdzb,"jzdzb"),
                 filePathCpy2Real(saveDir.getAbsolutePath(),wbwy,"wbwy"));
         saveContentToFile(saveDir+"/index.html",result);
+        return saveDir.getAbsolutePath() + "/index.html";
     }
 
     private static String filePathCpy2Real(String basePath,String paths,String extra) {

@@ -10,6 +10,7 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.stage.WindowEvent;
 import javafx.util.Callback;
 import sample.controller.BaseController;
@@ -43,7 +44,7 @@ public class YBCCController extends BaseController {
 
 
     private String biaoDian = "。，、：∶；‘’“”〝〞ˆˇ﹕︰﹔﹖﹑·¨.¸´？！～—｜‖＂〃｀@﹫¡¿﹏﹋︴々﹟#﹩$﹠&﹪%﹡﹢×﹦‐￣¯―﹨˜﹍﹎＿~（）〈〉‹›﹛﹜『』〖〗［］《》〔〕{}「」【】︵︷︿︹︽_︶︸﹀︺︾ˉ﹂﹄︼﹁﹃︻▲●□…→";
-    private String baseYuan = "əɛɿʮʅʯiɪʏeøᴇɛεɛœæaɶɑɒʌɔɤoɷʊƜɯuɨʉɘɵəǝɚɜɝɞɐᴀɩϊàáâãäåḁèéêëḙḛẽìíîïòóôõöùúûüṵṷāăēĕěĩīĭōŏőũūŭůűǎǐǒǔǖǘǚǜǣȁȅȇȉȋȍȗ";
+    private String baseYuan = "əɛɿʮʅʯiɪeøᴇɛεYyɛœæaɶɑɒʌɔɤoɷʊƜɯuɨʉɘɵəǝɚɜɝɞɐᴀɩϊàáâãäåḁèéêëḙḛẽìíîïòóôõöùúûüṵṷāăēĕěĩīĭōŏőũūŭůűǎǐǒǔǖǘǚǜǣȁȅȇȉȋȍȗ";
     private String doubleYuan = "ai ei ui ao ou iu ie ue uo";
     private String wrongSD = "111 222 333 444 555 123 124 125 234 235 345 543 542 541 432 431 321";
     private String currectZeroSD = "01 02 03 04 05";
@@ -83,6 +84,8 @@ public class YBCCController extends BaseController {
     @Override
     public void prepareInit() {
         super.prepareInit();
+
+        tableView.setPlaceholder(new Text("无错误音标"));
 
         TableColumn<YBCCBean,String> codeCol = new TableColumn<>("编码");
         TableColumn<YBCCBean,String> ipaCol = new TableColumn<>("音标注音");
@@ -245,7 +248,7 @@ public class YBCCController extends BaseController {
                         isFindSm = true;
                     }
 
-                    //判断连续元音
+//                    判断连续元音
 //                    for (int j = i + 1 ;j < sy.length(); j++){
 //                        Character afterC = sy.charAt(j);
 //                        String tempStr = sy.substring(i,j+1);
@@ -268,21 +271,27 @@ public class YBCCController extends BaseController {
 
             }
 
+//            if (!isFindSm){
+//                sm = "";
+//                ym = sy;
+//            }
+
+
             if (tempSMCount > maxSMCount){
                 maxSMCount = tempSMCount;
             }
             tempSMCount = 0;
 
             //判断连续元音 长度为三有可能错，超过三一定错
-            if (maxSMCount == 3){
-                bean.setWrongReason("出现连续三个元音字符，有可能出错");
-                return false;
-            }
-
-            if (maxSMCount > 3){
-                bean.setWrongReason("出现超过连续三个元音字符，声韵错漏");
-                return false;
-            }
+//            if (maxSMCount == 3){
+//                bean.setWrongReason("出现连续三个元音字符，有可能出错");
+//                return false;
+//            }
+//
+//            if (maxSMCount > 3){
+//                bean.setWrongReason("出现超过连续三个元音字符，声韵错漏");
+//                return false;
+//            }
 
             //声调
             sd = s.substring(matcher.end());
@@ -404,7 +413,7 @@ public class YBCCController extends BaseController {
 
         ipa = ipa.replaceAll(",",";");
         ipa = ipa.replaceAll("，",";");
-//        ipa = ipa.replaceAll("/",";");
+        ipa = ipa.replaceAll("/",";");
         ipa = ipa.replaceAll("；",";");
         ipa = ipa.replaceAll("\\(",";");
         ipa = ipa.replaceAll("\\)",";");

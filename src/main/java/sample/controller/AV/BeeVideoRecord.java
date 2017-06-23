@@ -120,6 +120,8 @@ public class BeeVideoRecord {
                 recorder.setAudioChannels(2);
                 recorder.start();
 
+
+
                 try {
                     AudioPlayer.player.start(new AudioStream(Main.class.getResourceAsStream("resource/sound/14.wav")));
                     new Thread(new Runnable() {
@@ -168,12 +170,12 @@ public class BeeVideoRecord {
                 startTime = 0;
                 videoTS = 0;
                 recorder = null;
-
+            } catch (FrameRecorder.Exception e) {
+                e.printStackTrace();
+            }finally {
                 if (listener != null){
                     listener.finishRecord();
                 }
-            } catch (FrameRecorder.Exception e) {
-                e.printStackTrace();
             }
         }
     }

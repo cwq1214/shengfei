@@ -1,91 +1,108 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.image.Image?>
+<?import java.lang.String?>
 <?import javafx.geometry.Insets?>
-<VBox xmlns="http://javafx.com/javafx"
-      xmlns:fx="http://javafx.com/fxml"
-      fx:controller="sample.controller.CreateHTML2Controller"
-      stylesheets="@css/sf.css"
-      spacing="8"
-      prefHeight="400.0" prefWidth="600.0">
-    <Label text="2.输出调查表网页" prefWidth="Infinity" alignment="CENTER" styleClass="yellowTitle"></Label>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox prefHeight="400.0" prefWidth="600.0" spacing="8" stylesheets="@css/sf.css" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.controller.CreateHTML2Controller">
+    <Label alignment="CENTER" prefWidth="Infinity" styleClass="yellowTitle" text="2.输出调查表网页" />
 
     <HBox spacing="16">
         <VBox>
-            <Label text="调查表清单"></Label>
-            <ListView fx:id="tableList"></ListView>
+            <Label text="调查表清单" />
+            <ListView fx:id="tableList" />
         </VBox>
 
         <VBox alignment="CENTER" spacing="8">
-            <Button prefWidth="80" prefHeight="30" fx:id="b1" onAction="#b1Click"></Button>
-            <Button prefWidth="80" prefHeight="30" fx:id="b2" onAction="#b2Click"></Button>
-            <Button prefWidth="80" prefHeight="30" fx:id="b3" onAction="#b3Click"></Button>
-            <Button prefWidth="80" prefHeight="30" fx:id="b4" onAction="#b4Click"></Button>
+            <Button fx:id="b1" onAction="#b1Click" prefHeight="30" prefWidth="80" />
+            <Button fx:id="b2" onAction="#b2Click" prefHeight="30" prefWidth="80" />
+            <Button fx:id="b3" onAction="#b3Click" prefHeight="30" prefWidth="80" />
+            <Button fx:id="b4" onAction="#b4Click" prefHeight="30" prefWidth="80" />
         </VBox>
 
         <VBox>
-            <Label text="已选择的调查表"></Label>
-            <ListView fx:id="tableSelectList"></ListView>
+            <Label text="已选择的调查表" />
+            <ListView fx:id="tableSelectList" />
         </VBox>
     </HBox>
 
     <HBox spacing="16">
-        <CheckBox text="网页是否显示说话人" fx:id="showSpeaker"></CheckBox>
-        <CheckBox text="是否显示元数据" fx:id="showMeta"></CheckBox>
+        <CheckBox fx:id="showSpeaker" text="网页是否显示说话人" />
+        <CheckBox fx:id="showMeta" text="是否显示元数据" />
     </HBox>
 
     <HBox alignment="CENTER_LEFT" spacing="16">
-        <RadioButton text="页面不分页显示" fx:id="noSplit">
+        <RadioButton fx:id="noSplit" text="页面不分页显示">
             <toggleGroup>
                 <ToggleGroup fx:id="a" />
             </toggleGroup>
         </RadioButton>
-        <RadioButton text="页面分页显示" fx:id="split" toggleGroup="$a"></RadioButton>
+        <RadioButton fx:id="split" text="页面分页显示" toggleGroup="$a" />
         <HBox alignment="CENTER">
-            <Label text="每页"></Label>
+            <Label text="每页" />
             <ChoiceBox fx:id="lineCB">
-                <String fx:value="200"></String>
-                <String fx:value="300"></String>
-                <String fx:value="500"></String>
+                <String fx:value="200" />
+                <String fx:value="300" />
+                <String fx:value="500" />
             </ChoiceBox>
-            <Label text="行"></Label>
+            <Label text="行" />
         </HBox>
     </HBox>
 
     <AnchorPane>
 
-        <HBox alignment="CENTER_LEFT" >
-            <Label text="字词分栏"></Label>
+        <HBox alignment="CENTER_LEFT">
+            <Label text="字词分栏" />
             <ChoiceBox fx:id="flCB">
-                <String fx:value="1"></String>
-                <String fx:value="2"></String>
-                <String fx:value="3"></String>
+                <String fx:value="1" />
+                <String fx:value="2" />
+                <String fx:value="3" />
             </ChoiceBox>
 
             <Label text="对齐"><HBox.margin><Insets><left>16</left></Insets></HBox.margin></Label>
             <ChoiceBox fx:id="alignCB">
-                <String fx:value="左对齐"></String>
-                <String fx:value="居中"></String>
-                <String fx:value="右对齐"></String>
+                <String fx:value="左对齐" />
+                <String fx:value="居中" />
+                <String fx:value="右对齐" />
             </ChoiceBox>
+         <Label text="句表排列">
+            <HBox.margin>
+               <Insets left="20.0" />
+            </HBox.margin>
+         </Label>
+         <RadioButton fx:id="senVRBtn" mnemonicParsing="false" selected="true" text="竖排">
+            <toggleGroup>
+               <ToggleGroup fx:id="b" />
+            </toggleGroup>
+            <HBox.margin>
+               <Insets left="10.0" />
+            </HBox.margin>
+         </RadioButton>
+         <RadioButton fx:id="senHRBtn" mnemonicParsing="false" text="横排" toggleGroup="$b">
+            <HBox.margin>
+               <Insets left="5.0" />
+            </HBox.margin>
+         </RadioButton>
 
 
         </HBox>
-        <Button text="输出调查表网页" wrapText="false" AnchorPane.rightAnchor="0" onAction="#outHtmlClick">
+        <Button onAction="#outHtmlClick" text="输出调查表网页" wrapText="false" AnchorPane.rightAnchor="0">
         </Button>
     </AnchorPane>
 
 
     <VBox styleClass="hint">
-        <Label text="操作说明："></Label>
-        <Label text="(1)一种语言的语档包括该语言的全部调查表。"></Label>
-        <Label text="(2)只输出调查表中有音标记音或录音的条目。"></Label>
+        <Label text="操作说明：" />
+        <Label text="(1)一种语言的语档包括该语言的全部调查表。" />
+        <Label text="(2)只输出调查表中有音标记音或录音的条目。" />
     </VBox>
 </VBox>

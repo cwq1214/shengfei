@@ -1,30 +1,30 @@
 .label {
-    -fx-font-size: 10pt;
+    -fx-font-size: 11pt;
     -fx-font-family: "Times New Roman";
 }
 .text-field {
-    -fx-font-size: 10pt;
+    -fx-font-size: 11pt;
     -fx-font-family: "Times New Roman";
 }
 .button {
-    -fx-font-size: 10pt;
+    -fx-font-size: 11pt;
     -fx-font-family: "Times New Roman";
 }
 .list-view {
-    -fx-font-size: 10pt;
+    -fx-font-size: 11pt;
     -fx-font-family: "Times New Roman";
 }
 .table-view {
-    -fx-font-size: 10pt;
+    -fx-font-size: 11pt;
     -fx-font-family: "Times New Roman";
 }
 
 #test{
-    -fx-font-size: 20pt;
+    -fx-font-size: 11pt;
     -fx-font-family: "Times New Roman";
 }
 
 .tab-pane {
-    -fx-font-size: 10pt;
+    -fx-font-size: 11pt;
     -fx-font-family: "Times New Roman";
 }

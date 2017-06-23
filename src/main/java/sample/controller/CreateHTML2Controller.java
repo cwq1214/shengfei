@@ -11,6 +11,8 @@ import sample.util.DbHelper;
 import sample.util.ExportUtil;
 
 import java.net.URL;
+import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 /**
@@ -57,6 +59,14 @@ public class CreateHTML2Controller extends BaseController {
     private ChoiceBox alignCB;
 
     @FXML
+    private RadioButton senVRBtn;
+
+    @FXML
+    private RadioButton senHRBtn;
+
+    public List<Map> outFiles;
+
+    @FXML
     public void b1Click(){
         int index = tableList.getSelectionModel().getSelectedIndex();
         if (index != -1){
@@ -89,7 +99,7 @@ public class CreateHTML2Controller extends BaseController {
     @FXML
     public void outHtmlClick(){
         if (selectTable.size()!=0){
-            ExportUtil.exportTableHtml(selectTable,showSpeaker.isSelected(),showMeta.isSelected(),split.isSelected(),Integer.parseInt(lineCB.getValue().toString()),Integer.parseInt(flCB.getValue().toString()),alignCB.getSelectionModel().getSelectedIndex());
+            outFiles = ExportUtil.exportTableHtml(selectTable,showSpeaker.isSelected(),showMeta.isSelected(),split.isSelected(),Integer.parseInt(lineCB.getValue().toString()),Integer.parseInt(flCB.getValue().toString()),alignCB.getSelectionModel().getSelectedIndex(),senVRBtn.isSelected());
         }
     }
 

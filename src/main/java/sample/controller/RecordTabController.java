@@ -216,6 +216,37 @@ public class RecordTabController extends BaseController {
     public void setupTablView(){
         IPACol.setId("test");
 
+        ContextMenu tblContextMenu = new ContextMenu();
+        MenuItem impAudio = new MenuItem("导入音频");
+        MenuItem impVideo = new MenuItem("导入视频");
+
+        impAudio.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                if (tableView.getSelectionModel().getSelectedItems().size() == 1){
+                    List<File> files = DialogUtil.chooseAudio(false);
+                    if (files==null||files.size()==0){
+                        return;
+                    }
+                    importMedia(tableView.getSelectionModel().getSelectedItems(),files,1,true);
+                }
+            }
+        });
+
+        impVideo.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                List<File> files = DialogUtil.chooseVideo(false);
+                if (files==null||files.size()==0){
+                    return;
+                }
+                importMedia(tableView.getSelectionModel().getSelectedItems(),files,1,false);
+            }
+        });
+
+        tblContextMenu.getItems().addAll(impAudio,impVideo);
+        tableView.setContextMenu(tblContextMenu);
+
         Callback<TableColumn<Record,String>,TableCell<Record,String>> callback = (TableColumn<Record,String> col) -> new MyCell();
 
         videoDoneCol.setCellFactory(callback);

@@ -26,7 +26,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import sample.controller.widget.VideoPlayer?>
 
-<AnchorPane prefHeight="600" prefWidth="800" stylesheets="@css/sf.css,@css/recordTabView.css,@css/fontTimeNewRoman.css" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.controller.RecordTabController">
+<AnchorPane prefHeight="600" prefWidth="800" stylesheets="@css/sf.css,@css/fontTimeNewRoman.css" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.controller.RecordTabController">
     <VBox AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0">
         <!---->
         <HBox spacing="8">
@@ -51,13 +51,13 @@
             </HBox>
 
             <GridPane hgap="8" styleClass="showBorder" vgap="8">
-                <ChoiceBox fx:id="cb_importAudio" value="导入音频" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                <ChoiceBox fx:id="cb_importAudio" prefWidth="150.0" value="导入音频" GridPane.columnIndex="0" GridPane.rowIndex="0">
                     <String fx:value="导入音频" />
                     <String fx:value="导入单个音频" />
                     <String fx:value="按编号批量导入" />
                     <String fx:value="按条目批量导入" />
                 </ChoiceBox>
-                <ChoiceBox fx:id="cb_exportAudio" value="导出音频" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                <ChoiceBox fx:id="cb_exportAudio" prefWidth="150.0" value="导出音频" GridPane.columnIndex="1" GridPane.rowIndex="0">
                     <String fx:value="导出音频" />
                     <String fx:value="以编码导出选中条目" />
                     <String fx:value="以中文导出选中条目" />
@@ -68,23 +68,23 @@
                     <String fx:value="以英文导出全部条目" />
                     <String fx:value="以编码+中文导出全部条目" />
                 </ChoiceBox>
-                <ChoiceBox fx:id="cb_delAudio" value="删除音频" GridPane.columnIndex="2" GridPane.rowIndex="0">
+                <ChoiceBox fx:id="cb_delAudio" prefWidth="150.0" value="删除音频" GridPane.columnIndex="2" GridPane.rowIndex="0">
                     <String fx:value="删除音频" />
                     <String fx:value="删除选中条目录音" />
                     <String fx:value="删除全部条目录音" />
                 </ChoiceBox>
-                <ChoiceBox fx:id="cb_tableShowMode" value="显示全部" GridPane.columnIndex="3" GridPane.rowIndex="0">
+                <ChoiceBox fx:id="cb_tableShowMode" prefWidth="150.0" value="显示全部" GridPane.columnIndex="3" GridPane.rowIndex="0">
                     <String fx:value="显示全部" />
                     <String fx:value="显示已录" />
                     <String fx:value="显示未录" />
                 </ChoiceBox>
-                <ChoiceBox fx:id="cb_importVideo" value="导入视频" GridPane.columnIndex="0" GridPane.rowIndex="1">
+                <ChoiceBox fx:id="cb_importVideo" prefWidth="150.0" value="导入视频" GridPane.columnIndex="0" GridPane.rowIndex="1">
                     <String fx:value="导入视频" />
                     <String fx:value="导入单个视频" />
                     <String fx:value="按编号批量导入视频" />
                     <String fx:value="按条目批量导入视频" />
                 </ChoiceBox>
-                <ChoiceBox fx:id="cb_exportVideo" value="导出视频" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                <ChoiceBox fx:id="cb_exportVideo" prefWidth="150.0" value="导出视频" GridPane.columnIndex="1" GridPane.rowIndex="1">
                     <String fx:value="导出视频" />
                     <String fx:value="以编码导出选中条目" />
                     <String fx:value="以中文导出选中条目" />
@@ -93,7 +93,7 @@
                     <String fx:value="以中文导出全部条目" />
                     <String fx:value="以英文导出全部条目" />
                 </ChoiceBox>
-                <ChoiceBox fx:id="cb_delVideo" value="删除视频" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                <ChoiceBox fx:id="cb_delVideo" prefWidth="150.0" value="删除视频" GridPane.columnIndex="2" GridPane.rowIndex="1">
                     <String fx:value="删除视频" />
                     <String fx:value="删除选中条目视频" />
                     <String fx:value="删除全部条目视频" />
@@ -130,19 +130,18 @@
                     </graphic>
                 </Button>
             </HBox>
-            <HBox>
-                <TextArea fx:id="tipTextArea" />
-                <Slider fx:id="fontSizeSlider" orientation="VERTICAL" value="100" />
-            </HBox>
         </HBox>
         <!---->
         <Label />
+         <HBox maxHeight="100.0" minHeight="100.0" prefHeight="100.0">
+             <TextArea fx:id="tipTextArea" prefWidth="5000.0" />
+             <Slider fx:id="fontSizeSlider" orientation="VERTICAL" value="100" />
+         </HBox>
         <!---->
         <HBox spacing="8">
             <GridPane alignment="CENTER" hgap="8" styleClass="showBorder">
-                <HBox alignment="CENTER" GridPane.columnIndex="0" GridPane.rowIndex="0">
-                    <Label text="采样率" />
-                    <ChoiceBox fx:id="cb_sampleRate" value="44100">
+                <HBox alignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                    <ChoiceBox fx:id="cb_sampleRate" prefWidth="100.0" value="44100">
                         <String fx:value="11025" />
                         <String fx:value="16000" />
                         <String fx:value="22050" />
@@ -151,21 +150,20 @@
                     </ChoiceBox>
                 </HBox>
 
-                <HBox alignment="CENTER" GridPane.columnIndex="0" GridPane.rowIndex="1">
-                    <Label text="位深度" />
-                    <ChoiceBox fx:id="cb_bit" value="16">
+                <HBox alignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                    <ChoiceBox fx:id="cb_bit" prefWidth="100.0" value="16">
                         <String fx:value="16" />
                         <String fx:value="24" />
                     </ChoiceBox>
                 </HBox>
 
-                <RadioButton selected="true" text="手动录音" toggleGroup="$recordMode" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                <RadioButton selected="true" text="手动录音" toggleGroup="$recordMode" GridPane.columnIndex="2" GridPane.rowIndex="0">
                     <toggleGroup><ToggleGroup fx:id="recordMode" /></toggleGroup>
                 </RadioButton>
-                <RadioButton text="自动录音" toggleGroup="$recordMode" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                <RadioButton text="自动录音" toggleGroup="$recordMode" GridPane.columnIndex="2" GridPane.rowIndex="1" />
 
 
-                <HBox alignment="CENTER" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                <HBox alignment="CENTER" GridPane.columnIndex="3" GridPane.rowIndex="1">
                     <Label text="条目时长" />
                     <ChoiceBox fx:id="cb_recordSpace" value="2">
                         <String fx:value="2" />
@@ -177,7 +175,10 @@
                         <String fx:value="14" />
                     </ChoiceBox>
                 </HBox>
+                 <Label text="采样率" />
+                 <Label text="位深度" GridPane.rowIndex="1" />
             <columnConstraints>
+               <ColumnConstraints halignment="RIGHT" minWidth="10.0" prefWidth="70.0" />
                <ColumnConstraints />
                <ColumnConstraints />
                <ColumnConstraints />
@@ -221,22 +222,23 @@
             </HBox>
 
             <GridPane alignment="CENTER" hgap="8" styleClass="showBorder">
-                <HBox alignment="CENTER" GridPane.columnIndex="0" GridPane.rowIndex="0">
-                    <Label text="摄像头" />
-                    <ChoiceBox fx:id="cb_cameraName" />
+                <HBox alignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                    <ChoiceBox fx:id="cb_cameraName" prefWidth="120.0" />
                 </HBox>
-                <HBox alignment="CENTER" GridPane.columnIndex="0" GridPane.rowIndex="1">
-                    <Label text="分辨率" />
-                    <ChoiceBox fx:id="cb_resolution" value="800*600">
+                <HBox alignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                    <ChoiceBox fx:id="cb_resolution" prefWidth="120.0" value="800*600">
                         <String fx:value="800*600" />
                         <String fx:value="1280*720" />
                     </ChoiceBox>
                 </HBox>
 
-                <Label fx:id="label_recordTime" style="-fx-font-size: 25px" text="00:00.000" GridPane.columnIndex="1" GridPane.rowIndex="0" GridPane.rowSpan="2" />
+                <Label fx:id="label_recordTime" style="-fx-font-size: 25px" text="00:00.000" GridPane.columnIndex="2" GridPane.rowIndex="0" GridPane.rowSpan="2" />
 
-                <CheckBox fx:id="cb_cover" text="覆盖已有录音" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                <CheckBox fx:id="cb_cover" text="覆盖已有录音" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+                 <Label text="摄像头" />
+                 <Label text="分辨率" GridPane.rowIndex="1" />
                 <columnConstraints>
+               <ColumnConstraints halignment="RIGHT" minWidth="10.0" prefWidth="75.0" />
                     <ColumnConstraints />
                     <ColumnConstraints />
                     <ColumnConstraints />
@@ -249,7 +251,7 @@
 
         </HBox>
         <!---->
-        <SplitPane dividerPositions="0.63" VBox.vgrow="ALWAYS">
+        <SplitPane dividerPositions="0.7" VBox.vgrow="ALWAYS">
             <GridPane alignment="TOP_CENTER">
                 <children>
                     <ProgressBar fx:id="pgb_pg1" prefHeight="20.0" prefWidth="Infinity" progress="0" GridPane.columnIndex="0" GridPane.columnSpan="10" GridPane.rowIndex="0" />

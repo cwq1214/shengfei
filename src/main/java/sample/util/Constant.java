@@ -8,6 +8,7 @@ public class Constant {
     public static String DEMO_PIC_DIR = ROOT_FILE_DIR + "/DemoPic";
     public static String TEMP_DIR = ROOT_FILE_DIR + "/temp";
     public static String DEMO_Video_DIR = ROOT_FILE_DIR + "/DemoVideo";
+    public static String EXPORT_YD = ROOT_FILE_DIR + "/ExportYD";
     public static String PASSWORD = "ok";
 
     public static String VIDEO_SUFFIX = ".mp4";

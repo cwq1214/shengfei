@@ -5,6 +5,7 @@ import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -768,6 +769,15 @@ public class NewTableView extends BaseController {
         tableView.refresh();
     }
 
+    private void columnMoreWidth(TableColumn col){
+        col.widthProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+
+            }
+        });
+    }
+
     public void setContextMenuContent(boolean isTextField){
         contextMenu.getItems().get(0).setDisable(isTextField);
         contextMenu.getItems().get(1).setDisable(isTextField);
@@ -798,6 +808,20 @@ public class NewTableView extends BaseController {
 
 
         IPACol.setId("test");
+
+        columnMoreWidth(hideCol);
+        columnMoreWidth(doneCol);
+        columnMoreWidth(codeCol);
+        columnMoreWidth(rankCol);
+        columnMoreWidth(contentCol);
+        columnMoreWidth(yunCol);
+        columnMoreWidth(IPACol);
+        columnMoreWidth(spellCol);
+        columnMoreWidth(englishCol);
+        columnMoreWidth(noteCol);
+        columnMoreWidth(recordDateCol);
+        columnMoreWidth(mwfyCol);
+        columnMoreWidth(duiyiCol);
 
 
         //设置header contextMenu
@@ -849,6 +873,8 @@ public class NewTableView extends BaseController {
         recordDateCol.setCellFactory(callback);
         mwfyCol.setCellFactory(callback);
         duiyiCol.setCellFactory(callback);
+
+
 
 
         //设置单元格编辑事件
@@ -1062,6 +1088,7 @@ public class NewTableView extends BaseController {
         tableTopCtl.setNowIndex(0);
 
         tableView.setItems(tableDatas);
+        tableView.refresh();
     }
 
     public void setupAllColumn(){

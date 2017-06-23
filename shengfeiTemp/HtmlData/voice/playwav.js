@@ -85,3 +85,40 @@ $(".showtitle").click(function()
     $(this).siblings().toggle();
 });
 });
+
+//////视频变拖动层
+var clicked = "Nope.";
+var mausx = "0";
+var mausy = "0";
+var winx = "0";
+var winy = "0";
+var difx = mausx - winx;
+var dify = mausy - winy;
+
+$("html").mousemove(function (event) {
+    mausx = event.pageX;
+    mausy = event.pageY;
+    winx = $("#mp4player").offset().left;
+    winy = $("#mp4player").offset().top;
+    if (clicked == "Nope.") {
+        difx = mausx - winx;
+        dify = mausy - winy;
+    }
+
+    var newx = event.pageX - difx - $("#mp4player").css("marginLeft").replace('px', '');
+    var newy = event.pageY - dify - $("#mp4player").css("marginTop").replace('px', '');
+    $("#mp4player").css({ top: newy, left: newx });
+
+});
+$(function(){
+    $("#mp4player").mousedown(function (event) {
+        clicked = "Yeah.";
+    });
+});
+
+$("html").mouseup(function (event) {
+
+    clicked = "Nope.";
+});
+
+//====

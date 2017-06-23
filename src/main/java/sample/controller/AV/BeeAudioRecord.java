@@ -58,7 +58,6 @@ public class BeeAudioRecord {
             exec.scheduleAtFixedRate(new Runnable() {
                 @Override
                 public void run() {
-                    try {
                         // 非阻塞方式读取
                         int nBytesRead = line.read(audioBytes, 0, line.available());
                         // 因为我们设置的是16位音频格式,所以需要将byte[]转成short[]
@@ -87,7 +86,12 @@ public class BeeAudioRecord {
 
                             if (recorders != null){
                                 for (FFmpegFrameRecorder rc :recorders) {
-                                    rc.recordSamples(sampleRate, numChannels, sBuff);
+                                    try {
+                                        rc.recordSamples(sampleRate, numChannels, sBuff);
+                                    } catch (FrameRecorder.Exception e) {
+                                        e.printStackTrace();
+                                    }
+
                                 }
                             }
 
@@ -95,11 +99,6 @@ public class BeeAudioRecord {
                                 listener.onRecording(1000 * (System.currentTimeMillis() - startTime));
                             }
                         }
-
-
-                    } catch (org.bytedeco.javacv.FrameRecorder.Exception e) {
-                        e.printStackTrace();
-                    }
                 }
             }, 0, (long) 1000 / FRAME_RATE, TimeUnit.MILLISECONDS);
         } catch (LineUnavailableException e1) {

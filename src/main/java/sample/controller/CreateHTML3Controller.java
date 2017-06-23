@@ -20,6 +20,8 @@ import sample.util.ViewUtil;
 
 import java.io.File;
 import java.net.URL;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -46,6 +48,9 @@ public class CreateHTML3Controller extends BaseController {
     @FXML
     public TextField wbwyTF;
 
+    public CreateHTMLFileController rootController;
+    public List<Map> clarList;
+
     @FXML
     public void gkTextBtnClick(){
         TextAreaInputController vc = ((TextAreaInputController) ViewUtil.getInstance().showView("view/textAreaInput.fxml", "请输入概况", -1, -1, ""));
@@ -69,6 +74,17 @@ public class CreateHTML3Controller extends BaseController {
         if (f != null){
             tf.setText(tf.getText().length() == 0?"":tf.getText() + ";");
             tf.setText(tf.getText() + f.getAbsolutePath());
+        }
+    }
+
+    private void setTfContent(TextField tf,String loc){
+        File dir = new File(loc);
+        File[] fs = dir.listFiles();
+        for (File f :fs){
+            if (!f.isDirectory() && f.getName().contains(".html")){
+                tf.setText(tf.getText().length() == 0?"":tf.getText() + ";");
+                tf.setText(tf.getText() + f.getAbsolutePath());
+            }
         }
     }
 
@@ -115,6 +131,25 @@ public class CreateHTML3Controller extends BaseController {
     @FXML
     public void wbwyHtmlClick(){
         setTfContent(wbwyTF);
+    }
+
+    public void setupClarc(){
+        clarList = rootController.getHtml2List();
+
+        if (clarList != null){
+            for (Map map : clarList){
+                String dirLoc = map.get("location").toString();
+                String tblType = map.get("type").toString();
+
+                if (tblType.equalsIgnoreCase("0")){
+                    setTfContent(zbTF,dirLoc);
+                }else if (tblType.equalsIgnoreCase("1")){
+                    setTfContent(chTF,dirLoc);
+                }else {
+                    setTfContent(jzTF,dirLoc);
+                }
+            }
+        }
     }
 
     @Override
