@@ -38,11 +38,23 @@ import java.util.regex.Pattern;
 
 public class MainController extends BaseController {
     @FXML
+    private Label statusL;
+
+    @FXML
     public MenuItem tutorial;
+
     @FXML
     public TabPane contentPane;
+
     @FXML
     public Label changeLanguage;
+
+    static MainController mainController;
+    public static void setStatusContent(String tip){
+        if (mainController != null){
+            mainController.statusL.setText(tip);
+        }
+    }
 
     @FXML
     public void onCreateSfyFileClick(){
@@ -50,6 +62,8 @@ public class MainController extends BaseController {
         vc.mStage.initModality(Modality.APPLICATION_MODAL);
         vc.mStage.setResizable(false);
         vc.mStage.show();
+
+        MainController.setStatusContent("导出生飞云");
     }
 
     @FXML
@@ -58,10 +72,14 @@ public class MainController extends BaseController {
         vc.mStage.initModality(Modality.APPLICATION_MODAL);
         vc.mStage.setResizable(false);
         vc.mStage.show();
+
+        MainController.setStatusContent("导出千语街");
     }
 
     @FXML
     public void tqjzchClick(){
+        MainController.setStatusContent("提取句子词汇");
+
         int index = contentPane.getSelectionModel().getSelectedIndex();
         if (index != -1){
             Tab tab = contentPane.getTabs().get(index);
@@ -93,6 +111,8 @@ public class MainController extends BaseController {
 
     @FXML
     public void tqjzClick() {
+        MainController.setStatusContent("提取句子");
+
         int index = contentPane.getSelectionModel().getSelectedIndex();
         if (index != -1) {
             Tab tab = contentPane.getTabs().get(index);
@@ -123,6 +143,8 @@ public class MainController extends BaseController {
 
     @FXML
     public void tqchClick(){
+        MainController.setStatusContent("提取词汇");
+
         int index = contentPane.getSelectionModel().getSelectedIndex();
         if (index != -1) {
             Tab tab = contentPane.getTabs().get(index);
@@ -151,6 +173,8 @@ public class MainController extends BaseController {
     }
 
     public void openImpExcelBindWithType(int type){
+        MainController.setStatusContent("打开导入Excel绑定");
+
         ImportExcelBindViewController vc = ((ImportExcelBindViewController) ViewUtil.getInstance().showView("view/impExcelBindView.fxml", "导入数据绑定", -1, -1, this));
         vc.setExcelType(type);
         vc.mStage.initModality(Modality.APPLICATION_MODAL);
@@ -160,6 +184,8 @@ public class MainController extends BaseController {
 
     @FXML
     public void changeTableNameClick(){
+        MainController.setStatusContent("修改表名");
+
         int nIndex = contentPane.getSelectionModel().getSelectedIndex();
         if (nIndex != -1 ){
             Tab tab = contentPane.getTabs().get(nIndex);
@@ -188,6 +214,8 @@ public class MainController extends BaseController {
 
     @FXML
     public void onTableModeClick(){
+        MainController.setStatusContent("制表模式");
+
         int nowIndex = contentPane.getSelectionModel().getSelectedIndex();
         if (nowIndex != -1) {
             Tab t = contentPane.getTabs().get(nowIndex);
@@ -227,6 +255,8 @@ public class MainController extends BaseController {
 
     @FXML
     public void onRewriteModeClick(){
+        MainController.setStatusContent("转写模式");
+
         int nowIndex = contentPane.getSelectionModel().getSelectedIndex();
         if (nowIndex != -1) {
             Tab t = contentPane.getTabs().get(nowIndex);
@@ -256,20 +286,25 @@ public class MainController extends BaseController {
 
     @FXML
     public void impExlWordClick(){
+        MainController.setStatusContent("导入Excel字表");
         openImpExcelBindWithType(0);
     }
 
     @FXML
     public void impExlCiClick(){
+        MainController.setStatusContent("导入Excel词表");
         openImpExcelBindWithType(1);
     }
 
     @FXML
     public void impSentenceClick(){
+        MainController.setStatusContent("导入Excel句表");
         openImpExcelBindWithType(2);
     }
 
     public void openTable(Table t){
+        MainController.setStatusContent("打开表");
+
         NewTableView vc = ((NewTableView) ViewUtil.getInstance().showView("view/newTableView.fxml", "", -1, -1, t));
         vc.getmStage().setUserData(MainController.this);
         if (t.datatype.equals("0")){
@@ -324,22 +359,26 @@ public class MainController extends BaseController {
 
     @FXML
     public void impYbCi(){
+        MainController.setStatusContent("导入语保词表");
         ImportUtil.importYbWithType(1,this);
     }
 
     @FXML
     public void impYbWord(){
+        MainController.setStatusContent("导入语保字表");
         ImportUtil.importYbWithType(0,this);
     }
 
     @FXML
     public void impYbSentence(){
+        MainController.setStatusContent("导入语保句表");
         ImportUtil.importYbWithType(2,this);
     }
 
     //.exb
     @FXML
     public void impExma(){
+        MainController.setStatusContent("导入Exma");
         try {
             ImportXmlDialog dialog = ViewUtil.getInstance().openImpotXmlDialog("exma");
             dialog.setImportType(1);
@@ -352,6 +391,7 @@ public class MainController extends BaseController {
     //.eaf
     @FXML
     public void impElan(){
+        MainController.setStatusContent("导入Elan");
         try {
             ImportXmlDialog dialog = ViewUtil.getInstance().openImpotXmlDialog("elan");
             dialog.setImportType(0);
@@ -363,6 +403,7 @@ public class MainController extends BaseController {
 
     @FXML
     public void impAudacity(){
+        MainController.setStatusContent("导入Audacity");
         try {
             ImportXmlDialog dialog = ViewUtil.getInstance().openImpotXmlDialog("Audacity");
             dialog.setImportType(3);
@@ -374,6 +415,7 @@ public class MainController extends BaseController {
     //.xml
     @FXML
     public void impSfXml(){
+        MainController.setStatusContent("导入声飞xml");
         try {
             ImportXmlDialog2 dialog = ViewUtil.getInstance().openImportXmlDialog2();
             dialog.show();
@@ -391,6 +433,8 @@ public class MainController extends BaseController {
 
     @FXML
     public void dbdzClick(){
+        MainController.setStatusContent("多表对照");
+
         MutiAnalySelectFileController vc = ((MutiAnalySelectFileController) ViewUtil.getInstance().showView("view/mutiTableAnaly.fxml", "多表对照", -1, -1, ""));
         vc.setListener(new MutiAnalySelectFileController.AnalyListener() {
             @Override
@@ -410,12 +454,19 @@ public class MainController extends BaseController {
 
     @FXML
     public void fileExportClick(){
+        MainController.setStatusContent("导出");
+
         int tabIndex = contentPane.getSelectionModel().getSelectedIndex();
         if (tabIndex != -1) {
             Tab t = contentPane.getTabs().get(tabIndex);
             if (t.getUserData() != null && (t.getUserData() instanceof NewTableView || t.getUserData() instanceof RecordTabController || t.getUserData() instanceof RewriteViewController)) {
-                BaseController vc = ((BaseController) t.getUserData());
-                ExportUtil.exportTable(((Table) vc.preData));
+                if (t.getUserData() instanceof RewriteViewController){
+                    RewriteViewController vc = ((RewriteViewController) t.getUserData());
+                    ExportUtil.exportTable(vc.getTableView(), ((Table) vc.preData));
+                }else {
+                    BaseController vc = ((BaseController) t.getUserData());
+                    ExportUtil.exportTable(((Table) vc.preData));
+                }
             }else if (t.getUserData()!=null&&t.getUserData() instanceof NewTopicEditController){
                 NewTopicEditController newTopicEditController  = (NewTopicEditController) t.getUserData();
                 ExportUtil.exportTopic(newTopicEditController.getTopics());
@@ -432,6 +483,8 @@ public class MainController extends BaseController {
 
     @FXML
     public void newDiscourceClick(){
+        MainController.setStatusContent("新建话语表");
+
         NewTopicKindSelectController vc = ((NewTopicKindSelectController) ViewUtil.getInstance().showView("view/newTopicKindSelect.fxml", "选择一个话题", -1, -1, ""));
         vc.setListener(new NewTopicKindSelectListener() {
             @Override
@@ -462,6 +515,8 @@ public class MainController extends BaseController {
 
     @FXML
     public void tyzhchClick(){
+        MainController.setStatusContent("同音字汇词汇");
+
         int tabIndex = contentPane.getSelectionModel().getSelectedIndex();
         if (tabIndex != -1){
             Tab t = contentPane.getTabs().get(tabIndex);
@@ -471,48 +526,54 @@ public class MainController extends BaseController {
                     return;
                 }
 
-                //已经进行过音标差错
-                if (vc.isCanZlyyd()){
-                    System.out.println("can zlyyd");
-                    ZlyydViewController zVc = ((ZlyydViewController) ViewUtil.getInstance().showView("view/zlyydView.fxml", "整理音韵调", -1, -1, vc.preData));
-                    zVc.setZLYYD(false);
-                    zVc.setOriginDatas(vc.getAfterAnalyDatas());
-                    zVc.mStage.initModality(Modality.APPLICATION_MODAL);
-                    zVc.mStage.setResizable(false);
-                    zVc.mStage.show();
-                }else{
-                    DialogUtil.showDialog("请先执行音标差错！");
-                }
+                ZlyydViewController zVc = ((ZlyydViewController) ViewUtil.getInstance().showView("view/zlyydView.fxml", "整理音韵调", -1, -1, vc.preData));
+                zVc.setZLYYD(false);
+                zVc.setOriginDatas(YBCCController.analyDatas(vc.getOriginDatas()));
+                zVc.mStage.initModality(Modality.APPLICATION_MODAL);
+                zVc.mStage.setResizable(false);
+                zVc.mStage.show();
+
             }
         }
     }
 
     @FXML
     public void zlyydClick(){
+        MainController.setStatusContent("整理音韵调");
+
         int tabIndex = contentPane.getSelectionModel().getSelectedIndex();
         if (tabIndex != -1){
             Tab t = contentPane.getTabs().get(tabIndex);
             if (t.getUserData() !=  null && (t.getUserData() instanceof NewTableView)){
                 NewTableView vc = ((NewTableView) t.getUserData());
 
-                //已经进行过音标差错
-                if (vc.isCanZlyyd()){
-                    System.out.println("can zlyyd");
-                    ZlyydViewController zVc = ((ZlyydViewController) ViewUtil.getInstance().showView("view/zlyydView.fxml", "整理音韵调", -1, -1, vc.preData));
-                    zVc.setZLYYD(true);
-                    zVc.setOriginDatas(vc.getAfterAnalyDatas());
-                    zVc.mStage.initModality(Modality.APPLICATION_MODAL);
-                    zVc.mStage.setResizable(false);
-                    zVc.mStage.show();
-                }else{
-                    DialogUtil.showDialog("请先执行音标差错！");
-                }
+                ZlyydViewController zVc = ((ZlyydViewController) ViewUtil.getInstance().showView("view/zlyydView.fxml", "整理音韵调", -1, -1, vc.preData));
+                zVc.setZLYYD(true);
+                zVc.setOriginDatas(YBCCController.analyDatas(vc.getOriginDatas()));
+                zVc.mStage.initModality(Modality.APPLICATION_MODAL);
+                zVc.mStage.setResizable(false);
+                zVc.mStage.show();
+
+//                //已经进行过音标差错
+//                if (vc.isCanZlyyd()){
+//                    System.out.println("can zlyyd");
+//                    ZlyydViewController zVc = ((ZlyydViewController) ViewUtil.getInstance().showView("view/zlyydView.fxml", "整理音韵调", -1, -1, vc.preData));
+//                    zVc.setZLYYD(true);
+//                    zVc.setOriginDatas(vc.getAfterAnalyDatas());
+//                    zVc.mStage.initModality(Modality.APPLICATION_MODAL);
+//                    zVc.mStage.setResizable(false);
+//                    zVc.mStage.show();
+//                }else{
+//                    DialogUtil.showDialog("请先执行音标差错！");
+//                }
             }
         }
     }
 
     @FXML
     public void ybccClick(){
+        MainController.setStatusContent("音标差错");
+
         int tabIndex = contentPane.getSelectionModel().getSelectedIndex();
         if (tabIndex != -1){
             Tab t = contentPane.getTabs().get(tabIndex);
@@ -536,6 +597,8 @@ public class MainController extends BaseController {
 
     @FXML
     public void delTableClick(){
+        MainController.setStatusContent("删除表");
+
         OpenTableController vc = ((OpenTableController) ViewUtil.getInstance().showView("view/openTable.fxml", "删除表", -1, -1, ""));
         vc.setOpen(false);
 
@@ -546,6 +609,8 @@ public class MainController extends BaseController {
 
     @FXML
     public void openTableClick(){
+        MainController.setStatusContent("打开表");
+
         OpenTableController vc = ((OpenTableController) ViewUtil.getInstance().showView("view/openTable.fxml", "打开表", -1, -1, ""));
         vc.setListener(new OpenTableListener() {
             @Override
@@ -597,6 +662,8 @@ public class MainController extends BaseController {
 
     @FXML
     public void newWordTableClick(){
+        MainController.setStatusContent("新建字表");
+
         Table t = new Table("","0","","","","","","","","","","","","","","","");
         DbHelper.getInstance().insertNewTable(t);
 
@@ -618,6 +685,8 @@ public class MainController extends BaseController {
 
     @FXML
     public void newCiTableClick(){
+        MainController.setStatusContent("新建词表");
+
         Table t = new Table("","1","","","","","","","","","","","","","","","");
         DbHelper.getInstance().insertNewTable(t);
 
@@ -640,6 +709,8 @@ public class MainController extends BaseController {
 
     @FXML
     public void newSentenceTableClick(){
+        MainController.setStatusContent("新建句表");
+
         Table t = new Table("","2","","","","","","","","","","","","","","","");
         DbHelper.getInstance().insertNewTable(t);
 
@@ -661,6 +732,8 @@ public class MainController extends BaseController {
 
     @FXML
     public void onTutorialClick() throws IOException {
+        MainController.setStatusContent("声飞教程");
+
         WebView webView = new WebView();
         StringBuffer stringBuffer = new StringBuffer();
         BufferedReader reader = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/sample/resource/html/tutorial.html")));
@@ -682,6 +755,7 @@ public class MainController extends BaseController {
 
     @FXML
     public void onEnglish2ChineseClick(){
+        MainController.setStatusContent("菜单命令英汉对照");
         try {
             String osName = System.getProperty("os.name");
             File file = new File(Constant.ROOT_FILE_DIR + "/English.xls");
@@ -697,6 +771,8 @@ public class MainController extends BaseController {
 
     @FXML
     public void onPasswordAnalyClick(){
+        MainController.setStatusContent("密码验证");
+
         BaseController ctl = ((BaseController) ViewUtil.getInstance().showView("view/passwordAnaly.fxml", "密码验证", -1, -1,null));
         ctl.mStage.initModality(Modality.APPLICATION_MODAL);
         ctl.mStage.setResizable(false);
@@ -705,6 +781,8 @@ public class MainController extends BaseController {
 
     @FXML
     public void onNetClick(){
+        MainController.setStatusContent("语言资源联盟网");
+
         String netDoMain = "http://www.clarc.cn/";
         WebView webView = new WebView();
 
@@ -718,8 +796,10 @@ public class MainController extends BaseController {
 
     @FXML
     public void onAboutClick() throws IOException {
-//        ViewUtil.getInstance().openAboutDialog();
-//        ViewUtil.getInstance().showView("view/about.fxml","帮助",-1,-1,null,true);
+        MainController.setStatusContent("关于声飞");
+
+        ViewUtil.getInstance().openAboutDialog();
+        ViewUtil.getInstance().showView("view/about.fxml","帮助",-1,-1,null);
     }
 
     @FXML
@@ -742,6 +822,8 @@ public class MainController extends BaseController {
     }
 
     public void onFYDCZBClick() {
+        MainController.setStatusContent("方言调查字表");
+
         BaseController controller = null;
         controller = ViewUtil.getInstance().openHYFYDCZBTable();
 
@@ -752,6 +834,8 @@ public class MainController extends BaseController {
     }
 
     public void onCHDCBClick(){
+        MainController.setStatusContent("词汇调查表");
+
         BaseController controller = null;
         controller = ViewUtil.getInstance().openCHDCBTable();
 
@@ -762,6 +846,8 @@ public class MainController extends BaseController {
     }
 
     public void onJZDCBClick(){
+        MainController.setStatusContent("句子调查表");
+
         BaseController controller = null;
         controller = ViewUtil.getInstance().openYFLJRCYJDCB();
 
@@ -772,6 +858,7 @@ public class MainController extends BaseController {
     }
 
     public void onHYDCBClick(){
+
         BaseController controller = null;
         controller = ViewUtil.getInstance().openHYZTBTable();
 
@@ -782,6 +869,8 @@ public class MainController extends BaseController {
     }
 
     public void onZGYYDMClick(){
+        MainController.setStatusContent("中国语言代码");
+
         BaseController controller = null;
         controller = ViewUtil.getInstance().openYYZFDMBTable();
 
@@ -792,6 +881,8 @@ public class MainController extends BaseController {
     }
 
     public void onYYYBZFClick(){
+        MainController.setStatusContent("元音音标字符");
+
         BaseController controller = null;
         controller = ViewUtil.getInstance().openYYYBTable();
 
@@ -804,6 +895,8 @@ public class MainController extends BaseController {
     //说话人列表
     @FXML
     private void onSpeakerInfoTableClick() throws IOException {
+        MainController.setStatusContent("说话人列表");
+
         SpeakerInfoTableController speakerInfoTableController = ViewUtil.getInstance().openSpeakerInoTableView();
 
         Tab tab = WidgetUtil.createNewTab("说话人列表", speakerInfoTableController.getmParent());
@@ -815,6 +908,8 @@ public class MainController extends BaseController {
     //调查表元数据信息
     @FXML
     private void onTableMetadataInfoClick() throws IOException {
+        MainController.setStatusContent("调查表元数据信息");
+
         TableMetadataInfoController controller = ViewUtil.getInstance().openTableMetadataInfoView();
         controller.preData = MainController.this;
 
@@ -826,6 +921,8 @@ public class MainController extends BaseController {
     //导出网页
     @FXML
     private void onCreateHTMLFileClick()throws IOException{
+        MainController.setStatusContent("创建语档网页");
+
         CreateHTMLFileController controller = ViewUtil.getInstance().openCreateHTMLFileView();
         controller.mStage.initModality(Modality.APPLICATION_MODAL);
         controller.show();
@@ -837,6 +934,8 @@ public class MainController extends BaseController {
     //录音模式
     @FXML
     private void onRecordModeClick() throws IOException {
+        MainController.setStatusContent("录音模式");
+
         int nowIndex = contentPane.getSelectionModel().getSelectedIndex();
         if (nowIndex != -1){
             Tab t = contentPane.getTabs().get(nowIndex);
@@ -890,13 +989,15 @@ public class MainController extends BaseController {
     public void initialize(URL location, ResourceBundle resources) {
         super.initialize(location,resources);
         changeLanguage.setText(ViewUtil.currentLanguage);
+        mainController = this;
+        MainController.setStatusContent("就绪");
     }
 
 
     @Override
     public void onStop() {
         super.onStop();
-
+        mainController = null;
         //关闭窗口时，调用所有tab的onClose方法
         if (contentPane.getTabs().size()!=0){
             for (Tab tab :

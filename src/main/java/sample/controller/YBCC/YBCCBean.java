@@ -76,6 +76,12 @@ public class YBCCBean {
         return sdList;
     }
 
+    public void resetLists(){
+        smList = null;
+        ymList = null;
+        sdList = null;
+    }
+
     public void addSm(String sm){
         if (smList == null){
             smList = new ArrayList();

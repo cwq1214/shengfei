@@ -148,6 +148,10 @@ public class ExportUtil {
         exportTable(null,temp.getTableView(),t);
     }
 
+    public static void exportTable (TableView tableView,Table t){
+        exportTable(null,tableView,t);
+    }
+
     public static void exportTopic(List<Topic> topics){
         File saveFile = DialogUtil.exportFileDialog(new FileChooser.ExtensionFilter[]{new FileChooser.ExtensionFilter("2003Excel文件", "*.xls")
                 ,new FileChooser.ExtensionFilter("2007Excel文件", "*.xlsx")
@@ -274,8 +278,6 @@ public class ExportUtil {
     }
 
     public static void exportTable(Stage stage, TableView tableView,Table t){
-
-
         File saveFile = DialogUtil.exportFileDialog();
         String saveType = saveFile.getName().substring(saveFile.getName().lastIndexOf(".") + 1);
 
@@ -350,17 +352,18 @@ public class ExportUtil {
                 }else {
                     YBCCBean bean = ((YBCCBean) tableView.getItems().get(i - 1));
                     Record r = bean.getRecord();
-                    if (tableType == 0){
-                        allTrDatas.append("<tr>"+String.format(tableWordTrTd,Integer.toString(i),hasAudio?String.format(yydDemoWordTd,r.getUuid(),r.getContent()):r.getContent(),r.getIPA(),r.getYun(),r.getNote())+"</tr>");
-                    }else if (tableType == 1){
-                        allTrDatas.append("<tr>"+String.format(tableCiTrTd,Integer.toString(i),hasAudio?String.format(yydDemoWordTd,r.getUuid(),r.getContent()):r.getContent(),r.getIPA(),r.getMWFY(),r.getSpell(),r.getEnglish(),r.getNote())+"</tr>");
-                    }else if (tableType == 2){
-                        allTrDatas.append("<tr>"+String.format(tableSentenceTrTd,Integer.toString(i),hasAudio?String.format(yydDemoWordTd,r.getUuid(),r.getContent()):r.getContent(),r.getIPA(),r.getMWFY(),r.getFree_trans(),r.getEnglish(),r.getNote())+"</tr>");
-                    }
 
                     File vFile = new File(Constant.ROOT_FILE_DIR + "/audio/" + t.getId() + "/" + r.getUuid()+".wav");
                     if (vFile.exists()){
                         FileUtil.fileCopy(vFile.getAbsolutePath(),saveFile.getParentFile().getAbsolutePath() + "/voice/" + r.getUuid() + ".wav");
+                    }
+
+                    if (tableType == 0){
+                        allTrDatas.append("<tr>"+String.format(tableWordTrTd,Integer.toString(i),(hasAudio && vFile.exists())?String.format(yydDemoWordTd,r.getUuid(),r.getContent()):r.getContent(),r.getIPA(),r.getYun(),r.getNote())+"</tr>");
+                    }else if (tableType == 1){
+                        allTrDatas.append("<tr>"+String.format(tableCiTrTd,Integer.toString(i),(hasAudio && vFile.exists())?String.format(yydDemoWordTd,r.getUuid(),r.getContent()):r.getContent(),r.getIPA(),r.getMWFY(),r.getSpell(),r.getEnglish(),r.getNote())+"</tr>");
+                    }else if (tableType == 2){
+                        allTrDatas.append("<tr>"+String.format(tableSentenceTrTd,Integer.toString(i),(hasAudio && vFile.exists())?String.format(yydDemoWordTd,r.getUuid(),r.getContent()):r.getContent(),r.getIPA(),r.getMWFY(),r.getFree_trans(),r.getEnglish(),r.getNote())+"</tr>");
                     }
                 }
             }else {
@@ -369,18 +372,19 @@ public class ExportUtil {
                 }else {
                     YBCCBean bean = ((YBCCBean) tableView.getItems().get(i - 1));
                     Record r = bean.getRecord();
-                    allTrDatas.append("<tr><td>"+r.getBaseCode()+"</td><td>"+ r.getRank() +"</td></tr>");
-                    allTrDatas.append("<tr><td>"+r.getBaseCode()+"</td><td>"+ (hasAudio?String.format(yydDemoWordTd,r.getUuid(),r.getContent()):r.getContent())+"</td></tr>");
-                    allTrDatas.append("<tr><td>"+r.getBaseCode()+"</td><td>"+ r.getMWFY() +"</td></tr>");
-                    allTrDatas.append("<tr><td>"+r.getBaseCode()+"</td><td>"+ r.getIPA() +"</td></tr>");
-                    allTrDatas.append("<tr><td>"+r.getBaseCode()+"</td><td>"+ r.getFree_trans() +"</td></tr>");
-                    allTrDatas.append("<tr><td>"+r.getBaseCode()+"</td><td>"+ r.getNote() +"</td></tr>");
-                    allTrDatas.append("<tr><td>"+r.getBaseCode()+"</td><td>"+ r.getEnglish() +"</td></tr>");
 
                     File vFile = new File(Constant.ROOT_FILE_DIR + "/audio/" + t.getId() + "/" + r.getUuid()+".wav");
                     if (vFile.exists()){
                         FileUtil.fileCopy(vFile.getAbsolutePath(),saveFile.getParentFile().getAbsolutePath() + "/voice/" + r.getUuid() + ".wav");
                     }
+
+                    allTrDatas.append("<tr><td>"+r.getBaseCode()+"</td><td>"+ r.getRank() +"</td></tr>");
+                    allTrDatas.append("<tr><td>"+r.getBaseCode()+"</td><td>"+ ((hasAudio && vFile.exists())?String.format(yydDemoWordTd,r.getUuid(),r.getContent()):r.getContent())+"</td></tr>");
+                    allTrDatas.append("<tr><td>"+r.getBaseCode()+"</td><td>"+ r.getMWFY() +"</td></tr>");
+                    allTrDatas.append("<tr><td>"+r.getBaseCode()+"</td><td>"+ r.getIPA() +"</td></tr>");
+                    allTrDatas.append("<tr><td>"+r.getBaseCode()+"</td><td>"+ r.getFree_trans() +"</td></tr>");
+                    allTrDatas.append("<tr><td>"+r.getBaseCode()+"</td><td>"+ r.getNote() +"</td></tr>");
+                    allTrDatas.append("<tr><td>"+r.getBaseCode()+"</td><td>"+ r.getEnglish() +"</td></tr>");
                 }
             }
         }
@@ -402,7 +406,7 @@ public class ExportUtil {
         }
 
         boolean isSentence = Integer.parseInt(((Table) tableView.getUserData()).datatype) == 2;
-        boolean isHor = false;
+        boolean isHor = true;
         if (isSentence){
             isHor = exportHor();
         }
@@ -478,15 +482,15 @@ public class ExportUtil {
     private static String demoWordTYZHCH(SameIPABean bean,int fileFormat,String voiceUrl){
         StringBuilder sb = new StringBuilder();
         for (Record r:bean.getSameRecords()){
-            if (fileFormat == 1){
-                sb.append(r.getContent()+";");
-            }else{
-                sb.append(String.format(yydDemoWordTd,r.getUuid(),r.getContent())+ ";");
-            }
-
             File vFile = new File(Constant.ROOT_FILE_DIR + "/audio/" + r.getBaseId() + "/" + r.getUuid()+".wav");
             if (vFile.exists()){
                 FileUtil.fileCopy(vFile.getAbsolutePath(),voiceUrl + "/" + r.getUuid() + ".wav");
+            }
+
+            if (fileFormat == 1){
+                sb.append(r.getContent()+";");
+            }else{
+                sb.append((vFile.exists()?String.format(yydDemoWordTd,r.getUuid(),r.getContent()):r.getContent())+ ";");
             }
         }
         if (sb.length()!=0){
@@ -707,11 +711,11 @@ public class ExportUtil {
             } else if (fileFormat == 1) {
                 yyDemoWordAllTd.append(String.format(yyDemoWordWithVoiceTd, tempDw));
             } else if (fileFormat == 2) {
-                yyDemoWordAllTd.append(String.format(yydDemoWordTd, r.getUuid(), tempDw));
                 File vFile = new File(Constant.ROOT_FILE_DIR + "/audio/" + r.getBaseId() + "/" + r.getUuid()+".wav");
                 if (vFile.exists()){
                     FileUtil.fileCopy(vFile.getAbsolutePath(),vPath + "/" + r.getUuid() + ".wav");
                 }
+                yyDemoWordAllTd.append(vFile.exists()?String.format(yydDemoWordTd, r.getUuid(), tempDw):tempDw);
             }
         }
         yyDemoWordAllTd.deleteCharAt(yyDemoWordAllTd.length() - 1);

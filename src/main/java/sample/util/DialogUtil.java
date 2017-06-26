@@ -252,7 +252,10 @@ public class DialogUtil {
             return chooser.showOpenMultipleDialog(new Stage());
         }else {
             List list = new ArrayList<>();
-            list.add(chooser.showOpenDialog(new Stage()));
+            File f = chooser.showOpenDialog(new Stage());
+            if (f != null){
+                list.add(f);
+            }
             return list;
         }
     }
@@ -296,5 +299,17 @@ public class DialogUtil {
             saveFile.getParentFile().mkdirs();
         }
         return saveFile;
+    }
+
+    public static boolean confirmDialog(){
+        Alert del = new Alert(Alert.AlertType.CONFIRMATION);
+        del.setHeaderText(null);
+        del.setContentText("确定要删除吗？");
+        Optional<ButtonType> result = del.showAndWait();
+        if (result.get() == ButtonType.OK){
+            return true;
+        } else {
+            return false;
+        }
     }
 }

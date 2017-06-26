@@ -559,6 +559,11 @@ public class NewTableView extends BaseController {
                         tableTopCtl.setNowIndex(tableView.getSelectionModel().getSelectedIndex());
                         break;
                     case RefreshBtnClick:
+                        for (int i = 0; i < originDatas.size(); i++) {
+                            YBCCBean bean = ((YBCCBean) originDatas.get(i));
+                            bean.setWrongReason("");
+                            bean.resetLists();
+                        }
                         tableDatas = FXCollections.observableArrayList(originDatas);
                         tableView.setItems(tableDatas);
                         tableView.refresh();
@@ -737,10 +742,12 @@ public class NewTableView extends BaseController {
     }
 
     public void delBtnClick(){
-        DbHelper.getInstance().delRecord(tableView.getSelectionModel().getSelectedItems());
-        originDatas.removeAll(tableView.getSelectionModel().getSelectedItems());
-        tableView.getItems().removeAll(tableView.getSelectionModel().getSelectedItems());
-        tableView.refresh();
+        if (DialogUtil.confirmDialog()){
+            DbHelper.getInstance().delRecord(tableView.getSelectionModel().getSelectedItems());
+            originDatas.removeAll(tableView.getSelectionModel().getSelectedItems());
+            tableView.getItems().removeAll(tableView.getSelectionModel().getSelectedItems());
+            tableView.refresh();
+        }
     }
 
     public void keepBtnClick(){
@@ -1088,6 +1095,9 @@ public class NewTableView extends BaseController {
         tableTopCtl.setNowIndex(0);
 
         tableView.setItems(tableDatas);
+
+        MainController.setStatusContent("共："+tableDatas.size()+"条");
+
         tableView.refresh();
     }
 

@@ -101,6 +101,10 @@ public class RewriteViewController extends BaseController {
     TableColumn<YBCCBean,String> mwfyCol = new TableColumn<>("民族文字或方言字");
     TableColumn<YBCCBean,String> duiyiCol = new TableColumn<>("普通话词对译");
 
+    public TableView getTableView() {
+        return tableView;
+    }
+
     @FXML
     public void autoPlayClick(){
         System.out.println("auto play click");

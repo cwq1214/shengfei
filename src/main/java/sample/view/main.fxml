@@ -10,9 +10,10 @@
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
 
-<BorderPane prefHeight="238.0" prefWidth="469.0" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.controller.MainController" stylesheets="@css/main.css,@css/fontTimeNewRoman.css">
+<BorderPane prefHeight="238.0" prefWidth="469.0" stylesheets="@css/main.css,@css/fontTimeNewRoman.css" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.controller.MainController">
     <top>
         <StackPane alignment="CENTER_RIGHT">
       <MenuBar BorderPane.alignment="CENTER">
@@ -30,19 +31,19 @@
                 <SeparatorMenuItem />
                      <Menu mnemonicParsing="false" text="%menu_file_import">
                        <items>
-                           <MenuItem mnemonicParsing="false" text="%menu_file_import_excelWord" onAction="#impExlWordClick"/>
-                           <MenuItem mnemonicParsing="false" text="%menu_file_import_excelCi" onAction="#impExlCiClick"/>
-                           <MenuItem mnemonicParsing="false" text="%menu_file_import_excelSentence" onAction="#impSentenceClick"/>
+                           <MenuItem mnemonicParsing="false" onAction="#impExlWordClick" text="%menu_file_import_excelWord" />
+                           <MenuItem mnemonicParsing="false" onAction="#impExlCiClick" text="%menu_file_import_excelCi" />
+                           <MenuItem mnemonicParsing="false" onAction="#impSentenceClick" text="%menu_file_import_excelSentence" />
                            <SeparatorMenuItem mnemonicParsing="false" />
-                           <MenuItem mnemonicParsing="false" text="%menu_file_import_ybWord" onAction="#impYbWord"/>
-                           <MenuItem mnemonicParsing="false" text="%menu_file_import_ybCi" onAction="#impYbCi"/>
-                           <MenuItem mnemonicParsing="false" text="%menu_file_import_ybSentence" onAction="#impYbSentence"/>
+                           <MenuItem mnemonicParsing="false" onAction="#impYbWord" text="%menu_file_import_ybWord" />
+                           <MenuItem mnemonicParsing="false" onAction="#impYbCi" text="%menu_file_import_ybCi" />
+                           <MenuItem mnemonicParsing="false" onAction="#impYbSentence" text="%menu_file_import_ybSentence" />
                            <SeparatorMenuItem mnemonicParsing="false" />
-                           <MenuItem mnemonicParsing="false" text="%menu_file_import_exma" onAction="#impExma"/>
-                           <MenuItem mnemonicParsing="false" text="%menu_file_import_elan" onAction="#impElan"/>
-                           <MenuItem mnemonicParsing="false" text="%menu_file_import_audacity" onAction="#impAudacity"/>
-                           <MenuItem mnemonicParsing="false" text="%menu_file_import_sfxml" onAction="#impSfXml"/>
-                           <MenuItem mnemonicParsing="false" text="%menu_file_import_talkTxt" onAction="#impTalkTxt"/>
+                           <MenuItem mnemonicParsing="false" onAction="#impExma" text="%menu_file_import_exma" />
+                           <MenuItem mnemonicParsing="false" onAction="#impElan" text="%menu_file_import_elan" />
+                           <MenuItem mnemonicParsing="false" onAction="#impAudacity" text="%menu_file_import_audacity" />
+                           <MenuItem mnemonicParsing="false" onAction="#impSfXml" text="%menu_file_import_sfxml" />
+                           <MenuItem mnemonicParsing="false" onAction="#impTalkTxt" text="%menu_file_import_talkTxt" />
                        </items>
                      </Menu>
                 <MenuItem mnemonicParsing="false" onAction="#fileExportClick" text="%menu_file_export" />
@@ -58,15 +59,15 @@
               <MenuItem mnemonicParsing="false" onAction="#tyzhchClick" text="%menu_data_tyzhch" />
                 <SeparatorMenuItem />
               <MenuItem mnemonicParsing="false" onAction="#dbdzClick" text="%menu_data_dbdz" />
-                <MenuItem mnemonicParsing="false" onAction="#tqjzchClick" text="%menu_data_tqjzch"/>
-                <MenuItem mnemonicParsing="false" onAction="#tqjzClick" text="%menu_data_tqjz"/>
-                <MenuItem mnemonicParsing="false" onAction="#tqchClick" text="%menu_data_tqch"/>
+                <MenuItem mnemonicParsing="false" onAction="#tqjzchClick" text="%menu_data_tqjzch" />
+                <MenuItem mnemonicParsing="false" onAction="#tqjzClick" text="%menu_data_tqjz" />
+                <MenuItem mnemonicParsing="false" onAction="#tqchClick" text="%menu_data_tqch" />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="%menu_option">
             <items>
 
-                <RadioMenuItem selected="true" text="%menu_option_zbms" onAction="#onTableModeClick"><toggleGroup><ToggleGroup fx:id="mode" /></toggleGroup></RadioMenuItem>
+                <RadioMenuItem onAction="#onTableModeClick" selected="true" text="%menu_option_zbms"><toggleGroup><ToggleGroup fx:id="mode" /></toggleGroup></RadioMenuItem>
                 <RadioMenuItem onAction="#onRecordModeClick" text="%menu_option_lyms" toggleGroup="$mode" />
                 <RadioMenuItem onAction="#onRewriteModeClick" text="%menu_option_zxms" toggleGroup="$mode" />
                 <!--<SeparatorMenuItem />-->
@@ -123,4 +124,15 @@
    <center>
       <TabPane fx:id="contentPane" prefHeight="209.0" prefWidth="526.0" BorderPane.alignment="CENTER" />
    </center>
+   <bottom>
+      <HBox alignment="CENTER_LEFT" style="-fx-border-width: 1; -fx-border-style: solid; -fx-border-color: lightgray;" BorderPane.alignment="CENTER">
+         <children>
+            <Label fx:id="statusL" style="-fx-font-size: 12;" text="Label">
+               <HBox.margin>
+                  <Insets bottom="5.0" left="5.0" top="5.0" />
+               </HBox.margin>
+            </Label>
+         </children>
+      </HBox>
+   </bottom>
 </BorderPane>

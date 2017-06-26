@@ -37,6 +37,7 @@ import java.util.concurrent.Executors;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
+import javafx.scene.input.MouseEvent;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.text.Font;
@@ -192,6 +193,7 @@ public class RecordTabController extends BaseController {
     public void initialize(URL location, ResourceBundle resources) {
         super.initialize(location, resources);
         tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        tableView.getSelectionModel().setCellSelectionEnabled(true);
     }
 
     public void startPreview(){
@@ -207,7 +209,7 @@ public class RecordTabController extends BaseController {
         fontSizeSlider.valueProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                double fontSize = (1 - newValue.doubleValue() / 100.0) * (48 - 12) + 12;
+                double fontSize = (1 - newValue.doubleValue() / 100.0) * (48 - 20) + 20;
                 tipTextArea.setFont(new Font(fontSize));
             }
         });
@@ -219,6 +221,10 @@ public class RecordTabController extends BaseController {
         ContextMenu tblContextMenu = new ContextMenu();
         MenuItem impAudio = new MenuItem("导入音频");
         MenuItem impVideo = new MenuItem("导入视频");
+        MenuItem delAudio = new MenuItem("删除音频");
+        MenuItem delVideo = new MenuItem("删除视频");
+        MenuItem expAudio = new MenuItem("导出音频");
+        MenuItem expVideo = new MenuItem("导出视频");
 
         impAudio.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -244,7 +250,35 @@ public class RecordTabController extends BaseController {
             }
         });
 
-        tblContextMenu.getItems().addAll(impAudio,impVideo);
+        delAudio.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                cb_delAudio.getSelectionModel().select(1);
+            }
+        });
+
+        delVideo.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                cb_delVideo.getSelectionModel().select(1);
+            }
+        });
+
+        expAudio.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                cb_exportAudio.getSelectionModel().select(1);
+            }
+        });
+
+        expVideo.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                cb_exportVideo.getSelectionModel().select(1);
+            }
+        });
+
+        tblContextMenu.getItems().addAll(impAudio,impVideo,delAudio,delVideo,expAudio,expVideo);
         tableView.setContextMenu(tblContextMenu);
 
         Callback<TableColumn<Record,String>,TableCell<Record,String>> callback = (TableColumn<Record,String> col) -> new MyCell();
@@ -359,9 +393,9 @@ public class RecordTabController extends BaseController {
         if (tableType.equals("0")) {
             tableView.getColumns().addAll(codeCol, doneCol,videoDoneCol, contentCol, englishCol, yunCol, noteCol, rankCol, spellCol, IPACol, recordDateCol);
         }else if (tableType.equals("1")){
-            tableView.getColumns().addAll(doneCol,videoDoneCol, codeCol, rankCol, contentCol, mwfyCol, IPACol, spellCol,englishCol, noteCol, recordDateCol);
+            tableView.getColumns().addAll(codeCol,doneCol,videoDoneCol, rankCol, contentCol, mwfyCol, IPACol, spellCol,englishCol, noteCol, recordDateCol);
         }else if (tableType.equals("2")){
-            tableView.getColumns().addAll(doneCol,videoDoneCol, codeCol, rankCol, contentCol, mwfyCol, IPACol, freeTran, noteCol, englishCol, recordDateCol);
+            tableView.getColumns().addAll(codeCol,doneCol,videoDoneCol, rankCol, contentCol, mwfyCol, IPACol, freeTran, noteCol, englishCol, recordDateCol);
         }
 
 
@@ -638,6 +672,21 @@ public class RecordTabController extends BaseController {
             }
         });
 
+        tableView.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                int selIndex = tableView.getSelectionModel().getSelectedIndex();
+                if (selIndex != -1) {
+                    Record r = tableView.getItems().get(selIndex);
+
+                    if (tableView.getSelectionModel().getSelectedCells().size() != 0) {
+                        TablePosition position = tableView.getSelectionModel().getSelectedCells().get(0);
+                        tipTextArea.setText(((StringProperty) position.getTableColumn().getCellValueFactory().call(new TableColumn.CellDataFeatures<>(tableView, position.getTableColumn(), r))).get());
+                    }
+                }
+            }
+        });
+
         //点击表格 选中行
         tableView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Record>() {
             @Override
@@ -647,7 +696,10 @@ public class RecordTabController extends BaseController {
                 if (selIndex != -1){
                     Record r = tableView.getItems().get(selIndex);
 
-                    tipTextArea.setText(r.getContent());
+                    if (tableView.getSelectionModel().getSelectedCells().size() != 0) {
+                        TablePosition position = tableView.getSelectionModel().getSelectedCells().get(0);
+                        tipTextArea.setText(((StringProperty) position.getTableColumn().getCellValueFactory().call(new TableColumn.CellDataFeatures<>(tableView, position.getTableColumn(), r))).get());
+                    }
 
                     File demoPFile = FileUtil.searchFile( Constant.DEMO_PIC_DIR + "/",r.getUuid());
                     File demoVFile = FileUtil.searchFile(Constant.DEMO_Video_DIR + "/",r.getUuid());
@@ -744,7 +796,7 @@ public class RecordTabController extends BaseController {
 
                     }
                 }
-
+                cb_delAudio.getSelectionModel().select(0);
                 tableView.refresh();
             }
         });
@@ -772,6 +824,7 @@ public class RecordTabController extends BaseController {
 
                     }
                 }
+                cb_delVideo.getSelectionModel().select(0);
             }
         });
         //分辨率
@@ -843,8 +896,8 @@ public class RecordTabController extends BaseController {
                     tableView.setItems(recordDatas.filtered(new Predicate<Record>() {
                         @Override
                         public boolean test(Record record) {
-                            if (record.done.equals("1")){
-                                System.out.println(record.baseCode);
+                            File demoVFile = new File(getSelItemVideoPath(record));
+                            if (record.done.equals("1") || demoVFile.exists()){
                                 return true;
                             }
                             return false;
@@ -856,8 +909,8 @@ public class RecordTabController extends BaseController {
                     tableView.setItems(recordDatas.filtered(new Predicate<Record>() {
                         @Override
                         public boolean test(Record record) {
-                            if (record.done.equals("0")){
-                                System.out.println(record.baseCode);
+                            File demoVFile = new File(getSelItemVideoPath(record));
+                            if (record.done.equals("0") && !demoVFile.exists()){
                                 return true;
                             }
                             return false;
@@ -876,11 +929,17 @@ public class RecordTabController extends BaseController {
                         ||newValue.toString().endsWith("0")){
                     return;
                 }
-                List<File> files = DialogUtil.chooseAudio(!newValue.toString().equals("1"));
-                if (files==null||files.size()==0){
-                    return;
+                cb_importAudio.getSelectionModel().select(0);
+
+                ObservableList temp = Integer.parseInt(newValue.toString()) == 1?tableView.getSelectionModel().getSelectedItems():tableView.getItems();
+                if (temp != null && temp.size() != 0){
+                    List<File> files = DialogUtil.chooseAudio(!newValue.toString().equals("1"));
+                    if (files==null||files.size()==0){
+                        return;
+                    }
+
+                    importMedia(temp,files,Integer.valueOf(newValue.toString()),true);
                 }
-                importMedia(tableView.getSelectionModel().getSelectedItems(),files,Integer.valueOf(newValue.toString()),true);
             }
         });
 
@@ -893,11 +952,16 @@ public class RecordTabController extends BaseController {
                         ||newValue.toString().equals("0")){
                     return;
                 }
-                List<File> files = DialogUtil.chooseVideo(!newValue.toString().equals("1"));
-                if (files==null||files.size()==0){
-                    return;
+                cb_importVideo.getSelectionModel().select(0);
+
+                ObservableList temp = Integer.parseInt(newValue.toString()) == 1?tableView.getSelectionModel().getSelectedItems():tableView.getItems();
+                if (temp != null && temp.size() != 0) {
+                    List<File> files = DialogUtil.chooseVideo(!newValue.toString().equals("1"));
+                    if (files==null||files.size()==0){
+                        return;
+                    }
+                    importMedia(temp, files, Integer.valueOf(newValue.toString()), false);
                 }
-                importMedia(tableView.getSelectionModel().getSelectedItems(),files,Integer.valueOf(newValue.toString()),false);
             }
         });
 
@@ -905,34 +969,39 @@ public class RecordTabController extends BaseController {
         cb_exportAudio.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                if (newValue.toString().equals("-1")){
+                if (newValue.toString().equals("-1") || newValue.toString().equals("0")){
                     return;
                 }
-                //0 编码导出选中
-                //1 中文导出选中
-                //2 英文导出选中
-                //3 编码+中文导出选中
-                //4 编码导出全部
-                //5 中文导出全部
-                //6 英文导出全部
-                //7 编码+中文导出全部
-                File file = DialogUtil.selDir();
-                List<Record> records ;
-                int type = newValue.intValue();
+                cb_exportAudio.getSelectionModel().select(0);
+                //1 编码导出选中
+                //2 中文导出选中
+                //3 英文导出选中
+                //4 编码+中文导出选中
+                //5 编码导出全部
+                //6 中文导出全部
+                //7 英文导出全部
+                //8 编码+中文导出全部
+                if (tableView.getSelectionModel().getSelectedItems().size() != 0 || newValue.intValue() >= 5){
+                    File file = DialogUtil.selDir();
+                    if (file != null){
+                        List<Record> records ;
+                        int type = newValue.intValue();
 
-                if (newValue.intValue()>=4){
-                    type -=4;
-                    records = tableView.getItems();
-                }else {
-                    records = tableView.getSelectionModel().getSelectedItems();
-                }
+                        if (newValue.intValue()>=5){
+                            type -=4;
+                            records = tableView.getItems();
+                        }else {
+                            records = tableView.getSelectionModel().getSelectedItems();
+                        }
 
-                try {
-                    exportMedia(records,file,type,true);
-                } catch (NoSuchFieldException e) {
-                    e.printStackTrace();
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
+                        try {
+                            exportMedia(records,file,type,true);
+                        } catch (NoSuchFieldException e) {
+                            e.printStackTrace();
+                        } catch (IllegalAccessException e) {
+                            e.printStackTrace();
+                        }
+                    }
                 }
             }
         });
@@ -940,34 +1009,35 @@ public class RecordTabController extends BaseController {
         cb_exportVideo.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                if (newValue.toString().equals("-1")){
+                if (newValue.toString().equals("-1") || newValue.toString().equals("0")){
                     return;
                 }
-                File file = DialogUtil.selDir();
+                cb_exportVideo.getSelectionModel().select(0);
+                if (tableView.getSelectionModel().getSelectedItems().size() != 0 || newValue.intValue() >= 4){
+                    File file = DialogUtil.selDir();
 
-                //0 编码导出选中
-                //1 中文导出选中
-                //2 英文导出选中
-                //3 编码导出全部
-                //4 中文导出全部
-                //5 英文导出全部
-                int type = newValue.intValue();
-                List<Record> records;
-                if (type>=3){
-                    type -= 3;
-                    records = tableView.getItems();
-                }else {
-                    records = tableView.getSelectionModel().getSelectedItems();
+                    //1 编码导出选中
+                    //2 中文导出选中
+                    //3 英文导出选中
+                    //4 编码导出全部
+                    //5 中文导出全部
+                    //6 英文导出全部
+                    int type = newValue.intValue();
+                    List<Record> records;
+                    if (type>=4){
+                        type -= 3;
+                        records = tableView.getItems();
+                    }else {
+                        records = tableView.getSelectionModel().getSelectedItems();
+                    }
+                    try {
+                        exportMedia(records,file,type,false);
+                    } catch (NoSuchFieldException e) {
+                        e.printStackTrace();
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    }
                 }
-                try {
-                    exportMedia(records,file,type,false);
-                } catch (NoSuchFieldException e) {
-                    e.printStackTrace();
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                }
-
-
             }
         });
     }
@@ -1083,19 +1153,23 @@ public class RecordTabController extends BaseController {
     private void onPlayNextAudioClick(){
         if(mediaPlayer==null){
             int index = tableView.getSelectionModel().getSelectedIndex();
-            if(index<tableView.getItems().size()-1){
+            if(index<tableView.getItems().size()){
                 tableView.getSelectionModel().clearSelection();
-                tableView.getSelectionModel().select(index+1);
+                tableView.getSelectionModel().select(index);
                 playAudio(btn_playNextAudio,"resource/img/b4.png","resource/img/b7.png",true);
             }
         }else {
-            if (mediaPlayer.getStatus()== MediaPlayer.Status.PLAYING){
-                mediaPlayer.pause();
-            }else if (mediaPlayer.getStatus()== MediaPlayer.Status.PAUSED
-                    ||mediaPlayer.getStatus()==MediaPlayer.Status.STOPPED
-                    ){
-                mediaPlayer.play();
-            }
+            mediaPlayer.stop();
+            ((ImageView) btn_playNextAudio.getGraphic()).setImage(new Image(Main.class.getResourceAsStream("resource/img/b4.png")));
+            mediaPlayer.dispose();
+            mediaPlayer = null;
+//            if (mediaPlayer.getStatus()== MediaPlayer.Status.PLAYING){
+//                mediaPlayer.pause();
+//            }else if (mediaPlayer.getStatus()== MediaPlayer.Status.PAUSED
+//                    ||mediaPlayer.getStatus()==MediaPlayer.Status.STOPPED
+//                    ){
+//                mediaPlayer.play();
+//            }
         }
     }
 
@@ -1112,6 +1186,12 @@ public class RecordTabController extends BaseController {
 //                    if (playAfterRelease){
                     mediaPlayer.dispose();
                     mediaPlayer = null;
+                    if (btn == btn_playNextAudio){
+                        tableView.getSelectionModel().selectNext();
+                        onPlayNextAudioClick();
+                    }
+
+
 //                    }
                 }
             });
@@ -1172,6 +1252,7 @@ public class RecordTabController extends BaseController {
                 aRecord.stopRecorder(false);
             }
         }
+
     }
 
     private void setBtnVisableChange(){
@@ -1341,8 +1422,17 @@ public class RecordTabController extends BaseController {
                                 if (index != -1 && index != tableView.getItems().size() - 1){
                                     try {
                                         Thread.sleep(2000);
-                                        tableView.getSelectionModel().clearSelection();
-                                        tableView.getSelectionModel().select(index + 1);
+
+                                        TablePosition positin = null;
+                                        if (tableView.getSelectionModel().getSelectedCells().size() == 1){
+                                            positin = tableView.getSelectionModel().getSelectedCells().get(0);
+                                            if (positin.getRow() < tableView.getItems().size() - 1){
+                                                tableView.getSelectionModel().clearAndSelect(positin.getRow() + 1,positin.getTableColumn());
+                                            }else {
+                                                tableView.getSelectionModel().clearSelection();
+                                            }
+                                        }
+
                                         onAudioClick(null);
                                     } catch (InterruptedException e) {
                                         e.printStackTrace();
@@ -1683,7 +1773,7 @@ public class RecordTabController extends BaseController {
             if (empty && getIndex()<0){
 
             }else {
-                if (getTableRow() != null) {
+                if (getTableRow() != null && getTableRow().getIndex() < getTableViewItems().size()) {
                     String colName = getTableColumn().getText();
                     Record r = ((Record) getTableViewItems().get(getTableRow().getIndex()));
                     if (colName.equalsIgnoreCase("录音状态")){

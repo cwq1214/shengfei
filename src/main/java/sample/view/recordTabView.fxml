@@ -24,6 +24,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 <?import sample.controller.widget.VideoPlayer?>
 
 <AnchorPane prefHeight="600" prefWidth="800" stylesheets="@css/sf.css,@css/fontTimeNewRoman.css" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.controller.RecordTabController">
@@ -134,7 +135,10 @@
         <!---->
         <Label />
          <HBox maxHeight="100.0" minHeight="100.0" prefHeight="100.0">
-             <TextArea fx:id="tipTextArea" prefWidth="5000.0" />
+             <TextArea fx:id="tipTextArea" prefWidth="5000.0">
+            <font>
+               <Font name="Times New Roman" size="20.0" />
+            </font></TextArea>
              <Slider fx:id="fontSizeSlider" orientation="VERTICAL" value="100" />
          </HBox>
         <!---->
@@ -165,8 +169,8 @@
 
                 <HBox alignment="CENTER" GridPane.columnIndex="3" GridPane.rowIndex="1">
                     <Label text="条目时长" />
-                    <ChoiceBox fx:id="cb_recordSpace" value="2">
-                        <String fx:value="2" />
+                    <ChoiceBox fx:id="cb_recordSpace" value="3">
+                        <String fx:value="3" />
                         <String fx:value="4" />
                         <String fx:value="6" />
                         <String fx:value="8" />

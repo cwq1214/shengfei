@@ -146,6 +146,7 @@ public class VideoPlayer extends VBox implements Initializable {
             sl_progress.setMax(1f);
             sl_progress.setMin(0f);
             mediaPlayer.volumeProperty().bind(sl_volume.valueProperty().divide(50));
+            sl_volume.setValue(100);
             mediaPlayer.currentTimeProperty().addListener(new ChangeListener<Duration>() {
                 @Override
                 public void changed(ObservableValue<? extends Duration> observable, Duration oldValue, Duration newValue) {

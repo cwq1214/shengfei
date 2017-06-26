@@ -71,7 +71,7 @@ public class YBCCController extends BaseController {
         this.analyDatas = FXCollections.observableArrayList(analyDatas.filtered(new Predicate<YBCCBean>() {
             @Override
             public boolean test(YBCCBean bean) {
-                if (bean.getRecord().getIPA() == null || bean.getRecord().getIPA().length() == 0){
+                if (bean.getRecord().getIPA() == null || bean.getRecord().getIPA().length() == 0 || bean.getRecord().getHide().equals("1")){
                     return false;
                 }
                 return true;
@@ -489,5 +489,35 @@ public class YBCCController extends BaseController {
                 newTableViewVC.setAfterAnalyDatas(analyDatas);
             }
         });
+    }
+
+    public static ObservableList<YBCCBean> analyDatas(ObservableList<YBCCBean> beforeAnaly){
+        beforeAnaly = beforeAnaly.filtered(new Predicate<YBCCBean>() {
+            @Override
+            public boolean test(YBCCBean bean) {
+                if (bean.getRecord().getIPA() == null || bean.getRecord().getIPA().length() == 0 || bean.getRecord().getHide().equals("1")){
+                    return false;
+                }
+                return true;
+            }
+        });
+
+        YBCCController vc = new YBCCController();
+        for (int i = 0; i < beforeAnaly.size(); i++) {
+            YBCCBean bean = beforeAnaly.get(i);
+
+            if (bean.getSmList() != null) bean.getSmList().clear();
+            if (bean.getYmList() != null) bean.getYmList().clear();
+            if (bean.getSdList() != null) bean.getSdList().clear();
+
+            //分析得出有可能错误
+            if (vc.hasWrong(bean)) {
+                //错误出现声母变为空 声调变为空  韵母为IPA
+                bean.addSm("无");
+                bean.addYm(bean.getRecord().getIPA());
+                bean.addSd("无");
+            }
+        }
+        return FXCollections.observableArrayList(beforeAnaly);
     }
 }
