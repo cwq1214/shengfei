@@ -121,7 +121,7 @@
                         </ImageView>
                     </graphic>
                 </Button>
-                <Button>
+                <Button onAction="#praatClick">
                     <graphic>
                         <ImageView fitHeight="16.0" fitWidth="16.0" rotate="180">
                             <image>
@@ -303,7 +303,7 @@
                 <Tab fx:id="tab_recordVideo" closable="false" text="视频录制">
                     <ImageView fx:id="img" fitHeight="300" fitWidth="400" preserveRatio="true" />
                 </Tab>
-                <Tab closable="false" text="语图" />
+                <Tab fx:id="tab_langPic" closable="false" text="语图" />
             </TabPane>
         </SplitPane>
     </VBox>

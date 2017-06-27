@@ -25,6 +25,7 @@ import javafx.util.Callback;
 import javafx.util.StringConverter;
 import javafx.util.converter.DefaultStringConverter;
 import sample.controller.BaseController;
+import sample.controller.MainController;
 import sample.controller.NewTableView.NewTableView;
 import sample.controller.ReplaceViewController;
 import sample.controller.SearchViewController;
@@ -478,6 +479,8 @@ public class RewriteViewController extends BaseController {
         sortItem.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
+                MainController.setStatusContent("记录排序");
+
                 TableColumn c = searchColumn(headerMenu);
                 if (tableView.getSortOrder().size() == 0){
                     c.setSortType(TableColumn.SortType.ASCENDING);
@@ -501,6 +504,8 @@ public class RewriteViewController extends BaseController {
         changeItem.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
+                MainController.setStatusContent("记录排序");
+
                 TableColumn c = searchColumn(headerMenu);
                 System.out.println(c.getText());
             }
@@ -508,6 +513,8 @@ public class RewriteViewController extends BaseController {
         hideItem.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
+                MainController.setStatusContent("隐藏列");
+
                 TableColumn c = searchColumn(headerMenu);
                 tableView.getColumns().remove(c);
             }
@@ -516,6 +523,8 @@ public class RewriteViewController extends BaseController {
             @Override
             public void handle(ActionEvent event) {
                 try {
+                    MainController.setStatusContent("搜索");
+
                     SearchViewController searchViewController = (SearchViewController) ViewUtil.getInstance().openSearchDialog();
                     List columnsName = getTableColumnNameList();
                     searchViewController.setSearchTableTitleName(columnsName);
@@ -565,6 +574,8 @@ public class RewriteViewController extends BaseController {
         replaceItem.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
+                MainController.setStatusContent("替换");
+
                 try{
                     ReplaceViewController controller = (ReplaceViewController) ViewUtil.getInstance().openReplaceDialog();
                     controller.setChoiceBoxItems(getTableColumnNameList());
@@ -890,6 +901,8 @@ public class RewriteViewController extends BaseController {
 
         tableDatas = FXCollections.observableArrayList(originDatas);
         tableView.setItems(tableDatas);
+
+        MainController.setStatusContent("共："+ tableDatas.size() +"条");
     }
 
     private void editNext(TableColumn column,int rowIndex){

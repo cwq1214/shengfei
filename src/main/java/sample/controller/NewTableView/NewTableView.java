@@ -567,9 +567,11 @@ public class NewTableView extends BaseController {
                         tableDatas = FXCollections.observableArrayList(originDatas);
                         tableView.setItems(tableDatas);
                         tableView.refresh();
+                        MainController.setStatusContent("刷新，共："+tableDatas.size()+"条");
                         break;
                     case SelectAllBtnClick:
                         tableView.getSelectionModel().selectAll();
+                        MainController.setStatusContent("全选，共："+tableDatas.size()+"条");
                         break;
                     case SelectAnotherBtnClick:{
                         ObservableList postions = tableView.getSelectionModel().getSelectedIndices();
@@ -580,18 +582,24 @@ public class NewTableView extends BaseController {
                                 tableView.getSelectionModel().select(i);
                             }
                         }
+                        MainController.setStatusContent("反选，共："+tableView.getSelectionModel().getSelectedItems().size()+"条");
                         break;
                     }
                     case KeepBtnClick: {
                         keepBtnClick();
+                        MainController.setStatusContent("保留，共："+tableView.getSelectionModel().getSelectedItems().size()+"条");
                         break;
                     }
                     case DisappearBtnClick: {
+                        MainController.setStatusContent("隐藏，共："+tableView.getSelectionModel().getSelectedItems().size()+"条");
                         disapperBtnClick();
+
                         break;
                     }
                     case DelBtnClick: {
+                        MainController.setStatusContent("删除，共："+tableView.getSelectionModel().getSelectedItems().size()+"条");
                         delBtnClick();
+
                         break;
                     }
                     case ShowAllBtnClick:
@@ -601,6 +609,7 @@ public class NewTableView extends BaseController {
                         tableView.getSelectionModel().select(0);
                         tableTopCtl.setNowIndex(0);
                         tableView.refresh();
+                        MainController.setStatusContent("全部显示，共："+tableDatas.size()+"条");
                         break;
                     case ShowOnlyKeepBtnClick:
                         tableDatas = FXCollections.observableArrayList(originDatas.filtered(new Predicate<YBCCBean>(){
@@ -617,6 +626,7 @@ public class NewTableView extends BaseController {
                         tableView.getSelectionModel().select(0);
                         tableTopCtl.setNowIndex(0);
                         tableView.refresh();
+                        MainController.setStatusContent("显示保留条目，共："+tableDatas.size()+"条");
                         break;
                     case ShowOnlyDisappearBtnClick:
                         tableDatas = FXCollections.observableArrayList(originDatas.filtered(new Predicate<YBCCBean>(){
@@ -633,13 +643,16 @@ public class NewTableView extends BaseController {
                         tableView.getSelectionModel().select(0);
                         tableTopCtl.setNowIndex(0);
                         tableView.refresh();
+                        MainController.setStatusContent("显示隐藏条目，共："+tableDatas.size()+"条");
                         break;
                     case SaveBtnClick:
                         saveBtnClick();
+                        MainController.setStatusContent("保存，共："+tableDatas.size()+"条");
                         break;
                     case UnionBtnClick:
                         saveBtnClick();
                         unionBtnClick();
+                        MainController.setStatusContent("统一编码");
                         break;
                 }
             }

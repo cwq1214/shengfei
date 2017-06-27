@@ -5,6 +5,7 @@ package sample.util;
  */
 public class Constant {
     public static String ROOT_FILE_DIR = "shengfeiTemp";
+    public static String PRAAT = ROOT_FILE_DIR + "/praat";
     public static String DEMO_PIC_DIR = ROOT_FILE_DIR + "/DemoPic";
     public static String TEMP_DIR = ROOT_FILE_DIR + "/temp";
     public static String DEMO_Video_DIR = ROOT_FILE_DIR + "/DemoVideo";

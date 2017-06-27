@@ -12,6 +12,7 @@ import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -137,6 +138,9 @@ public class RecordTabController extends BaseController {
     private ImageView demoImgView;
     @FXML
     private VideoPlayer demoVideoPlayer;
+
+    @FXML
+    private Tab tab_langPic;
 
     @FXML
     private TextArea tipTextArea;
@@ -401,6 +405,30 @@ public class RecordTabController extends BaseController {
 
     }
 
+    public void praatClick(){
+        if (tableView.getSelectionModel().getSelectedItems().size() != 0){
+            if (tableView.getSelectionModel().getSelectedItems().get(0).getDone().equals("0")){
+                ToastUtil.show("该条目未录音");
+                return;
+            }
+            try {
+                Runtime.getRuntime().exec("cmd /c start "+ new File(Constant.PRAAT + "/praat.exe").getAbsolutePath());
+                Thread.sleep(500);
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            String param = "#Read from file... " + new File(getSelItemAudioPath(tableView.getSelectionModel().getSelectedItems().get(0))).getAbsolutePath() + "#   #Edit# ";
+            param = param.replace("#","\"");
+            try {
+                Runtime.getRuntime().exec("cmd /c start "+ new File(Constant.PRAAT + "/sendpraat.exe").getAbsolutePath() + " praat "+ param);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     public ContextMenu setupHeaderMenu(boolean sort,boolean change,boolean hide,boolean search,boolean replace){
         ContextMenu headerMenu = new ContextMenu();
         MenuItem sortItem = new MenuItem("记录排序");
@@ -593,11 +621,11 @@ public class RecordTabController extends BaseController {
                 recordDatas = FXCollections.observableArrayList(DbHelper.getInstance().searchTempRecordKeep(tableType,t.getId()));
                 try {
                     tableView.getItems().clear();
-
                 }catch (Exception e){
                     e.printStackTrace();
                 }
                 tableView.setItems(recordDatas);
+                MainController.setStatusContent("刷新，共："+tableView.getItems().size()+"条");
             }
         });
 
@@ -772,6 +800,7 @@ public class RecordTabController extends BaseController {
         cb_delAudio.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                MainController.setStatusContent(cb_delAudio.getItems().get(Integer.parseInt(newValue.toString())).toString());
                 if (newValue.intValue()==1){//删除选中条目
                     List<Record> selItems = tableView.getSelectionModel().getSelectedItems();
                     if (selItems!=null&&selItems.size()!=0){
@@ -804,6 +833,7 @@ public class RecordTabController extends BaseController {
         cb_delVideo.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                MainController.setStatusContent(cb_delVideo.getItems().get(Integer.parseInt(newValue.toString())).toString());
                 if (newValue.intValue()==1){//删除选中条目
                     List<Record> selItems = tableView.getSelectionModel().getSelectedItems();
                     if (selItems!=null&&selItems.size()!=0){
@@ -881,7 +911,7 @@ public class RecordTabController extends BaseController {
         cb_tableShowMode.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                System.out.println(newValue.toString());
+                MainController.setStatusContent(cb_tableShowMode.getItems().get(Integer.parseInt(newValue.toString())).toString());
                 if (newValue.intValue()==0){//显示全部
                     tableView.setItems(recordDatas.filtered(new Predicate<Record>() {
                         @Override
@@ -929,6 +959,7 @@ public class RecordTabController extends BaseController {
                         ||newValue.toString().endsWith("0")){
                     return;
                 }
+                MainController.setStatusContent(cb_importAudio.getItems().get(Integer.parseInt(newValue.toString())).toString());
                 cb_importAudio.getSelectionModel().select(0);
 
                 ObservableList temp = Integer.parseInt(newValue.toString()) == 1?tableView.getSelectionModel().getSelectedItems():tableView.getItems();
@@ -952,6 +983,7 @@ public class RecordTabController extends BaseController {
                         ||newValue.toString().equals("0")){
                     return;
                 }
+                MainController.setStatusContent(cb_importVideo.getItems().get(Integer.parseInt(newValue.toString())).toString());
                 cb_importVideo.getSelectionModel().select(0);
 
                 ObservableList temp = Integer.parseInt(newValue.toString()) == 1?tableView.getSelectionModel().getSelectedItems():tableView.getItems();
@@ -972,6 +1004,7 @@ public class RecordTabController extends BaseController {
                 if (newValue.toString().equals("-1") || newValue.toString().equals("0")){
                     return;
                 }
+                MainController.setStatusContent(cb_exportAudio.getItems().get(Integer.parseInt(newValue.toString())).toString());
                 cb_exportAudio.getSelectionModel().select(0);
                 //1 编码导出选中
                 //2 中文导出选中
@@ -1012,6 +1045,7 @@ public class RecordTabController extends BaseController {
                 if (newValue.toString().equals("-1") || newValue.toString().equals("0")){
                     return;
                 }
+                MainController.setStatusContent(cb_exportVideo.getItems().get(Integer.parseInt(newValue.toString())).toString());
                 cb_exportVideo.getSelectionModel().select(0);
                 if (tableView.getSelectionModel().getSelectedItems().size() != 0 || newValue.intValue() >= 4){
                     File file = DialogUtil.selDir();
@@ -1135,6 +1169,7 @@ public class RecordTabController extends BaseController {
     //播放音频
     @FXML
     private void onPlayAudioClick(){
+        MainController.setStatusContent("播放音频");
         if (mediaPlayer==null){
             playAudio(btn_playAudio,"resource/img/b3.png","resource/img/b2.png",false);
         }else {
@@ -1321,6 +1356,7 @@ public class RecordTabController extends BaseController {
             @Override
             public void beginRecord() {
                 System.out.println("begin record video");
+                MainController.setStatusContent("开始视频录制");
                 setBtnVisableChange();
             }
 
@@ -1343,6 +1379,7 @@ public class RecordTabController extends BaseController {
             @Override
             public void finishRecord() {
                 System.out.println("finish record video");
+                MainController.setStatusContent("停止视频录制");
                 if (cb_cover.isSelected()){
                     selectRecord.setCreateDate(record_simpleDateFormat.format(new Date()));
                 }
@@ -1353,6 +1390,7 @@ public class RecordTabController extends BaseController {
 
             @Override
             public void errorRecord() {
+                MainController.setStatusContent("视频录制发生错误");
                 if (aRecord!=null){
                     aRecord.stopRecorder(false);
                 }
@@ -1366,6 +1404,7 @@ public class RecordTabController extends BaseController {
 
             @Override
             public void errorRecord() {
+                MainController.setStatusContent("音频录制发生错误");
 //                if (aRecord!=null){
 //                    aRecord.stopRecorder(false);
 //                }
@@ -1385,6 +1424,7 @@ public class RecordTabController extends BaseController {
             @Override
             public void beginRecording() {
                 System.out.println("begin record audio");
+                MainController.setStatusContent("开始音频录制");
                 setBtnVisableChange();
             }
 
@@ -1409,6 +1449,7 @@ public class RecordTabController extends BaseController {
             public void finishRecording(boolean isStopFromUser) {
                 System.out.println("finish record audio:"+isStopFromUser);
                 if (!isRecordVideo){
+                    MainController.setStatusContent("停止音频录制");
                     selectRecord.setDone("1");
                     selectRecord.setCreateDate(record_simpleDateFormat.format(new Date()));
                     DbHelper.getInstance().updateRecord(selectRecord);

@@ -52,7 +52,12 @@ public class MainController extends BaseController {
     static MainController mainController;
     public static void setStatusContent(String tip){
         if (mainController != null){
-            mainController.statusL.setText(tip);
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    mainController.statusL.setText(tip);
+                }
+            });
         }
     }
 
@@ -276,7 +281,7 @@ public class MainController extends BaseController {
 
                 contentPane.getTabs().remove(nowIndex);
 
-                Tab tab = WidgetUtil.createNewTab(t.getText() + "-转写模式", rvc.getmParent());
+                Tab tab = WidgetUtil.createNewTab((t.getText().contains("-")?t.getText().substring(0,t.getText().indexOf("-")):t.getText()) + "-转写模式", rvc.getmParent());
                 WidgetUtil.addTabToTabPane(contentPane, tab,true,rvc);
                 WidgetUtil.selectTab(tab);
             }
@@ -961,7 +966,7 @@ public class MainController extends BaseController {
 
                     contentPane.getTabs().remove(nowIndex);
 
-                    Tab tab = WidgetUtil.createNewTab(t.getText() + "-录制", controller.getmParent());
+                    Tab tab = WidgetUtil.createNewTab((t.getText().contains("-")?t.getText().substring(0,t.getText().indexOf("-")):t.getText()) + "-录制", controller.getmParent());
 
                     tab.setOnClosed(new EventHandler<Event>() {
                         @Override
