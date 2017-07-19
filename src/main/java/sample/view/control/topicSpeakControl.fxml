@@ -5,85 +5,107 @@
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<fx:root minHeight="210.0" type="javafx.scene.layout.VBox" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1">
+<fx:root spacing="5.0" stylesheets="@../css/topicspeakcss.css" type="javafx.scene.layout.VBox" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <HBox alignment="CENTER_LEFT" prefHeight="30.0">
+      <HBox alignment="CENTER_LEFT">
          <children>
             <Label fx:id="ipaLB" minWidth="120.0" text="(SPK1)音标注音">
                <HBox.margin>
                   <Insets left="5.0" />
                </HBox.margin></Label>
-            <TextArea fx:id="ipaTF" minHeight="30.0" prefWidth="5000.0">
+            <TextArea fx:id="ipaTF" minHeight="25.0" prefHeight="30.0" prefWidth="5000.0">
                <HBox.margin>
                   <Insets right="10.0" />
-               </HBox.margin></TextArea>
+               </HBox.margin>
+               <font>
+                  <Font size="18.0" />
+               </font></TextArea>
          </children></HBox>
-       <HBox alignment="CENTER_LEFT" prefHeight="30.0">
+       <HBox alignment="CENTER_LEFT">
            <children>
                <Label fx:id="mwfyLB" minWidth="120.0" text="(SPK1)民文或方言">
                    <HBox.margin>
                        <Insets left="5.0" />
                    </HBox.margin></Label>
-               <TextArea fx:id="mwfyTF" minHeight="30.0" prefWidth="5000.0">
+               <TextArea fx:id="mwfyTF" minHeight="25.0" prefHeight="30.0" prefWidth="5000.0">
                <HBox.margin>
                   <Insets right="10.0" />
-               </HBox.margin></TextArea>
+               </HBox.margin>
+               <font>
+                  <Font size="18.0" />
+               </font></TextArea>
            </children></HBox>
-       <HBox alignment="CENTER_LEFT" prefHeight="30.0">
+       <HBox alignment="CENTER_LEFT">
            <children>
                <Label fx:id="spellLB" minWidth="120.0" text="(SPK1)拼音">
                    <HBox.margin>
                        <Insets left="5.0" />
                    </HBox.margin></Label>
-               <TextArea fx:id="spellTF" minHeight="30.0" prefWidth="5000.0">
+               <TextArea fx:id="spellTF" minHeight="25.0" prefHeight="30.0" prefWidth="5000.0">
                <HBox.margin>
                   <Insets right="10.0" />
-               </HBox.margin></TextArea>
+               </HBox.margin>
+               <font>
+                  <Font size="18.0" />
+               </font></TextArea>
            </children></HBox>
-       <HBox alignment="CENTER_LEFT" prefHeight="30.0">
+       <HBox alignment="CENTER_LEFT">
            <children>
                <Label fx:id="wordTranLB" minWidth="120.0" text="(SPK1)普通话词对译">
                    <HBox.margin>
                        <Insets left="5.0" />
                    </HBox.margin></Label>
-               <TextArea fx:id="wordTranTF" minHeight="30.0" prefWidth="5000.0">
+               <TextArea fx:id="wordTranTF" minHeight="25.0" prefHeight="30.0" prefWidth="5000.0">
                <HBox.margin>
                   <Insets right="10.0" />
-               </HBox.margin></TextArea>
+               </HBox.margin>
+               <font>
+                  <Font size="18.0" />
+               </font></TextArea>
            </children></HBox>
-       <HBox alignment="CENTER_LEFT" prefHeight="30.0">
+       <HBox alignment="CENTER_LEFT">
            <children>
                <Label fx:id="freeTranLB" minWidth="120.0" text="(SPK1)普通话意译">
                    <HBox.margin>
                        <Insets left="5.0" />
                    </HBox.margin></Label>
-               <TextArea fx:id="freeTranTF" minHeight="30.0" prefWidth="5000.0">
+               <TextArea fx:id="freeTranTF" minHeight="25.0" prefHeight="30.0" prefWidth="5000.0">
                <HBox.margin>
                   <Insets right="10.0" />
-               </HBox.margin></TextArea>
+               </HBox.margin>
+               <font>
+                  <Font size="18.0" />
+               </font></TextArea>
            </children></HBox>
-       <HBox alignment="CENTER_LEFT" prefHeight="30.0">
+       <HBox alignment="CENTER_LEFT">
            <children>
                <Label fx:id="noteLB" minWidth="120.0" text="(SPK1)注释">
                    <HBox.margin>
                        <Insets left="5.0" />
                    </HBox.margin></Label>
-               <TextArea fx:id="noteTF" minHeight="30.0" prefWidth="5000.0">
+               <TextArea fx:id="noteTF" minHeight="25.0" prefHeight="30.0" prefWidth="5000.0">
                <HBox.margin>
                   <Insets right="10.0" />
-               </HBox.margin></TextArea>
+               </HBox.margin>
+               <font>
+                  <Font size="18.0" />
+               </font></TextArea>
            </children></HBox>
-       <HBox alignment="CENTER_LEFT" prefHeight="30.0">
+       <HBox alignment="CENTER_LEFT">
            <children>
                <Label fx:id="englishLB" minWidth="120.0" text="(SPK1)英语">
                    <HBox.margin>
                        <Insets left="5.0" />
                    </HBox.margin></Label>
-               <TextArea fx:id="englishTF" minHeight="30.0" prefWidth="5000.0">
+               <TextArea fx:id="englishTF" minHeight="25.0" prefHeight="30.0" prefWidth="5000.0">
                <HBox.margin>
                   <Insets right="10.0" />
-               </HBox.margin></TextArea>
+               </HBox.margin>
+               <font>
+                  <Font size="18.0" />
+               </font></TextArea>
            </children></HBox>
    </children>
 </fx:root>

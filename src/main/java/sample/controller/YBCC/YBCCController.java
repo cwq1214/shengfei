@@ -239,7 +239,7 @@ public class YBCCController extends BaseController {
                     if (!isFindSm){
                         //元音开头
                         if (i == 0){
-                            sm = "";
+                            sm = "Ø";
                             ym = sy;
                         }else {
                             sm = sy.substring(0,i);
@@ -455,7 +455,7 @@ public class YBCCController extends BaseController {
                     //分析得出有可能错误
                     if (hasWrong(bean)){
                         //错误出现声母变为空 声调变为空  韵母为IPA
-                        bean.addSm("无");
+                        bean.addSm("自成音节");
                         bean.addYm(bean.getRecord().getIPA());
                         bean.addSd("无");
 
@@ -513,7 +513,7 @@ public class YBCCController extends BaseController {
             //分析得出有可能错误
             if (vc.hasWrong(bean)) {
                 //错误出现声母变为空 声调变为空  韵母为IPA
-                bean.addSm("无");
+                bean.addSm("自成音节");
                 bean.addYm(bean.getRecord().getIPA());
                 bean.addSd("无");
             }

@@ -1,6 +1,8 @@
 package sample.controller;
 
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -48,6 +50,17 @@ public class MainController extends BaseController {
 
     @FXML
     public Label changeLanguage;
+
+    @FXML
+    private MenuItem tqjzch;
+
+    @FXML
+    private MenuItem tqjz;
+
+    @FXML
+    private MenuItem tqch;
+
+
 
     static MainController mainController;
     public static void setStatusContent(String tip){
@@ -123,23 +136,27 @@ public class MainController extends BaseController {
             Tab tab = contentPane.getTabs().get(index);
             if (tab.getUserData() != null && tab.getUserData() instanceof NewTopicEditController) {
                 NewTopicEditController vc = ((NewTopicEditController) tab.getUserData());
-                TextInputDialog dialog = new TextInputDialog();
-                dialog.setTitle("提示");
-                dialog.setHeaderText("");
-                dialog.setContentText("请输入要导出的说话人：");
-                Optional<String> result = dialog.showAndWait();
-                if (result.isPresent()) {
-                    try {
-                        int eIndex = Integer.valueOf(result.get());
-                        if (eIndex <= vc.getTopics().size() && eIndex>=1){
-                            ExportUtil.exportTQJz(vc.getTopics().get(eIndex - 1));
-                        }else {
-                            ToastUtil.show("超出说话人列表长度");
-                        }
+                if (vc.getTopics().size() == 1){
+                    ExportUtil.exportTQJz(vc.getTopics().get(0));
+                }else {
+                    TextInputDialog dialog = new TextInputDialog();
+                    dialog.setTitle("提示");
+                    dialog.setHeaderText("");
+                    dialog.setContentText("请输入要导出的说话人：");
+                    Optional<String> result = dialog.showAndWait();
+                    if (result.isPresent()) {
+                        try {
+                            int eIndex = Integer.valueOf(result.get());
+                            if (eIndex <= vc.getTopics().size() && eIndex>=1){
+                                ExportUtil.exportTQJz(vc.getTopics().get(eIndex - 1));
+                            }else {
+                                ToastUtil.show("超出说话人列表长度");
+                            }
 
-                    }catch (Exception e){
-                        e.printStackTrace();
-                        ToastUtil.show("请输入数字");
+                        }catch (Exception e){
+                            e.printStackTrace();
+                            ToastUtil.show("请输入数字");
+                        }
                     }
                 }
             }
@@ -155,22 +172,26 @@ public class MainController extends BaseController {
             Tab tab = contentPane.getTabs().get(index);
             if (tab.getUserData() != null && tab.getUserData() instanceof NewTopicEditController) {
                 NewTopicEditController vc = ((NewTopicEditController) tab.getUserData());
-                TextInputDialog dialog = new TextInputDialog();
-                dialog.setTitle("提示");
-                dialog.setHeaderText("");
-                dialog.setContentText("请输入要导出的说话人：");
-                Optional<String> result = dialog.showAndWait();
-                if (result.isPresent()) {
-                    try {
-                        int eIndex = Integer.valueOf(result.get());
-                        if (eIndex <= vc.getTopics().size() && eIndex>=1){
-                            ExportUtil.exportTQCh(vc.getTopics().get(eIndex - 1));
-                        }else {
-                            ToastUtil.show("超出说话人列表长度");
-                        }
+                if (vc.getTopics().size() == 1){
+                    ExportUtil.exportTQCh(vc.getTopics().get(0));
+                }else {
+                    TextInputDialog dialog = new TextInputDialog();
+                    dialog.setTitle("提示");
+                    dialog.setHeaderText("");
+                    dialog.setContentText("请输入要导出的说话人：");
+                    Optional<String> result = dialog.showAndWait();
+                    if (result.isPresent()) {
+                        try {
+                            int eIndex = Integer.valueOf(result.get());
+                            if (eIndex <= vc.getTopics().size() && eIndex>=1){
+                                ExportUtil.exportTQCh(vc.getTopics().get(eIndex - 1));
+                            }else {
+                                ToastUtil.show("超出说话人列表长度");
+                            }
 
-                    }catch (Exception e){
-                        ToastUtil.show("请输入数字");
+                        }catch (Exception e){
+                            ToastUtil.show("请输入数字");
+                        }
                     }
                 }
             }
@@ -531,11 +552,11 @@ public class MainController extends BaseController {
                     return;
                 }
 
-                ZlyydViewController zVc = ((ZlyydViewController) ViewUtil.getInstance().showView("view/zlyydView.fxml", "整理音韵调", -1, -1, vc.preData));
+                ZlyydViewController zVc = ((ZlyydViewController) ViewUtil.getInstance().showView("view/zlyydView.fxml", "同音字汇词汇", -1, -1, vc.preData));
                 zVc.setZLYYD(false);
                 zVc.setOriginDatas(YBCCController.analyDatas(vc.getOriginDatas()));
                 zVc.mStage.initModality(Modality.APPLICATION_MODAL);
-                zVc.mStage.setResizable(false);
+//                zVc.mStage.setResizable(false);
                 zVc.mStage.show();
 
             }
@@ -556,7 +577,7 @@ public class MainController extends BaseController {
                 zVc.setZLYYD(true);
                 zVc.setOriginDatas(YBCCController.analyDatas(vc.getOriginDatas()));
                 zVc.mStage.initModality(Modality.APPLICATION_MODAL);
-                zVc.mStage.setResizable(false);
+//                zVc.mStage.setResizable(false);
                 zVc.mStage.show();
 
 //                //已经进行过音标差错
@@ -741,7 +762,7 @@ public class MainController extends BaseController {
 
         WebView webView = new WebView();
         StringBuffer stringBuffer = new StringBuffer();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/sample/resource/html/tutorial.html")));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/sample/resource/html/tutorial.html"),"utf-8"));
         String line;
         while ((line =reader.readLine())!=null){
             stringBuffer.append(line);
@@ -996,6 +1017,20 @@ public class MainController extends BaseController {
         changeLanguage.setText(ViewUtil.currentLanguage);
         mainController = this;
         MainController.setStatusContent("就绪");
+
+        contentPane.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Tab>() {
+            @Override
+            public void changed(ObservableValue<? extends Tab> observable, Tab oldValue, Tab newValue) {
+                BaseController vc = ((BaseController) newValue.getUserData());
+
+                boolean isTopicEdit = vc instanceof NewTopicEditController;
+                tqjzch.setVisible(!isTopicEdit);
+                tqjz.setVisible(isTopicEdit);
+                tqch.setVisible(isTopicEdit);
+
+                System.out.println(newValue.getUserData());
+            }
+        });
     }
 
 

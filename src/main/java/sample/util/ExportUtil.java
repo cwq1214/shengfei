@@ -513,7 +513,9 @@ public class ExportUtil {
         for (int i = 0; i < beans.size() + 1; i++) {
             Row row = sheet.createRow(i);
             if (i == 0 ){
-
+                row.createCell(0).setCellValue("音韵调");
+                row.createCell(1).setCellValue("出现次数");
+                row.createCell(2).setCellValue("例字");
             }else{
                 SameIPABean bean = beans.get(i - 1);
                 row.createCell(0).setCellValue(bean.getIpa());
@@ -1356,6 +1358,60 @@ public class ExportUtil {
         }
     }
 
+    public static void exportTQJz(String title,String content){
+        int rs = DialogUtil.exportTQDialog();
+        String[] contents = content.split("╟");
+        if (rs == 0){
+            File saveFile = DialogUtil.exportDBDZDialog(true);
+            String saveType = saveFile.getName().substring(saveFile.getName().lastIndexOf(".") + 1);
+
+            Workbook workbook;
+            if (saveType.equals("xls")){
+                workbook = new HSSFWorkbook();
+            }else{
+                workbook = new XSSFWorkbook();
+            }
+            Sheet sheet = workbook.createSheet();
+            Row rTitle = sheet.createRow(0);
+            rTitle.createCell(0).setCellValue(title);
+
+            for (int i = 0; i < contents.length; i++) {
+                Row r = sheet.createRow(i + 1);
+                r.createCell(0).setCellValue(contents[i]);
+            }
+
+            try {
+                FileOutputStream outputStream = new FileOutputStream(saveFile);
+                workbook.write(outputStream);
+                outputStream.flush();
+                outputStream.close();
+                ToastUtil.show("导出成功");
+            } catch (IOException e) {
+                e.printStackTrace();
+                ToastUtil.show("导出失败");
+            }
+        }else {
+            File saveFile = DialogUtil.exportDBDZDialog(false);
+            String saveType = saveFile.getName().substring(saveFile.getName().lastIndexOf(".") + 1);
+
+            StringBuilder thSb = new StringBuilder();
+            StringBuilder trSb = new StringBuilder();
+
+            thSb.append("<th>"+ title +"</th>");
+
+            for (int i = 0; i < contents.length; i++) {
+                trSb.append("<tr>");
+                trSb.append("<td>"+contents[i]+"</td>");
+                trSb.append("</tr>");
+            }
+
+            String html = String.format(htmlWithYDBase,"提取句子","提取句子",String.format(contentHtml,thSb,trSb),"1");
+            saveContentToFile(saveFile.getAbsolutePath(),
+                    html);
+        }
+
+    }
+
     public static void exportTQJz(Topic topic){
         int rs = DialogUtil.exportTQDialog();
 
@@ -1387,6 +1443,8 @@ public class ExportUtil {
             }
             Sheet sheet = workbook.createSheet();
             Row rTitle = sheet.createRow(0);
+
+
             rTitle.createCell(0).setCellValue("音标注音");
             rTitle.createCell(1).setCellValue("民文方言");
             rTitle.createCell(2).setCellValue("拼音");
@@ -1483,6 +1541,63 @@ public class ExportUtil {
             saveContentToFile(saveFile.getAbsolutePath(),
                     html);
         }
+    }
+
+    public static void exportTQCh(String title,String content){
+        content.replace("╟","");
+        String[] contents = content.split(" ");
+
+        int rs = DialogUtil.exportTQDialog();
+        if (rs == 0){
+            File saveFile = DialogUtil.exportDBDZDialog(true);
+            String saveType = saveFile.getName().substring(saveFile.getName().lastIndexOf(".") + 1);
+
+            Workbook workbook;
+            if (saveType.equals("xls")){
+                workbook = new HSSFWorkbook();
+            }else{
+                workbook = new XSSFWorkbook();
+            }
+            Sheet sheet = workbook.createSheet();
+
+            Row rTitle = sheet.createRow(0);
+            rTitle.createCell(0).setCellValue(title);
+
+            for (int i = 0; i < contents.length; i++) {
+                Row r = sheet.createRow(i + 1);
+                r.createCell(0).setCellValue(contents[i]);
+            }
+
+            try {
+                FileOutputStream outputStream = new FileOutputStream(saveFile);
+                workbook.write(outputStream);
+                outputStream.flush();
+                outputStream.close();
+                ToastUtil.show("导出成功");
+            } catch (IOException e) {
+                e.printStackTrace();
+                ToastUtil.show("导出失败");
+            }
+        }else {
+            File saveFile = DialogUtil.exportDBDZDialog(false);
+            String saveType = saveFile.getName().substring(saveFile.getName().lastIndexOf(".") + 1);
+
+            StringBuilder thSb = new StringBuilder();
+            StringBuilder trSb = new StringBuilder();
+
+            thSb.append("<th>"+ title +"</th>");
+
+            for (int i = 0; i < contents.length; i++) {
+                trSb.append("<tr>");
+                trSb.append("<td>" + contents[i] + "</td>");
+                trSb.append("</tr>");
+            }
+
+            String html = String.format(htmlWithYDBase,"提取词汇","提取词汇",String.format(contentHtml,thSb,trSb),"1");
+            saveContentToFile(saveFile.getAbsolutePath(),
+                    html);
+        }
+
     }
 
     public static void exportTQCh(Topic topic){

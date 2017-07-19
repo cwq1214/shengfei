@@ -214,7 +214,7 @@ public class RecordTabController extends BaseController {
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
                 double fontSize = (1 - newValue.doubleValue() / 100.0) * (48 - 20) + 20;
-                tipTextArea.setFont(new Font(fontSize));
+                tipTextArea.setFont(new Font("Times New Roman",fontSize));
             }
         });
     }
@@ -411,20 +411,24 @@ public class RecordTabController extends BaseController {
                 ToastUtil.show("该条目未录音");
                 return;
             }
-            try {
-                Runtime.getRuntime().exec("cmd /c start "+ new File(Constant.PRAAT + "/praat.exe").getAbsolutePath());
-                Thread.sleep(500);
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            String param = "#Read from file... " + new File(getSelItemAudioPath(tableView.getSelectionModel().getSelectedItems().get(0))).getAbsolutePath() + "#   #Edit# ";
-            param = param.replace("#","\"");
-            try {
-                Runtime.getRuntime().exec("cmd /c start "+ new File(Constant.PRAAT + "/sendpraat.exe").getAbsolutePath() + " praat "+ param);
-            } catch (IOException e) {
-                e.printStackTrace();
+            if (AppCache.getInstance().getOsType()!=0) {
+
+            }else {
+                try {
+                    Runtime.getRuntime().exec("cmd /c start "+ new File(Constant.PRAAT + "/praat.exe").getAbsolutePath());
+                    Thread.sleep(500);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                String param = "#Read from file... " + new File(getSelItemAudioPath(tableView.getSelectionModel().getSelectedItems().get(0))).getAbsolutePath() + "#   #Edit# ";
+                param = param.replace("#","\"");
+                try {
+                    Runtime.getRuntime().exec("cmd /c start "+ new File(Constant.PRAAT + "/sendpraat.exe").getAbsolutePath() + " praat "+ param);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }

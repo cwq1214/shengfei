@@ -1,5 +1,6 @@
 package sample.controller.AV;
 
+import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.ImageView;
 import org.bytedeco.javacpp.avcodec;
@@ -14,6 +15,8 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Bee on 2017/6/5.
@@ -163,47 +166,52 @@ public class BeeVideoRecord {
 
     public void stopRecorder(){
         if (recorder != null){
-            try {
-                canRecordVideo = false;
-                recorder.stop();
-                recorder.release();
-                startTime = 0;
-                videoTS = 0;
-                recorder = null;
-            } catch (FrameRecorder.Exception e) {
-                e.printStackTrace();
-            }finally {
-                if (listener != null){
-                    listener.finishRecord();
+            canRecordVideo = false;
+            ScheduledThreadPoolExecutor exec = new ScheduledThreadPoolExecutor(1);
+            exec.schedule(new Runnable() {
+                @Override
+                public void run() {
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                recorder.stop();
+                                recorder.release();
+                                startTime = 0;
+                                videoTS = 0;
+                                recorder = null;
+                            } catch (FrameRecorder.Exception e) {
+                                e.printStackTrace();
+                            }finally {
+                                if (listener != null){
+                                    listener.finishRecord();
+                                }
+                            }
+                        }
+                    });
                 }
-            }
+            },500, TimeUnit.MILLISECONDS);
+
         }
     }
 
-    private void videoRecording(Frame frame,BufferedImage img) {
-        if (imgViews != null){
-            for (ImageView iv : imgViews) {
-                iv.setImage(SwingFXUtils.toFXImage(img,null));
-            }
+    private void videoRecording(Frame frame) {
+        if (startTime == 0) {
+            startTime = System.currentTimeMillis();
         }
-        if (canRecordVideo && recorder != null){
-            if (startTime == 0) {
-                startTime = System.currentTimeMillis();
-            }
-            videoTS = 1000 * (System.currentTimeMillis() - startTime);
+        videoTS = 1000 * (System.currentTimeMillis() - startTime);
 
-            if (videoTS > recorder.getTimestamp()) {
-                recorder.setTimestamp(videoTS);
-                try {
-                    recorder.record(frame);
-                    if (listener != null){
-                        listener.onRecording(startTime,videoTS);
-                    }
-                } catch (FrameRecorder.Exception e) {
-                    e.printStackTrace();
-                    if (listener != null){
-                        listener.errorRecord();
-                    }
+        if (videoTS > recorder.getTimestamp()) {
+            recorder.setTimestamp(videoTS);
+            try {
+                recorder.record(frame);
+                if (listener != null){
+                    listener.onRecording(startTime,videoTS);
+                }
+            } catch (FrameRecorder.Exception e) {
+                e.printStackTrace();
+                if (listener != null){
+                    listener.errorRecord();
                 }
             }
         }
@@ -214,7 +222,16 @@ public class BeeVideoRecord {
             Frame frame;
             while (!isStop && (frame = grabber.grab()) != null) {
                 BufferedImage img = converter.convert(frame);
-                videoRecording(frame, img);
+                if (imgViews != null){
+                    for (ImageView iv : imgViews) {
+                        iv.setImage(SwingFXUtils.toFXImage(img,null));
+                    }
+                }
+
+                if (canRecordVideo && recorder != null){
+                    videoRecording(frame);
+                }
+
             }
             grabber.close();
         } catch (FrameGrabber.Exception e) {

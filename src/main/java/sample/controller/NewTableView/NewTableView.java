@@ -24,6 +24,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
+import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
@@ -104,6 +105,12 @@ public class NewTableView extends BaseController {
 
     @FXML
     private TableView tableView;
+
+    @FXML
+    private TextArea tipTextArea;
+
+    @FXML
+    private Slider fontSizeSlider;
 
     public ObservableList getOriginDatas() {
         return originDatas;
@@ -477,12 +484,25 @@ public class NewTableView extends BaseController {
 
         setupRowMenu();
 
+        tipTextArea.setEditable(false);
+        fontSizeSlider.valueProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                double fontSize = (1 - newValue.doubleValue() / 100.0) * (48 - 20) + 20;
+                tipTextArea.setFont(new Font("Times New Roman",fontSize));
+            }
+        });
+
         tableView.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
                 int nowIndex = tableView.getSelectionModel().getSelectedIndex();
                 if (nowIndex != -1){
                     tableTopCtl.setNowIndex(nowIndex);
+                    if (tableView.getSelectionModel().getSelectedCells().size() != 0) {
+                        TablePosition position = (TablePosition) tableView.getSelectionModel().getSelectedCells().get(0);
+                        tipTextArea.setText(((StringProperty) position.getTableColumn().getCellValueFactory().call(new TableColumn.CellDataFeatures<>(tableView, position.getTableColumn(), tableView.getItems().get(position.getRow())))).get());
+                    }
 
                     String demoP = ((YBCCBean) tableView.getItems().get(nowIndex)).getDemoPicLoc();
                     String demoV = ((YBCCBean) tableView.getItems().get(nowIndex)).getDemoVideoLoc();
@@ -517,6 +537,7 @@ public class NewTableView extends BaseController {
 
         tableView.setEditable(true);
         tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        tableView.getSelectionModel().setCellSelectionEnabled(true);
 
         tableTopCtl.setBtnClickListener(new TableTopCtlListener() {
             @Override
@@ -863,7 +884,10 @@ public class NewTableView extends BaseController {
         //设置单元格编辑权限
         hideCol.setEditable(false);
         doneCol.setEditable(false);
-//        codeCol.setEditable(false);
+        codeCol.setEditable(false);
+        rankCol.setEditable(false);
+        contentCol.setEditable(false);
+
         recordDateCol.setEditable(false);
 
         //设置单元格类型

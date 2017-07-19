@@ -17,6 +17,6 @@ public interface TopicSpeakCtlListener {
 
     public void addSpeakerClick();
     public void delSpeakerClick(TopicSpeakControl ctl);
-    public void tqjzClick(TopicSpeakControl ctl);
-    public void tqchClick(TopicSpeakControl ctl);
+    public void tqjzClick(TopicSpeakControl ctl,String title,String content);
+    public void tqchClick(TopicSpeakControl ctl,String title,String content);
 }

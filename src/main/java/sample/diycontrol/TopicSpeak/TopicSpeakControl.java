@@ -82,6 +82,7 @@ public class TopicSpeakControl extends VBox {
         setupTextFieldContextMenu();
         setupTextFieldChange();
         setupTextFieldActive();
+
     }
 
     private void setupTextFieldContextMenu(){
@@ -101,6 +102,7 @@ public class TopicSpeakControl extends VBox {
         addSpeaker.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
+                System.out.println(event.getSource());
                 if (listener != null){
                     listener.addSpeakerClick();
                 }
@@ -119,7 +121,14 @@ public class TopicSpeakControl extends VBox {
         tqjzItem.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                listener.tqjzClick(TopicSpeakControl.this);
+                if (lastActive == null){
+                    System.out.println("1");
+                    listener.tqjzClick(TopicSpeakControl.this,null,null);
+                }else {
+                    System.out.println("2");
+                    listener.tqjzClick(TopicSpeakControl.this, ((String ) lastActive.getUserData()),lastActive.getText());
+                }
+
             }
         });
 
@@ -127,7 +136,12 @@ public class TopicSpeakControl extends VBox {
         tqchItem.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                listener.tqchClick(TopicSpeakControl.this);
+                if (lastActive == null){
+                    listener.tqchClick(TopicSpeakControl.this,null,null);
+                }else {
+                    listener.tqchClick(TopicSpeakControl.this,((String ) lastActive.getUserData()),lastActive.getText());
+                }
+
             }
         });
 
@@ -158,6 +172,7 @@ public class TopicSpeakControl extends VBox {
         setOnContextMenuRequested(new EventHandler<ContextMenuEvent>() {
             @Override
             public void handle(ContextMenuEvent event) {
+                lastActive = null;
                 contextMenu.show(TopicSpeakControl.this,event.getScreenX(),event.getScreenY());
             }
         });
@@ -186,6 +201,7 @@ public class TopicSpeakControl extends VBox {
             @Override
             public void handle(MouseEvent event) {
                 lastActive = ipaTF;
+                lastActive.setUserData("音标注音");
                 listener.textFieldActive(ipaTF, TopicSpeakCtlListener.TextFieldType.IPATF);
             }
         });
@@ -193,6 +209,7 @@ public class TopicSpeakControl extends VBox {
             @Override
             public void handle(MouseEvent event) {
                 lastActive = mwfyTF;
+                lastActive.setUserData("民文或方言");
                 listener.textFieldActive(mwfyTF, TopicSpeakCtlListener.TextFieldType.MWFYTF);
             }
         });
@@ -200,6 +217,7 @@ public class TopicSpeakControl extends VBox {
             @Override
             public void handle(MouseEvent event) {
                 lastActive = spellTF;
+                lastActive.setUserData("拼音");
                 listener.textFieldActive(spellTF, TopicSpeakCtlListener.TextFieldType.SPELLTF);
             }
         });
@@ -207,6 +225,7 @@ public class TopicSpeakControl extends VBox {
             @Override
             public void handle(MouseEvent event) {
                 lastActive = wordTranTF;
+                lastActive.setUserData("普通话词对译");
                 listener.textFieldActive(wordTranTF, TopicSpeakCtlListener.TextFieldType.WORDTRANTF);
             }
         });
@@ -214,6 +233,7 @@ public class TopicSpeakControl extends VBox {
             @Override
             public void handle(MouseEvent event) {
                 lastActive = freeTranTF;
+                lastActive.setUserData("普通话意译");
                 listener.textFieldActive(freeTranTF, TopicSpeakCtlListener.TextFieldType.FREETRANTF);
             }
         });
@@ -221,6 +241,7 @@ public class TopicSpeakControl extends VBox {
             @Override
             public void handle(MouseEvent event) {
                 lastActive = noteTF;
+                lastActive.setUserData("注释");
                 listener.textFieldActive(noteTF, TopicSpeakCtlListener.TextFieldType.NOTETF);
             }
         });
@@ -228,6 +249,7 @@ public class TopicSpeakControl extends VBox {
             @Override
             public void handle(MouseEvent event) {
                 lastActive = englishTF;
+                lastActive.setUserData("英语");
                 listener.textFieldActive(englishTF, TopicSpeakCtlListener.TextFieldType.ENGLISHTF);
             }
         });

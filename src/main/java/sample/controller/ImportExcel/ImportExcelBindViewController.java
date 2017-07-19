@@ -105,6 +105,8 @@ public class ImportExcelBindViewController extends BaseController {
                     if (titleBean != null){
                         try {
                             if (row.getCell(j) != null){
+                                row.getCell(j).setCellType(Cell.CELL_TYPE_STRING);
+
                                 Method m = Record.class.getMethod(titleBean.getMethodName(),String.class);
                                 m.invoke(record,row.getCell(j).getStringCellValue());
                                 if (!row.getCell(j).getStringCellValue().equalsIgnoreCase("")){

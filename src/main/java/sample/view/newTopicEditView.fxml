@@ -4,14 +4,16 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane stylesheets="@css/fontTimeNewRoman.css" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.controller.NewTableView.NewTopicEditController">
+<BorderPane prefHeight="400.0" prefWidth="600.0" stylesheets="@css/fontTimeNewRoman.css" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.controller.NewTableView.NewTopicEditController">
    <top>
       <VBox prefHeight="150.0" prefWidth="100.0" BorderPane.alignment="CENTER">
          <children>
@@ -38,10 +40,15 @@
                   <Button mnemonicParsing="false" onAction="#saveBtnClick" text="保存" />
                </children>
             </FlowPane>
-            <TextArea fx:id="topTextArea" prefHeight="200.0" prefWidth="200.0" wrapText="true">
-               <font>
-                  <Font size="30.0" />
-               </font></TextArea>
+            <HBox>
+               <children>
+                  <TextArea fx:id="topTextArea" prefHeight="200.0" prefWidth="5000.0" wrapText="true">
+                     <font>
+                        <Font name="Times New Roman" size="20.0" />
+                     </font></TextArea>
+                  <Slider fx:id="fontSizeSlider" orientation="VERTICAL" value="100.0" />
+               </children>
+            </HBox>
          </children></VBox>
    </top>
    <center>

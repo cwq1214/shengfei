@@ -23,7 +23,9 @@ import sample.entity.Table;
 import sample.util.ExportUtil;
 
 import java.io.File;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.function.Predicate;
@@ -49,6 +51,8 @@ public class ZlyydViewController extends BaseController {
     private ObservableList<CollectBean> smDatas;
     private ObservableList<CollectBean> ymDatas;
     private ObservableList<CollectBean> sdDatas;
+    private List<String> presetList = new ArrayList<>(Arrays.asList("p", "pʰ", "b", "ɓ", "m", "m̥", "f", "v", "t", "tʰ", "d", "ɗ", "n", "n̥", "l", "l̥", "ɬ", "ɮ", "ʦ", "ʦʰ", "ʣ", "s", "z", "ȶ", "ȶʰ", "ȡ", "ȵ", "ȵ̊", "ʧ", "ʧʰ", "ʤ", "ʃ", "ʒ", "ʈ", "ʈʰ", "ɖ", "ɳ", "ɳ̊", "tʂ", "tʂʰ", "dʐ", "ʂ", "ʐ", "ʨ", "ʨʰ", "ʥ", "ɕ", "ʑ", "ç", "ʝ", "c", "cʰ", "ɟ", "ɲ", "ɲ̊", "k", "kʰ", "ɡ", "ɠ", "ŋ̊", "x", "ɣ", "q", "qʰ", "ɢ", "ɴ", "ɴ̥", "χ", "ʁ", "h", "ɦ", "pl", "pf", "pʰf", "pʰl", "bl", "ml", "tl", "tʰl", "dl", "kl", "kʰl", "ɡl", "gl", "sl", "pj", "pʰj", "bj", "mj", "fj", "tj", "tʰj", "dj", "nj", "lj", "pr", "pʰr", "br", "mr", "kr", "kʰr", "gr", "ɡr", "sr", "r", "ʀ", "ŋ","Ø","自成音节" ));
+
 
     @FXML
     private ListView smList;
@@ -539,6 +543,11 @@ public class ZlyydViewController extends BaseController {
 
     public void setOriginDatas(ObservableList<YBCCBean> originDatas) {
         this.originDatas = originDatas;
+
+        smDatas = FXCollections.observableArrayList();
+        ymDatas = FXCollections.observableArrayList();
+        sdDatas = FXCollections.observableArrayList();
+
         analyOriginDatas();
 
         int bdCount = calculateBD();
@@ -567,7 +576,9 @@ public class ZlyydViewController extends BaseController {
                 smDatas.sort(new Comparator<CollectBean>() {
                     @Override
                     public int compare(CollectBean o1, CollectBean o2) {
-                        return o1.getKey().compareTo(o2.getKey());
+                        int i1 = presetList.indexOf(o1.getKey());
+                        int i2 = presetList.indexOf(o2.getKey());
+                        return i1-i2;
                     }
                 });
             }else if (type == 2){
@@ -656,21 +667,12 @@ public class ZlyydViewController extends BaseController {
         ObservableList<CollectBean> temp = null;
         List<String> keyWordList = null;
         if (type == 1){
-            if (smDatas == null){
-                smDatas = FXCollections.observableArrayList();
-            }
             temp = smDatas;
             keyWordList = cBean.getSmList();
         }else if (type == 2){
-            if (ymDatas == null){
-                ymDatas = FXCollections.observableArrayList();
-            }
             temp = ymDatas;
             keyWordList = cBean.getYmList();
         }else if (type == 3){
-            if (sdDatas == null){
-                sdDatas = FXCollections.observableArrayList();
-            }
             temp = sdDatas;
             keyWordList = cBean.getSdList();
         }

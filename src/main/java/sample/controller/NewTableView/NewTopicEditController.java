@@ -12,6 +12,7 @@ import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
 import sample.controller.BaseController;
 import sample.diycontrol.TopicSpeak.TopicSpeakControl;
 import sample.diycontrol.TopicSpeak.TopicSpeakCtlListener;
@@ -57,6 +58,9 @@ public class NewTopicEditController extends BaseController {
 
     @FXML
     private TextField replaceWordTF;
+
+    @FXML
+    private Slider fontSizeSlider;
 
 
     private ContextMenu topMenu;
@@ -134,6 +138,14 @@ public class NewTopicEditController extends BaseController {
     @Override
     public void prepareInit() {
         super.prepareInit();
+        topTextArea.setFont(new Font(20));
+        fontSizeSlider.valueProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                double fontSize = (1 - newValue.doubleValue() / 100.0) * (48 - 20) + 20;
+                topTextArea.setFont(new Font("Times New Roman",fontSize));
+            }
+        });
     }
 
 
@@ -168,8 +180,19 @@ public class NewTopicEditController extends BaseController {
                 for (int i = topTextArea.getText().length() - 1; i >= 0 ; i--) {
                     Character c = topTextArea.getText().charAt(i);
                     if (biaoDian.contains(c.toString())){
-                        sb.insert(i+1,"\r\n╟");
+                        if (topTextArea.getText().length() - i >= 3) {
+                            String threeChar = topTextArea.getText().substring(i+1,i+3);
+                            System.out.println("threechar:"+threeChar);
+                            if (!threeChar.equalsIgnoreCase("\n" +
+                                    "╟")){
+                                sb.insert(i+1,"\r\n╟");
+                            }
+                        }else{
+                            sb.insert(i+1,"\r\n╟");
+                        }
+
                     }
+
                 }
                 topTextArea.setText(sb.toString());
             }
@@ -190,7 +213,7 @@ public class NewTopicEditController extends BaseController {
         topTextArea.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                System.out.println(newValue);
+//                System.out.println(newValue);
                 nowEditTF.setText(newValue);
             }
         });
@@ -261,15 +284,23 @@ public class NewTopicEditController extends BaseController {
             }
 
             @Override
-            public void tqjzClick(TopicSpeakControl ctl) {
-                int ctlIndex = scrollVBox.getChildren().indexOf(ctl);
-                ExportUtil.exportTQJz(getTopics().get(ctlIndex));
+            public void tqjzClick(TopicSpeakControl ctl,String title,String content) {
+                if (title == null){
+                    int ctlIndex = scrollVBox.getChildren().indexOf(ctl);
+                    ExportUtil.exportTQJz(getTopics().get(ctlIndex));
+                }else {
+                    ExportUtil.exportTQJz(title,content);
+                }
             }
 
             @Override
-            public void tqchClick(TopicSpeakControl ctl) {
-                int ctlIndex = scrollVBox.getChildren().indexOf(ctl);
-                ExportUtil.exportTQCh(getTopics().get(ctlIndex));
+            public void tqchClick(TopicSpeakControl ctl,String title,String content) {
+                if (title == null){
+                    int ctlIndex = scrollVBox.getChildren().indexOf(ctl);
+                    ExportUtil.exportTQCh(getTopics().get(ctlIndex));
+                }else {
+                    ExportUtil.exportTQCh(title,content);
+                }
             }
         });
         return ctl;
