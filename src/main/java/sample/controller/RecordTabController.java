@@ -1125,15 +1125,16 @@ public class RecordTabController extends BaseController {
     private void exportMedia(List<Record> records,File dir,int type,boolean audio) throws NoSuchFieldException, IllegalAccessException {
 
         Field[] fields = new Field[0];
-        if (type==0){//编码导出选中
+        if (type==1){//编码导出选中
             fields = new Field[]{Record.class.getDeclaredField("investCode")};
-        }else if (type == 1){//中文导出选中
+        }else if (type == 2){//中文导出选中
             fields = new Field[]{Record.class.getDeclaredField("content")};
-        }else if (type == 2){//英文导出选中
+        }else if (type == 3){//英文导出选中
             fields = new Field[]{Record.class.getDeclaredField("english")};
-        }else if (type == 3){//编码+中文导出选中
+        }else if (type == 4){//编码+中文导出选中
             fields = new Field[]{Record.class.getDeclaredField("investCode"),Record.class.getDeclaredField("content")};
         }
+
 
 
         for (int i=0,max = records.size();i<max;i++){
@@ -1175,7 +1176,7 @@ public class RecordTabController extends BaseController {
     private void onPlayAudioClick(){
         MainController.setStatusContent("播放音频");
         if (mediaPlayer==null){
-            playAudio(btn_playAudio,"resource/img/b3.png","resource/img/b2.png",false);
+            playAudio(btn_playAudio,"resource/img/b3.png","resource/img/b5.png",false);
         }else {
             if (mediaPlayer.getStatus()== MediaPlayer.Status.PLAYING){
                 mediaPlayer.pause();
@@ -1195,7 +1196,7 @@ public class RecordTabController extends BaseController {
             if(index<tableView.getItems().size()){
                 tableView.getSelectionModel().clearSelection();
                 tableView.getSelectionModel().select(index);
-                playAudio(btn_playNextAudio,"resource/img/b4.png","resource/img/b7.png",true);
+                playAudio(btn_playNextAudio,"resource/img/b4.png","resource/img/b5.png",true);
             }
         }else {
             mediaPlayer.stop();
@@ -1258,6 +1259,7 @@ public class RecordTabController extends BaseController {
     //录音
     @FXML
     private void onAudioClick(Event event){
+        ((ImageView) btn_recordAudio.getGraphic()).setImage(new Image(Main.class.getResourceAsStream("resource/img/b5.png")));
         if (!vRecord.isRecording()){
             isRecordVideo = false;
             if (!aRecord.isRecording()){
@@ -1274,6 +1276,7 @@ public class RecordTabController extends BaseController {
     //录像
     @FXML
     private void onVideoClick(Event event){
+        ((ImageView) btn_recordVideo.getGraphic()).setImage(new Image(Main.class.getResourceAsStream("resource/img/b5.png")));
         if (!aRecord.isRecording() || (aRecord.isRecording() && vRecord.isRecording())){
             isRecordVideo = true;
             if (!vRecord.isRecording()){
@@ -1383,6 +1386,7 @@ public class RecordTabController extends BaseController {
             @Override
             public void finishRecord() {
                 System.out.println("finish record video");
+                ((ImageView) btn_recordVideo.getGraphic()).setImage(new Image(Main.class.getResourceAsStream("resource/img/b6.png")));
                 MainController.setStatusContent("停止视频录制");
                 if (cb_cover.isSelected()){
                     selectRecord.setCreateDate(record_simpleDateFormat.format(new Date()));
@@ -1395,6 +1399,7 @@ public class RecordTabController extends BaseController {
             @Override
             public void errorRecord() {
                 MainController.setStatusContent("视频录制发生错误");
+                ((ImageView) btn_recordVideo.getGraphic()).setImage(new Image(Main.class.getResourceAsStream("resource/img/b6.png")));
                 if (aRecord!=null){
                     aRecord.stopRecorder(false);
                 }
@@ -1408,6 +1413,7 @@ public class RecordTabController extends BaseController {
 
             @Override
             public void errorRecord() {
+                ((ImageView) btn_recordAudio.getGraphic()).setImage(new Image(Main.class.getResourceAsStream("resource/img/b1.png")));
                 MainController.setStatusContent("音频录制发生错误");
 //                if (aRecord!=null){
 //                    aRecord.stopRecorder(false);
@@ -1453,6 +1459,7 @@ public class RecordTabController extends BaseController {
             public void finishRecording(boolean isStopFromUser) {
                 System.out.println("finish record audio:"+isStopFromUser);
                 if (!isRecordVideo){
+                    ((ImageView) btn_recordAudio.getGraphic()).setImage(new Image(Main.class.getResourceAsStream("resource/img/b1.png")));
                     MainController.setStatusContent("停止音频录制");
                     selectRecord.setDone("1");
                     selectRecord.setCreateDate(record_simpleDateFormat.format(new Date()));

@@ -25,6 +25,8 @@ public class Main extends Application {
 //        TestController vc = ((TestController) ViewUtil.getInstance().showView("view/testView.fxml", "测试", -1, -1, ""));
 //        vc.mStage.show();
 
+        System.out.println("");
+
         ViewUtil.getInstance().openMainView();
         DbHelper.getInstance();
 

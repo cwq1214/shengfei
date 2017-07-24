@@ -63,6 +63,11 @@ public class MainController extends BaseController {
 
 
     static MainController mainController;
+
+    public static MainController getMainC(){
+        return mainController;
+    }
+
     public static void setStatusContent(String tip){
         if (mainController != null){
             Platform.runLater(new Runnable() {
@@ -1016,7 +1021,9 @@ public class MainController extends BaseController {
         super.initialize(location,resources);
         changeLanguage.setText(ViewUtil.currentLanguage);
         mainController = this;
-        MainController.setStatusContent("就绪");
+        MainController.setStatusContent("ꆏꉾ");
+
+
 
         contentPane.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Tab>() {
             @Override

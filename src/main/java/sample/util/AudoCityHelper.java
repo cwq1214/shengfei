@@ -3,6 +3,7 @@ package sample.util;
 import javafx.scene.control.TableView;
 import org.bytedeco.javacv.FrameGrabber;
 import org.bytedeco.javacv.FrameRecorder;
+import sample.controller.MainController;
 import sample.controller.YBCC.YBCCBean;
 import sample.entity.BindResult;
 import sample.entity.Record;
@@ -252,6 +253,8 @@ public class AudoCityHelper {
             System.out.println(records);
 
             ToastUtil.show("导入成功");
+
+            MainController.getMainC().openTable(table);
         }catch (Exception e){
             ToastUtil.show("导入失败");
             e.printStackTrace();

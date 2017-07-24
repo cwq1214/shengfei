@@ -11,6 +11,7 @@ import org.dom4j.Element;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.SAXReader;
 import org.dom4j.io.XMLWriter;
+import sample.controller.MainController;
 import sample.controller.YBCC.YBCCBean;
 import sample.entity.*;
 
@@ -47,7 +48,7 @@ public class EXBHelper {
         if (!TextUtil.isEmpty(t.speaker)){
             speaker = DbHelper.getInstance().getSpeakerById(Integer.valueOf(t.speaker));
         }else {
-            speaker = new Speaker();
+            speaker = null;
         }
 
         int tableType = Integer.parseInt(t.getDatatype());
@@ -95,7 +96,7 @@ public class EXBHelper {
                 tableView.getItems()) {
             records.add(((YBCCBean) bean).getRecord());
         }
-        createXML(speaker,filePath,filePath.replace(".exb",Constant.AUDIO_SUFFIX),records,tableType);
+        createXML(speaker,filePath,filePath.replace(".exb",Constant.AUDIO_SUFFIX).substring(filePath.lastIndexOf("\\")),records,tableType);
     }
 
 
@@ -346,27 +347,29 @@ public class EXBHelper {
         meta_information.addElement("comment");
         meta_information.addElement("transcription-convention");
         Element speakertable = head.addElement("speakertable");
-        Element speaker = speakertable.addElement("speaker");
-        speaker.addAttribute("id",speakerBean.ID+"");
-        Element abb = speaker.addElement("abbreviation");
-        if (!TextUtil.isEmpty(speakerBean.speakcode))
-            abb.addText(speakerBean.speakcode);
-        Element sex = speaker.addElement("sex");
-        if (!TextUtil.isEmpty(speakerBean.sex))
-            sex.addAttribute("value",speakerBean.sex);
-        Element languages_used = speaker.addElement("languages-used");
-        if (!TextUtil.isEmpty(speakerBean.usualLang))
-            languages_used.addText(speakerBean.usualLang);
-        Element l1 = speaker.addElement("l1");
-        if (!TextUtil.isEmpty(speakerBean.motherLang))
-            l1.addText(speakerBean.motherLang);
-        Element l2 = speaker.addElement("l2");
-        if (!TextUtil.isEmpty(speakerBean.secondLang))
-            l2.addText(speakerBean.secondLang);
-        speaker.addElement("ud-speaker-information");
-        Element comment = speaker.addElement("comment");
-        if (!TextUtil.isEmpty(speakerBean.notetext))
-            comment.addText(speakerBean.notetext);
+        if (speakerBean != null){
+            Element speaker = speakertable.addElement("speaker");
+            speaker.addAttribute("id",speakerBean.ID+"");
+            Element abb = speaker.addElement("abbreviation");
+            if (!TextUtil.isEmpty(speakerBean.speakcode))
+                abb.addText(speakerBean.speakcode);
+            Element sex = speaker.addElement("sex");
+            if (!TextUtil.isEmpty(speakerBean.sex))
+                sex.addAttribute("value",speakerBean.sex);
+            Element languages_used = speaker.addElement("languages-used");
+            if (!TextUtil.isEmpty(speakerBean.usualLang))
+                languages_used.addText(speakerBean.usualLang);
+            Element l1 = speaker.addElement("l1");
+            if (!TextUtil.isEmpty(speakerBean.motherLang))
+                l1.addText(speakerBean.motherLang);
+            Element l2 = speaker.addElement("l2");
+            if (!TextUtil.isEmpty(speakerBean.secondLang))
+                l2.addText(speakerBean.secondLang);
+            speaker.addElement("ud-speaker-information");
+            Element comment = speaker.addElement("comment");
+            if (!TextUtil.isEmpty(speakerBean.notetext))
+                comment.addText(speakerBean.notetext);
+        }
 
         Element basic_body = root.addElement("basic-body");
         Element common_timeLine = basic_body.addElement("common-timeline");
@@ -400,10 +403,14 @@ public class EXBHelper {
         for (int i=0,max = category.length;i<max;i++){
             Element tier = basic_body.addElement("tier");
             tier.addAttribute("id","TIE"+i);
-            tier.addAttribute("speaker",speakerBean.ID+"");
+            if (speakerBean != null){
+                tier.addAttribute("speaker",speakerBean.ID+"");
+            }
             tier.addAttribute("category",category[i]);
             tier.addAttribute("type",type[i]);
-            tier.addAttribute("display-name",speakerBean.speakcode+"["+category[i]+"]");
+            if (speakerBean != null){
+                tier.addAttribute("display-name",speakerBean.speakcode+"["+category[i]+"]");
+            }
 
             for (int j=0,max2 = records.size();j<max2;j++){
                 Element event = tier.addElement("event");
@@ -683,8 +690,10 @@ public class EXBHelper {
                     records.get(i).baseCode = records.get(i).investCode;
                 }
 
-                records.get(i).createDate =simpleDateFormat.format(new Date());
-                records.get(i).done = "1";
+                if (audioPath != null){
+                    records.get(i).createDate =simpleDateFormat.format(new Date());
+                    records.get(i).done = "1";
+                }
                 records.get(i).autoSupple();
 
                 audioAttrs.get(i).path = Constant.getAudioPath(records.get(i).baseId+"",records.get(i).uuid);
@@ -697,6 +706,8 @@ public class EXBHelper {
             }
 
             ToastUtil.show("导入成功");
+
+            MainController.getMainC().openTable(table);
         } catch (DocumentException e) {
             ToastUtil.show("导入失败");
             e.printStackTrace();

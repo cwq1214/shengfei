@@ -11,6 +11,7 @@ import org.dom4j.io.OutputFormat;
 import org.dom4j.io.SAXReader;
 import org.dom4j.io.SAXWriter;
 import org.dom4j.io.XMLWriter;
+import sample.controller.MainController;
 import sample.controller.YBCC.YBCCBean;
 import sample.entity.*;
 
@@ -272,7 +273,7 @@ public class EAFHelper {
                     try {
                         Field field = Record.class.getDeclaredField(fieldName);
                         field.setAccessible(true);
-                        field.set(record, ((Element) tier.elements().get(j)).element("ANNOTATION_VALUE").getText());
+                        field.set(record, ((Element) tier.elements().get(j)).element("ALIGNABLE_ANNOTATION").element("ANNOTATION_VALUE").getText());
                     } catch (NoSuchFieldException e) {
                         e.printStackTrace();
                     } catch (IllegalAccessException e) {
@@ -299,8 +300,10 @@ public class EAFHelper {
                         records.get(i).baseCode = records.get(i).investCode;
                     }
 
-                    records.get(i).createDate =simpleDateFormat.format(new Date());
-                    records.get(i).done = "1";
+                    if (audioPath != null) {
+                        records.get(i).createDate = simpleDateFormat.format(new Date());
+                        records.get(i).done = "1";
+                    }
                     records.get(i).autoSupple();
 
                 audioAttrs.get(i).path = Constant.getAudioPath(records.get(i).baseId+"",records.get(i).uuid);
@@ -308,9 +311,13 @@ public class EAFHelper {
 
             DbHelper.getInstance().insertOrUpdateRecord(records);
 
-            WAVUtil.getInstance().deco(audioAttrs,audioPath);
+            if (audioPath != null){
+                WAVUtil.getInstance().deco(audioAttrs,audioPath);
+            }
 
             ToastUtil.show("导入成功");
+
+            MainController.getMainC().openTable(table);
         } catch (DocumentException e) {
             ToastUtil.show("导入失败");
             e.printStackTrace();

@@ -227,10 +227,10 @@ public class ImportXmlDialog extends BaseController {
             ToastUtil.show("请先选择导入文件");
             return;
         }else
-        if (wavFilePath==null){
-            ToastUtil.show("请先选择导入音频文件");
-            return;
-        }
+//        if (wavFilePath==null){
+//            ToastUtil.show("请先选择导入音频文件");
+//            return;
+//        }
 
         if (selType == 0){//字
 
@@ -241,12 +241,13 @@ public class ImportXmlDialog extends BaseController {
         }
 
         if(importType==0){//eaf
-            EAFHelper.getInstance().deco(xmlFilePath.getPath(),wavFilePath.getPath(),tb_bindName.getItems(),selType);
+            EAFHelper.getInstance().deco(xmlFilePath.getPath(),wavFilePath != null ?wavFilePath.getPath():null,tb_bindName.getItems(),selType);
         }else if (importType==1){//exb
-            EXBHelper.getInstance().deco(xmlFilePath.getPath(),wavFilePath.getPath(),tb_bindName.getItems(),selType);
+            EXBHelper.getInstance().deco(xmlFilePath.getPath(),wavFilePath != null ?wavFilePath.getPath():null,tb_bindName.getItems(),selType);
         }else if (importType==3){//ac
-            AudoCityHelper.getInstance().deco(xmlFilePath.getPath(),wavFilePath.getPath(),tb_bindName.getItems(),selType);
+            AudoCityHelper.getInstance().deco(xmlFilePath.getPath(),wavFilePath != null ?wavFilePath.getPath():null,tb_bindName.getItems(),selType);
         }
+        this.mStage.close();
     }
 
     @FXML

@@ -133,6 +133,10 @@ public class WAVUtil {
 
 
     public void deco(List<AudioAttr> audioAttrs,String sourcePath){
+        System.out.println(audioAttrs.size());
+        if (sourcePath == null){
+            return;
+        }
         FFmpegFrameGrabber grabber = new FFmpegFrameGrabber(sourcePath);
         Frame sample;
         FFmpegFrameRecorder recorder = null;
@@ -164,7 +168,6 @@ public class WAVUtil {
                         }
                     }
                     if (recorder==null){
-
                         if (i < audioAttrs.size() - 1) {
                             nextAudioAttr = audioAttrs.get(i + 1);
                         } else {
@@ -172,13 +175,15 @@ public class WAVUtil {
                         }
 
                         audioAttr = audioAttrs.get(i);
-                        File file = new File(audioAttr.path);
-                        if (!file.exists()) {
-                            file.getParentFile().mkdirs();
+                        if (audioAttr.path != null){
+                            File file = new File(audioAttr.path);
+                            if (!file.exists()) {
+                                file.getParentFile().mkdirs();
+                            }
+                            recorder = new FFmpegFrameRecorder(file, 2);
+                            System.out.println("create "+i);
+                            recorder.start();
                         }
-                        recorder = new FFmpegFrameRecorder(file, 2);
-                        System.out.println("create "+i);
-                        recorder.start();
                     }
                 }
 

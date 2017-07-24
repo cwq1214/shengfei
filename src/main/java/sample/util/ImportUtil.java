@@ -1,6 +1,8 @@
 package sample.util;
 
+import javafx.application.Platform;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -20,10 +22,8 @@ import javax.swing.text.View;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * Created by Bee on 2017/5/14.
@@ -32,14 +32,17 @@ public class ImportUtil {
 
     private static void impAV(File vDir,Record r,Table t){
         if (vDir != null){
-            String wavName = r.getBaseCode() + (r.getContent().length() > 4?r.getContent().substring(0,4):r.getContent()) + ".wav";
-            String mp4Name = r.getBaseCode() + (r.getContent().length() > 4?r.getContent().substring(0,4):r.getContent()) + ".mp4";
+            String wavName = r.getInvestCode() + (r.getContent().length() > 4?r.getContent().substring(0,4):r.getContent()) + ".wav";
+            String mp4Name = r.getInvestCode() + (r.getContent().length() > 4?r.getContent().substring(0,4):r.getContent()) + ".mp4";
+
+            System.out.println(wavName +"\t"+mp4Name);
 
             File[] fs = vDir.listFiles();
             for (File f : fs) {
                 if (f.getName().contains(wavName)){
                     FileUtil.fileCopy(f.getAbsolutePath(),Constant.ROOT_FILE_DIR + "/audio/" + t.getId() + "/" + r.getUuid() + ".wav");
                     r.setDone("1");
+                    r.setCreateDate(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
                 }else if (f.getName().contains(mp4Name)){
                     FileUtil.fileCopy(f.getAbsolutePath(),Constant.ROOT_FILE_DIR + "/video/" + t.getId() + "/" + r.getUuid() + ".mp4");
                 }
@@ -65,14 +68,13 @@ public class ImportUtil {
             Table t = new Table("",Integer.toString(type),"","","","","","","","","","","","","","","");
             DbHelper.getInstance().insertNewTable(t);
 
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION,"是否同时导入音视频",new ButtonType("是"),new ButtonType("否"));
             alert.setTitle("提示");
             alert.setHeaderText("");
-            alert.setContentText("是否同时导入音视频");
 
             Optional<ButtonType> result = alert.showAndWait();
             File vDir = null;
-            if (result.get() == ButtonType.OK){
+            if (result.get().getText() == "是"){
                 vDir = DialogUtil.dirChooses(new Stage());
             }
 
@@ -97,34 +99,76 @@ public class ImportUtil {
     private static void importYbCi(Sheet sheet,Table t,File vDir){
         List<Record> impDatas = new ArrayList<>();
 
+        Row titleRow = sheet.getRow(0);
+        boolean isLong = titleRow.getLastCellNum() > 9;
+
         for (int i = 1; i <= sheet.getLastRowNum(); i++) {
             Row row = sheet.getRow(i);
+            StringBuilder wordSb = new StringBuilder();
             StringBuilder ipaSb = new StringBuilder();
             StringBuilder noteSb = new StringBuilder();
-            System.out.println("i:"+i);
             for (int j = 0; j < 3; j++) {
-                //声
-                Cell ipa = row.getCell(j*3 + 1 + 3);
-                Cell note = row.getCell(j*3 + 2 + 3);
 
-                if (ipa == null){
-                    ipa = row.createCell(j*3 + 1 + 3);
+                if (isLong){
+                    Cell word = row.getCell(j*3+3);
+                    Cell ipa = row.getCell(j*3 + 1 + 3);
+                    Cell note = row.getCell(j*3 + 2 + 3);
+
+                    if (word == null){
+                        word = row.createCell(j*3+3);
+                    }
+
+                    if (ipa == null){
+                        ipa = row.createCell(j*3 + 1 + 3);
+                    }
+
+                    if (note == null){
+                        note = row.createCell(j*3 + 2 + 3);
+                    }
+
+                    word.setCellType(Cell.CELL_TYPE_STRING);
+                    ipa.setCellType(Cell.CELL_TYPE_STRING);
+                    note.setCellType(Cell.CELL_TYPE_STRING);
+
+                    if (word.getStringCellValue().length() != 0){
+                        wordSb.append(word.getStringCellValue() + ";");
+                    }
+
+                    if (ipa.getStringCellValue().length() != 0){
+                        ipaSb.append(ipa.getStringCellValue() + ";");
+                    }
+
+                    if (note.getStringCellValue().length() != 0){
+                        noteSb.append(note.getStringCellValue() + ";");
+                    }
+                }else {
+                    Cell ipa = row.getCell(j*2 + 0 + 3);
+                    Cell note = row.getCell(j*2 + 1 + 3);
+
+                    if (ipa == null){
+                        ipa = row.createCell(j*2 + 0 + 3);
+                    }
+
+                    if (note == null){
+                        note = row.createCell(j*2 + 1 + 3);
+                    }
+
+                    ipa.setCellType(Cell.CELL_TYPE_STRING);
+                    note.setCellType(Cell.CELL_TYPE_STRING);
+
+                    if (ipa.getStringCellValue().length() != 0){
+                        ipaSb.append(ipa.getStringCellValue() + ";");
+                    }
+
+                    if (note.getStringCellValue().length() != 0){
+                        noteSb.append(note.getStringCellValue() + ";");
+                    }
                 }
 
-                if (note == null){
-                    note = row.createCell(j*3 + 2 + 3);
-                }
+            }
 
-                ipa.setCellType(Cell.CELL_TYPE_STRING);
-                note.setCellType(Cell.CELL_TYPE_STRING);
-
-                if (ipa.getStringCellValue().length() != 0){
-                    ipaSb.append(ipa.getStringCellValue() + ";");
-                }
-
-                if (note.getStringCellValue().length() != 0){
-                    noteSb.append(note.getStringCellValue() + ";");
-                }
+            if (wordSb.length() != 0){
+                wordSb.deleteCharAt(wordSb.length() - 1);
             }
 
             if (ipaSb.length() != 0){
@@ -132,7 +176,7 @@ public class ImportUtil {
             }
 
             Cell noteCell = row.getCell(2);
-            if (noteCell.getStringCellValue().length() != 0){
+            if (noteCell != null && noteCell.getStringCellValue().length() != 0){
                 noteSb.insert(0,noteCell.getStringCellValue()+";");
             }
 
@@ -142,19 +186,25 @@ public class ImportUtil {
 
             Record r = new Record();
             r.setUuid(UUID.randomUUID().toString());
+            r.setMWFY(wordSb.toString());
             r.setBaseId(t.getId());
             r.setHide("0");
             r.setDone("0");
-            r.setBaseCode("yb"+ String.format("%05d",i));
-            r.setInvestCode(r.getBaseCode());
+            r.setBaseCode("yb"+ String.format("%04d",i));
+
+            row.getCell(0).setCellType(Cell.CELL_TYPE_STRING);
+            r.setInvestCode(row.getCell(0).getStringCellValue());
+
             r.setIPA(ipaSb.toString());
             r.setNote(noteSb.toString());
 
             Cell contentCell = row.getCell(1);
             r.setContent(contentCell.getStringCellValue());
-            r.autoSupple();
+//            r.autoSupple();
 
             impAV(vDir,r,t);
+
+            r.setInvestCode(r.getBaseCode());
 
             impDatas.add(r);
 
@@ -171,34 +221,103 @@ public class ImportUtil {
     private static void importYbSentence(Sheet sheet,Table t,File vDir){
         List<Record> impDatas = new ArrayList<>();
 
+        Row titleRow = sheet.getRow(0);
+        boolean isLong = titleRow.getLastCellNum() > 12;
+
         for (int i = 1; i <= sheet.getLastRowNum(); i++) {
             Row row = sheet.getRow(i);
+            StringBuilder wordSb = new StringBuilder();
             StringBuilder ipaSb = new StringBuilder();
             StringBuilder noteSb = new StringBuilder();
-            System.out.println("i:"+i);
+            StringBuilder wordCiSb = new StringBuilder();
+
             for (int j = 0; j < 3; j++) {
-                //声
-                Cell ipa = row.getCell(j*3 + 1 + 3);
-                Cell note = row.getCell(j*3 + 2 + 3);
+                if (isLong){
 
-                if (ipa == null){
-                    ipa = row.createCell(j*3 + 1 + 3);
+                    Cell ipa = row.getCell(j*4  + 3);
+                    Cell ci = row.getCell(j*4 + 1 + 3);
+                    Cell word = row.getCell(j*4 + 2 + 3);
+                    Cell note = row.getCell(j*4 + 3 + 3);
+
+
+                    if (word == null){
+                        word = row.createCell(j*3 + 3);
+                    }
+
+                    if (ci == null){
+                        ci = row.createCell(j*3 + 3);
+                    }
+
+                    if (ipa == null){
+                        ipa = row.createCell(j*3 + 1 + 3);
+                    }
+
+                    if (note == null){
+                        note = row.createCell(j*3 + 2 + 3);
+                    }
+
+                    word.setCellType(Cell.CELL_TYPE_STRING);
+                    ipa.setCellType(Cell.CELL_TYPE_STRING);
+                    note.setCellType(Cell.CELL_TYPE_STRING);
+                    ci.setCellType(Cell.CELL_TYPE_STRING);
+
+                    if (word.getStringCellValue().length() != 0){
+                        wordSb.append(word.getStringCellValue() + ";");
+                    }
+
+                    if (ci.getStringCellValue().length() != 0){
+                        wordCiSb.append(ci.getStringCellValue() + ";");
+                    }
+
+                    if (ipa.getStringCellValue().length() != 0){
+                        ipaSb.append(ipa.getStringCellValue() + ";");
+                    }
+
+                    if (note.getStringCellValue().length() != 0){
+                        noteSb.append(note.getStringCellValue() + ";");
+                    }
+                }else {
+                    //声
+                    Cell word = row.getCell(j*3 + 3);
+                    Cell ipa = row.getCell(j*3 + 1 + 3);
+                    Cell note = row.getCell(j*3 + 2 + 3);
+
+                    if (word == null){
+                        word = row.createCell(j*3 + 3);
+                    }
+
+                    if (ipa == null){
+                        ipa = row.createCell(j*3 + 1 + 3);
+                    }
+
+                    if (note == null){
+                        note = row.createCell(j*3 + 2 + 3);
+                    }
+
+                    word.setCellType(Cell.CELL_TYPE_STRING);
+                    ipa.setCellType(Cell.CELL_TYPE_STRING);
+                    note.setCellType(Cell.CELL_TYPE_STRING);
+
+                    if (word.getStringCellValue().length() != 0){
+                        wordSb.append(word.getStringCellValue() + ";");
+                    }
+
+                    if (ipa.getStringCellValue().length() != 0){
+                        ipaSb.append(ipa.getStringCellValue() + ";");
+                    }
+
+                    if (note.getStringCellValue().length() != 0){
+                        noteSb.append(note.getStringCellValue() + ";");
+                    }
                 }
+            }
 
-                if (note == null){
-                    note = row.createCell(j*3 + 2 + 3);
-                }
+            if (wordSb.length() != 0){
+                wordSb.deleteCharAt(wordSb.length() - 1);
+            }
 
-                ipa.setCellType(Cell.CELL_TYPE_STRING);
-                note.setCellType(Cell.CELL_TYPE_STRING);
-
-                if (ipa.getStringCellValue().length() != 0){
-                    ipaSb.append(ipa.getStringCellValue() + ";");
-                }
-
-                if (note.getStringCellValue().length() != 0){
-                    noteSb.append(note.getStringCellValue() + ";");
-                }
+            if (wordCiSb.length() != 0){
+                wordCiSb.deleteCharAt(wordCiSb.length() - 1);
             }
 
             if (ipaSb.length() != 0){
@@ -206,7 +325,7 @@ public class ImportUtil {
             }
 
             Cell noteCell = row.getCell(2);
-            if (noteCell.getStringCellValue().length() != 0){
+            if (noteCell != null && noteCell.getStringCellValue().length() != 0){
                 noteSb.insert(0,noteCell.getStringCellValue()+";");
             }
 
@@ -219,16 +338,24 @@ public class ImportUtil {
             r.setBaseId(t.getId());
             r.setHide("0");
             r.setDone("0");
-            r.setBaseCode("yb"+ String.format("%05d",i));
-            r.setInvestCode(r.getBaseCode());
+            r.setBaseCode("yb"+ String.format("%04d",i));
+
+            row.getCell(0).setCellType(Cell.CELL_TYPE_STRING);
+            r.setInvestCode(row.getCell(0).getStringCellValue());
+
+            r.setFree_trans(wordCiSb.toString());
+            r.setMWFY(wordSb.toString());
             r.setIPA(ipaSb.toString());
             r.setNote(noteSb.toString());
 
+
             Cell contentCell = row.getCell(1);
             r.setContent(contentCell.getStringCellValue());
-            r.autoSupple();
+//            r.autoSupple();
 
             impAV(vDir,r,t);
+
+            r.setInvestCode(r.getBaseCode());
 
             impDatas.add(r);
         }
@@ -250,24 +377,30 @@ public class ImportUtil {
             Row row = sheet.getRow(i);
             StringBuilder syd = new StringBuilder();
             StringBuilder bSb = new StringBuilder();
+
+            if (row.getCell(2) != null && row.getCell(2).getStringCellValue().length() != 0){
+                row.getCell(2).setCellType(Cell.CELL_TYPE_STRING);
+                bSb.append(row.getCell(2).getStringCellValue()+";");
+            }
+
             for (int j = 0; j < 3; j++) {
                 //声
-                Cell s = row.getCell(j*3 + 0 + 3);
-                Cell y = row.getCell(j*3 + 1 + 3);
-                Cell d = row.getCell(j*3 + 2 + 3);
-                Cell b = row.getCell(j*3 + 3 + 3);
+                Cell s = row.getCell(j*4 + 0 + 3);
+                Cell y = row.getCell(j*4 + 1 + 3);
+                Cell d = row.getCell(j*4 + 2 + 3);
+                Cell b = row.getCell(j*4 + 3 + 3);
 
                 if (s == null){
-                    s = row.createCell(j * 3 + 0 + 3);
+                    s = row.createCell(j * 4 + 0 + 3);
                 }
                 if (y == null){
-                    y = row.createCell(j * 3 + 2 + 3);
+                    y = row.createCell(j * 4 + 2 + 3);
                 }
                 if (d == null){
-                    d = row.createCell(j * 3 + 3 + 3);
+                    d = row.createCell(j * 4 + 3 + 3);
                 }
                 if (b == null){
-                    b = row.createCell(j * 3 + 4 + 3);
+                    b = row.createCell(j * 4 + 4 + 3);
                 }
 
 
@@ -297,16 +430,21 @@ public class ImportUtil {
             r.setBaseId(t.getId());
             r.setHide("0");
             r.setDone("0");
-            r.setBaseCode("yb"+ String.format("%05d",i));
-            r.setInvestCode(r.getBaseCode());
+            r.setBaseCode("yb"+ String.format("%04d",i));
+
+            row.getCell(0).setCellType(Cell.CELL_TYPE_STRING);
+            r.setInvestCode(row.getCell(0).getStringCellValue());
+
             r.setIPA(syd.toString());
             r.setNote(bSb.toString());
 
             Cell contentCell = row.getCell(1);
             r.setContent(contentCell.getStringCellValue());
-            r.autoSupple();
+//            r.autoSupple();
 
             impAV(vDir,r,t);
+
+            r.setInvestCode(r.getBaseCode());
 
             impDatas.add(r);
         }
