@@ -1,5 +1,6 @@
 package sample.util;
 
+import javafx.application.Platform;
 import javafx.scene.control.TableView;
 import org.bytedeco.javacv.FrameGrabber;
 import org.bytedeco.javacv.FrameRecorder;
@@ -149,7 +150,8 @@ public class AudoCityHelper {
                 if (i==0||tempLine.replaceAll(" ","").startsWith("0.0")){
                     System.out.println("start "+tempLine);
                     i++;
-                    strings.add("第"+i+"层");
+                    String[] contents = tempLine.split("\t");
+                    strings.add("第"+i+"层"+"\n"+contents[contents.length - 1]);
                 }
             }
             reader.close();
@@ -179,14 +181,14 @@ public class AudoCityHelper {
             String key = null;
 
             while ((temp = reader.readLine())!= null){
-
+                String[] contents = temp.split("\t");
                  if (i==0||temp.startsWith("0.0")){
-                     key = "第"+(i+1)+"层";
+                     key = "第"+(i+1)+"层"+"\n"+contents[contents.length - 1];
                      i++;
 
                      j=0;
                  }
-                if (key.equals("第1层")){
+                if (key.contains("第1层")){
                      records.add(new Record());
                 }
 
@@ -232,12 +234,14 @@ public class AudoCityHelper {
                     record.investCode = record.baseCode;
 
                 }else {
-                    record.investCode = "A"+String.format("%0" + 5 + "d", i + 1);
+                    record.investCode = "A"+String.format("%0" + 5 + "d", k+1);
                     record.baseCode = record.investCode;
                 }
 
-                record.createDate =simpleDateFormat.format(new Date());
-                record.done = "1";
+                if (audioPath != null){
+                    record.createDate =simpleDateFormat.format(new Date());
+                    record.done = "1";
+                }
                 record.autoSupple();
 
                 WAVUtil.AudioAttr audioAttr = audioAttrs.get(k);
@@ -254,7 +258,12 @@ public class AudoCityHelper {
 
             ToastUtil.show("导入成功");
 
-            MainController.getMainC().openTable(table);
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    MainController.getMainC().openTable(table);
+                }
+            });
         }catch (Exception e){
             ToastUtil.show("导入失败");
             e.printStackTrace();

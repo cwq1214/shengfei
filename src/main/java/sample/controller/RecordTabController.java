@@ -12,7 +12,11 @@ import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.geometry.Bounds;
 import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -42,12 +46,16 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.text.Font;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
+import javafx.stage.WindowEvent;
 import javafx.util.Callback;
 import org.apache.poi.xwpf.usermodel.TOC;
 import org.bytedeco.javacv.FFmpegFrameRecorder;
 import sample.Main;
 import sample.controller.AV.BeeAudioRecord;
 import sample.controller.AV.BeeVideoRecord;
+import sample.controller.AV.TestController;
 import sample.controller.YBCC.YBCCBean;
 import sample.controller.widget.VideoPlayer;
 import sample.entity.Record;
@@ -64,6 +72,10 @@ public class RecordTabController extends BaseController {
     private Record selectRecord;
     private boolean isRecordVideo;
 
+
+    private ChangeListener locationChange;
+    private Stage voiceMapStage;
+
     TableColumn<Record,String> doneCol = new TableColumn<>("录音状态");
     TableColumn<Record,String> videoDoneCol = new TableColumn<>("录像状态");
     TableColumn<Record,String> codeCol = new TableColumn<>("编码");
@@ -79,6 +91,7 @@ public class RecordTabController extends BaseController {
     TableColumn<Record,String> freeTran = new TableColumn<>("普通话词对译");
 
     public Table t;
+    private boolean isFirstPraat = true;
 
     @FXML
     Tab tab_recordVideo;
@@ -152,6 +165,9 @@ public class RecordTabController extends BaseController {
 
     public String tableType;
 
+    //旧语图窗口
+    private int oldIpa = 0;
+
     //是否录像
     boolean recordingVideo = false;
     //是否音中
@@ -198,7 +214,73 @@ public class RecordTabController extends BaseController {
         super.initialize(location, resources);
         tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         tableView.getSelectionModel().setCellSelectionEnabled(true);
+
     }
+
+    public void setVoiceStageLocation(){
+        Bounds inScreen = tab_langPic.getTabPane().localToScreen(tab_langPic.getTabPane().getBoundsInParent());
+
+        int titleHeight = 40;
+        voiceMapStage.setX(inScreen.getMinX());
+        voiceMapStage.setY(inScreen.getMinY() + titleHeight);
+    }
+
+    private void setupVoiceMapView() throws IOException {
+        Parent r1 = FXMLLoader.load(Main.class.getResource("view/voiceMap.fxml"));
+        voiceMapStage = new Stage(StageStyle.UNDECORATED);
+        voiceMapStage.initOwner(MainController.getMainC().getmStage());
+        voiceMapStage.setTitle("voice map");
+        voiceMapStage.setScene(new Scene(r1,0,0));
+        voiceMapStage.show();
+        voiceMapStage.setWidth(0.01);
+        voiceMapStage.setHeight(0.01);
+
+        locationChange = new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                setVoiceStageLocation();
+            }
+        };
+
+
+        MainController.getMainC().mStage.xProperty().addListener(locationChange);
+        MainController.getMainC().mStage.yProperty().addListener(locationChange);
+
+        tab_langPic.getTabPane().getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Tab>() {
+            @Override
+            public void changed(ObservableValue<? extends Tab> observable, Tab oldValue, Tab newValue) {
+                if (newValue.getText().equalsIgnoreCase("语图")){
+                    setVoiceStageLocation();
+                    voiceMapStage.setWidth(tab_langPic.getTabPane().getBoundsInParent().getWidth());
+                    voiceMapStage.setHeight(tab_langPic.getTabPane().getBoundsInParent().getHeight() - 40);
+                }else {
+                    voiceMapStage.setWidth(0.01);
+                    voiceMapStage.setHeight(0.01);
+                }
+            }
+        });
+
+        tab_langPic.getTabPane().boundsInParentProperty().addListener(new ChangeListener<Bounds>() {
+            @Override
+            public void changed(ObservableValue<? extends Bounds> observable, Bounds oldValue, Bounds newValue) {
+                Bounds inScreen = tab_langPic.getTabPane().localToScreen(newValue);
+
+                int titleHeight = 40;
+
+                voiceMapStage.setX(inScreen.getMinX());
+                voiceMapStage.setY(inScreen.getMinY() + titleHeight);
+
+                if (tab_langPic.isSelected()){
+                    voiceMapStage.setWidth(newValue.getWidth());
+                    voiceMapStage.setHeight(newValue.getHeight() - titleHeight);
+                }
+
+
+            }
+        });
+
+    }
+
 
     public void startPreview(){
         defaultSetting();
@@ -217,6 +299,14 @@ public class RecordTabController extends BaseController {
                 tipTextArea.setFont(new Font("Times New Roman",fontSize));
             }
         });
+
+
+
+        try {
+            setupVoiceMapView();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void setupTablView(){
@@ -414,19 +504,58 @@ public class RecordTabController extends BaseController {
             if (AppCache.getInstance().getOsType()!=0) {
 
             }else {
-                try {
-                    Runtime.getRuntime().exec("cmd /c start "+ new File(Constant.PRAAT + "/praat.exe").getAbsolutePath());
-                    Thread.sleep(500);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+
+                if (JNAUtil.hwndWithName(null,"Praat Objects") == 0 ){
+                    try {
+                        Runtime.getRuntime().exec("cmd /c start "+ new File(Constant.PRAAT + "/praat.exe").getAbsolutePath());
+                        Thread.sleep(500);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
-                String param = "#Read from file... " + new File(getSelItemAudioPath(tableView.getSelectionModel().getSelectedItems().get(0))).getAbsolutePath() + "#   #Edit# ";
+
+                String param = "";
+                if (isFirstPraat){
+                    param = "#Read from file... " + new File(getSelItemAudioPath(tableView.getSelectionModel().getSelectedItems().get(0))).getAbsolutePath() + "#   #Edit# ";
+                    isFirstPraat = false;
+                }else {
+                    param = "Remove #Read from file... " + new File(getSelItemAudioPath(tableView.getSelectionModel().getSelectedItems().get(0))).getAbsolutePath() + "#   #Edit# ";
+                }
                 param = param.replace("#","\"");
                 try {
                     Runtime.getRuntime().exec("cmd /c start "+ new File(Constant.PRAAT + "/sendpraat.exe").getAbsolutePath() + " praat "+ param);
+                    Thread.sleep(2000);
+                    int hwnd = JNAUtil.hwndWithName(null,"Praat Objects");
+                    if (hwnd != 0){
+                        JNAUtil.sendMessageWithHwnd(hwnd, 0x112, 0xf020, 0);
+                        JNAUtil.showWindow(hwnd,2);
+                    }
+
+                    hwnd = JNAUtil.hwndWithName(null,"Praat Picture");
+                    if (hwnd != 0){
+                        JNAUtil.sendMessageWithHwnd(hwnd, 0x0010, 0, 0);
+                    }
+
+                    hwnd = JNAUtil.hwndWithName("PraatChildWindow1 Praat",null);
+                    if (hwnd != 0){
+                        if (oldIpa != 0){
+                            JNAUtil.closeWindow(oldIpa);
+                        }
+
+                        int parentHwnd = JNAUtil.hwndWithName(null,"voice map");
+                        System.out.println("parentHwnd:"+parentHwnd);
+                        JNAUtil.setParent(hwnd,parentHwnd);
+                        JNAUtil.moveWindow(hwnd,0,0,800,800,true);
+                        oldIpa = hwnd;
+                    }
+
+
+
                 } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
@@ -997,6 +1126,7 @@ public class RecordTabController extends BaseController {
                         return;
                     }
                     importMedia(temp, files, Integer.valueOf(newValue.toString()), false);
+                    videoPlayer.setMediaPath(getSelItemVideoPath(selRecord));
                 }
             }
         });
@@ -1504,6 +1634,23 @@ public class RecordTabController extends BaseController {
 //        vRecord.destroyRecorder();
         vRecord.removeImgView(img);
         aRecord.destroyRecorder();
+
+        MainController.getMainC().getmStage().xProperty().removeListener(locationChange);
+        MainController.getMainC().getmStage().yProperty().removeListener(locationChange);
+        voiceMapStage.close();
+
+        int hwnd = JNAUtil.hwndWithName(null,"Praat Objects");
+        if (hwnd != 0 ){
+            try {
+                Runtime.getRuntime().exec("cmd /c start "+ new File(Constant.PRAAT + "/sendpraat.exe").getAbsolutePath() + " praat Remove");
+                Thread.sleep(500);
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            JNAUtil.sendMessageWithHwnd(hwnd,0x0010,0,0);
+        }
     }
 
     private void showTimeOnLabel(long time){

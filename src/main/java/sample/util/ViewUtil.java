@@ -1,11 +1,17 @@
 package sample.util;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.concurrent.Task;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.JavaFXBuilderFactory;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.image.Image;
+import javafx.scene.layout.Border;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -22,6 +28,11 @@ import java.util.ResourceBundle;
  * Created by chenweiqi on 2017/3/29.
  */
 public class ViewUtil {
+    public interface ProgressMethod{
+        void progresing();
+        void finished();
+    }
+
 
     static ViewUtil util = new ViewUtil();
 
@@ -55,6 +66,30 @@ public class ViewUtil {
      * 打开进度界面
      * @return
      */
+    public void showProgressView(String tip,ProgressMethod method){
+        ProgressViewController vc = showProgressView(tip);
+        Task<Void> task = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                method.progresing();
+                updateMessage("finish");
+                return null;
+            }
+        };
+
+        task.messageProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                if (newValue.equalsIgnoreCase("finish")){
+                    method.finished();
+                    vc.mStage.close();
+                }
+            }
+        });
+
+        new Thread(task).start();
+    }
+
     public ProgressViewController showProgressView(String tip){
         ProgressViewController vc = ((ProgressViewController) showView("view/progressView.fxml", "进度查询", -1, -1, ""));
         vc.setTip(tip);
@@ -64,7 +99,8 @@ public class ViewUtil {
         vc.mStage.show();
         return vc;
     }
-    
+
+
     /**
      *
      * @param resourcePath

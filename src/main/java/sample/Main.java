@@ -1,7 +1,12 @@
 package sample;
 
 import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import sample.controller.AV.TestController;
 import sample.controller.RecordTabController;
 import sample.entity.Record;
@@ -22,8 +27,7 @@ public class Main extends Application {
 //        controller.startPreview();
 //        controller.show();
 //
-//        TestController vc = ((TestController) ViewUtil.getInstance().showView("view/testView.fxml", "测试", -1, -1, ""));
-//        vc.mStage.show();
+//
 
         System.out.println("");
 
@@ -38,14 +42,17 @@ public class Main extends Application {
         DbHelper.getInstance().closeDBHelper();
 
         File tempDir = new File(Constant.TEMP_DIR);
-        File[] files = tempDir.listFiles();
-        for (int i = 0;i < files.length;i ++) {
-            files[i].deleteOnExit();
+        if (tempDir.exists()){
+            File[] files = tempDir.listFiles();
+            for (int i = 0;i < files.length;i ++) {
+                files[i].deleteOnExit();
+            }
+            tempDir.delete();
         }
-        tempDir.delete();
     }
 
     public static void main(String[] args) {
+        Font isaFont = Font.loadFont(Main.class.getResource("resource/bee.ttf").toString(), 20);
         launch(args);
     }
 }

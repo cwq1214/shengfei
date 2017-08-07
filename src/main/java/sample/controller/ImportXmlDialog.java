@@ -3,9 +3,15 @@ package sample.controller;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.concurrent.Task;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.input.MouseEvent;
+import javafx.stage.Stage;
 import javafx.util.Callback;
+import sample.diycontrol.ProgressView.ProgressViewController;
 import sample.entity.BindResult;
 import sample.util.*;
 
@@ -121,7 +127,6 @@ public class ImportXmlDialog extends BaseController {
             }
         });
         tb_xmlName.getColumns().add(xmlTC);
-
     }
 
 
@@ -240,14 +245,24 @@ public class ImportXmlDialog extends BaseController {
 
         }
 
-        if(importType==0){//eaf
-            EAFHelper.getInstance().deco(xmlFilePath.getPath(),wavFilePath != null ?wavFilePath.getPath():null,tb_bindName.getItems(),selType);
-        }else if (importType==1){//exb
-            EXBHelper.getInstance().deco(xmlFilePath.getPath(),wavFilePath != null ?wavFilePath.getPath():null,tb_bindName.getItems(),selType);
-        }else if (importType==3){//ac
-            AudoCityHelper.getInstance().deco(xmlFilePath.getPath(),wavFilePath != null ?wavFilePath.getPath():null,tb_bindName.getItems(),selType);
-        }
-        this.mStage.close();
+        ViewUtil.getInstance().showProgressView("请等待...", new ViewUtil.ProgressMethod() {
+            @Override
+            public void progresing() {
+                if(importType==0){//eaf
+                    EAFHelper.getInstance().deco(xmlFilePath.getPath(),wavFilePath != null ?wavFilePath.getPath():null,tb_bindName.getItems(),selType);
+                }else if (importType==1){//exb
+                    EXBHelper.getInstance().deco(xmlFilePath.getPath(),wavFilePath != null ?wavFilePath.getPath():null,tb_bindName.getItems(),selType);
+                }else if (importType==3){//ac
+                    AudoCityHelper.getInstance().deco(xmlFilePath.getPath(),wavFilePath != null ?wavFilePath.getPath():null,tb_bindName.getItems(),selType);
+                }
+            }
+
+            @Override
+            public void finished() {
+                ImportXmlDialog.this.mStage.close();
+            }
+        });
+
     }
 
     @FXML

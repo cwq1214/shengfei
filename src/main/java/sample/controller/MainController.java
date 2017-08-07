@@ -1021,21 +1021,23 @@ public class MainController extends BaseController {
         super.initialize(location,resources);
         changeLanguage.setText(ViewUtil.currentLanguage);
         mainController = this;
-        MainController.setStatusContent("ꆏꉾ");
+        MainController.setStatusContent("就绪");
 
 
 
         contentPane.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Tab>() {
             @Override
             public void changed(ObservableValue<? extends Tab> observable, Tab oldValue, Tab newValue) {
-                BaseController vc = ((BaseController) newValue.getUserData());
+                if (newValue != null){
+                    BaseController vc = ((BaseController) newValue.getUserData());
 
-                boolean isTopicEdit = vc instanceof NewTopicEditController;
-                tqjzch.setVisible(!isTopicEdit);
-                tqjz.setVisible(isTopicEdit);
-                tqch.setVisible(isTopicEdit);
+                    boolean isTopicEdit = vc instanceof NewTopicEditController;
+                    tqjzch.setVisible(!isTopicEdit);
+                    tqjz.setVisible(isTopicEdit);
+                    tqch.setVisible(isTopicEdit);
 
-                System.out.println(newValue.getUserData());
+                    System.out.println(newValue.getUserData());
+                }
             }
         });
     }
@@ -1044,14 +1046,22 @@ public class MainController extends BaseController {
     @Override
     public void onStop() {
         super.onStop();
-        mainController = null;
         //关闭窗口时，调用所有tab的onClose方法
         if (contentPane.getTabs().size()!=0){
-            for (Tab tab :
-                    contentPane.getTabs()) {
-                if (tab.getOnClosed()!=null)
+//            for (Tab tab :
+//                    contentPane.getTabs()) {
+//                if (tab.getOnClosed()!=null)
+//                    contentPane.getTabs().remove(tab);
+////                    tab.getOnClosed().handle(null);
+//            }
+            for (int i = contentPane.getTabs().size() - 1; i >= 0 ; i--) {
+                Tab tab = contentPane.getTabs().get(i);
+                if (tab.getOnClosed() != null){
                     tab.getOnClosed().handle(null);
+                }
+                contentPane.getTabs().remove(tab);
             }
         }
+        mainController = null;
     }
 }
