@@ -20,6 +20,8 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.bytedeco.javacpp.annotation.Const;
+import org.bytedeco.javacv.FrameGrabber;
+import org.bytedeco.javacv.FrameRecorder;
 import org.dom4j.DocumentException;
 import sample.controller.MutiAnaly.AfterAnalyViewController;
 import sample.controller.NewTableView.TempTableView;
@@ -302,7 +304,7 @@ public class ExportUtil {
         }else if (saveType.equals("xml")){
             exportTableXML(saveFile.getAbsolutePath(),tableView,t);
         }else if (saveType.equals("txt")){
-
+            exportAudacity(saveFile.getAbsolutePath(),tableView,t);
         }
 
     }
@@ -1138,6 +1140,97 @@ public class ExportUtil {
     }
     public static void exportTableXML(String savePath,TableView tableView,Table t){
         XMLHelper.getInstance().writeToXml(savePath,tableView,t);
+    }
+
+    public static void exportAudacity(String savePath,TableView tableView,Table t){
+        try {
+            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(savePath),"UTF-8"));
+            List<Record> records = new ArrayList<>();
+            List<String> audioFilePaths = new ArrayList<>();
+            Field[] fields;
+
+            if (Integer.parseInt(t.getDatatype()) == 0){
+                fields = new Field[]{Record.class.getDeclaredField("baseCode"),
+                Record.class.getDeclaredField("content"),
+                Record.class.getDeclaredField("IPA"),
+                Record.class.getDeclaredField("MWFY"),
+                Record.class.getDeclaredField("english"),
+                Record.class.getDeclaredField("spell"),
+                Record.class.getDeclaredField("note")
+                };
+            }else if (Integer.parseInt(t.getDatatype()) == 1){
+                fields = new Field[]{Record.class.getDeclaredField("baseCode"),
+                        Record.class.getDeclaredField("content"),
+                        Record.class.getDeclaredField("IPA"),
+                        Record.class.getDeclaredField("MWFY"),
+                        Record.class.getDeclaredField("english"),
+                        Record.class.getDeclaredField("spell"),
+                        Record.class.getDeclaredField("note")
+                };
+            }else {
+                fields = new Field[]{Record.class.getDeclaredField("baseCode"),
+                        Record.class.getDeclaredField("content"),
+                        Record.class.getDeclaredField("IPA"),
+                        Record.class.getDeclaredField("MWFY"),
+                        Record.class.getDeclaredField("english"),
+                        Record.class.getDeclaredField("note"),
+                        Record.class.getDeclaredField("free_trans")
+                };
+            }
+
+            for (int j = 0 ; j < fields.length ; j++){
+                double timeLine = 0.f;
+                for (int i=0;i<tableView.getItems().size();i++) {
+                    Record r;
+                    Object object = tableView.getItems().get(i);
+                    if (object instanceof  Record){
+                        r = (Record) object;
+                    }else if (object instanceof YBCCBean){
+                        r = ((YBCCBean) object).getRecord();
+                    }else {
+                        return;
+                    }
+
+                    String line = String.format("%.6f",timeLine/1000.0) + "\t";
+
+                    String avPath = Constant.getAudioPath(Integer.toString(t.getId()),r.getUuid());
+
+                    if (!new File(avPath).exists()){
+                        ToastUtil.show("有条目未录音!");
+                        return;
+                    }
+                    timeLine += WAVUtil.getInstance().getAudioTimeLine(avPath);
+                    fields[j].setAccessible(true);
+
+                    Object tmp = fields[j].get(r);
+                    line += String.format("%.6f",timeLine/1000.0) + "\t" + (tmp == null?"":tmp.toString()) + "\r\n";
+
+                    bw.write(line);
+
+                    if (j == 0){
+                        audioFilePaths.add(avPath);
+                    }
+                }
+            }
+
+            WAVUtil.getInstance().join(savePath.replace(".txt",Constant.AUDIO_SUFFIX),audioFilePaths);
+            bw.flush();
+            bw.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (FrameRecorder.Exception e) {
+            e.printStackTrace();
+        } catch (FrameGrabber.Exception e) {
+            e.printStackTrace();
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
     }
 
     public static void exportSentenceJZCH(Table t,boolean isExportExcel,int excelFormat){

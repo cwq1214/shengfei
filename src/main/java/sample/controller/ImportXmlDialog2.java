@@ -85,7 +85,8 @@ public class ImportXmlDialog2  extends BaseController {
         }
 
         List<Record> records = XMLHelper.getInstance().readXml(saveFile.getAbsolutePath(),getType());
-        createNewTableAndSaveRecords(records);
+        mStage.close();
+        MainController.getMainC().openTable(createNewTableAndSaveRecords(records));
         ToastUtil.show("导入成功");
 
     }
@@ -98,7 +99,7 @@ public class ImportXmlDialog2  extends BaseController {
         }
     }
 
-    private void createNewTableAndSaveRecords( List<Record> records){
+    private Table createNewTableAndSaveRecords( List<Record> records){
         Table table = new Table(getType()+"");
         DbHelper.getInstance().insertNewTable(table);
 
@@ -109,6 +110,7 @@ public class ImportXmlDialog2  extends BaseController {
         }
 
         DbHelper.getInstance().insertOrUpdateRecord(records);
+        return table;
     }
 
     private int getType(){

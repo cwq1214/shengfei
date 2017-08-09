@@ -1,5 +1,6 @@
 package sample.util;
 
+import javafx.application.Platform;
 import javafx.scene.control.TableView;
 import org.apache.poi.ss.formula.functions.T;
 import org.bytedeco.javacv.FrameGrabber;
@@ -96,7 +97,7 @@ public class EXBHelper {
                 tableView.getItems()) {
             records.add(((YBCCBean) bean).getRecord());
         }
-        createXML(speaker,filePath,filePath.replace(".exb",Constant.AUDIO_SUFFIX).substring(filePath.lastIndexOf("\\")),records,tableType);
+        createXML(speaker,filePath,filePath.replace(".exb",Constant.AUDIO_SUFFIX).substring(filePath.lastIndexOf("\\") + 1),records,tableType);
     }
 
 
@@ -376,12 +377,14 @@ public class EXBHelper {
 
 
         double time = 0.0;
-        for (int i=0,max = records.size(); i < max ;i++){
+        for (int i=0,max = records.size(); i <= max ;i++){
             Element tli = common_timeLine.addElement("tli");
             tli.addAttribute("id","T"+i);
-            tli.addAttribute("time",time+"");
-            String path = Constant.getAudioPath(records.get(i).baseId+"",records.get(i).uuid);
-            time += (WAVUtil.getInstance().getAudioTimeLine(path))/1000;
+            tli.addAttribute("time",String.format("%.3f",time));
+            if (i != max){
+                String path = Constant.getAudioPath(records.get(i).baseId+"",records.get(i).uuid);
+                time += (WAVUtil.getInstance().getAudioTimeLine(path))/1000;
+            }
         }
 
         String[] category = null;
@@ -707,7 +710,12 @@ public class EXBHelper {
 
             ToastUtil.show("导入成功");
 
-            MainController.getMainC().openTable(table);
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    MainController.getMainC().openTable(table);
+                }
+            });
         } catch (DocumentException e) {
             ToastUtil.show("导入失败");
             e.printStackTrace();

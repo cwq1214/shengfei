@@ -1357,8 +1357,10 @@ public class RecordTabController extends BaseController {
                     mediaPlayer.dispose();
                     mediaPlayer = null;
                     if (btn == btn_playNextAudio){
-                        tableView.getSelectionModel().selectNext();
-                        onPlayNextAudioClick();
+                        if (tableView.getSelectionModel().getSelectedIndex() != tableView.getItems().size() - 1){
+                            tableView.getSelectionModel().selectNext();
+                            onPlayNextAudioClick();
+                        }
                     }
 
 
@@ -1650,6 +1652,13 @@ public class RecordTabController extends BaseController {
                 e.printStackTrace();
             }
             JNAUtil.sendMessageWithHwnd(hwnd,0x0010,0,0);
+        }
+
+        if (mediaPlayer != null){
+            mediaPlayer.stop();
+            ((ImageView) btn_playNextAudio.getGraphic()).setImage(new Image(Main.class.getResourceAsStream("resource/img/b4.png")));
+            mediaPlayer.dispose();
+            mediaPlayer = null;
         }
     }
 

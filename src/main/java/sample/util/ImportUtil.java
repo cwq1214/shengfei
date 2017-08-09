@@ -73,21 +73,32 @@ public class ImportUtil {
             alert.setHeaderText("");
 
             Optional<ButtonType> result = alert.showAndWait();
-            File vDir = null;
+            final File vDir;
             if (result.get().getText() == "是"){
                 vDir = DialogUtil.dirChooses(new Stage());
+            }else {
+                vDir = null;
             }
 
             Sheet sheet = workbook.getSheetAt(0);
-            if (type == 0){
-                importYbWord(sheet,t,vDir);
-            }else if (type == 1){
-                importYbCi(sheet,t,vDir);
-            }else if (type == 2){
-                importYbSentence(sheet,t,vDir);
-            }
 
-            mainController.openTable(t);
+            ViewUtil.getInstance().showProgressView("此过程可能需要几分钟，请耐心等待！", new ViewUtil.ProgressMethod() {
+                @Override
+                public void progresing() {
+                    if (type == 0){
+                        importYbWord(sheet,t,vDir);
+                    }else if (type == 1){
+                        importYbCi(sheet,t,vDir);
+                    }else if (type == 2){
+                        importYbSentence(sheet,t,vDir);
+                    }
+                }
+
+                @Override
+                public void finished() {
+                    mainController.openTable(t);
+                }
+            });
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -101,6 +112,8 @@ public class ImportUtil {
 
         Row titleRow = sheet.getRow(0);
         boolean isLong = titleRow.getLastCellNum() > 9;
+
+        System.out.println("last row:"+sheet.getLastRowNum());
 
         for (int i = 1; i <= sheet.getLastRowNum(); i++) {
             Row row = sheet.getRow(i);
@@ -193,6 +206,9 @@ public class ImportUtil {
             r.setBaseCode("yb"+ String.format("%04d",i));
 
             row.getCell(0).setCellType(Cell.CELL_TYPE_STRING);
+            if (row.getCell(0).getStringCellValue().length() == 0){
+                break;
+            }
             r.setInvestCode(row.getCell(0).getStringCellValue());
 
             r.setIPA(ipaSb.toString());
@@ -210,13 +226,7 @@ public class ImportUtil {
 
         }
 
-        ProgressViewController pvc = ViewUtil.getInstance().showProgressView("导入数据中，请稍等");
-        DbHelper.getInstance().insertRecordReal(impDatas, new ImportExcelBindViewController.InsertSuccessCallBack() {
-            @Override
-            public void insertSuccess() {
-                pvc.mStage.close();
-            }
-        });
+        DbHelper.getInstance().insertRecordReal(impDatas, null);
     }
     private static void importYbSentence(Sheet sheet,Table t,File vDir){
         List<Record> impDatas = new ArrayList<>();
@@ -341,6 +351,9 @@ public class ImportUtil {
             r.setBaseCode("yb"+ String.format("%04d",i));
 
             row.getCell(0).setCellType(Cell.CELL_TYPE_STRING);
+            if (row.getCell(0).getStringCellValue().length() == 0){
+                break;
+            }
             r.setInvestCode(row.getCell(0).getStringCellValue());
 
             r.setFree_trans(wordCiSb.toString());
@@ -360,13 +373,7 @@ public class ImportUtil {
             impDatas.add(r);
         }
 
-        ProgressViewController pvc = ViewUtil.getInstance().showProgressView("导入数据中，请稍等");
-        DbHelper.getInstance().insertRecordReal(impDatas, new ImportExcelBindViewController.InsertSuccessCallBack() {
-            @Override
-            public void insertSuccess() {
-                pvc.mStage.close();
-            }
-        });
+        DbHelper.getInstance().insertRecordReal(impDatas, null);
     }
 
 
@@ -433,6 +440,9 @@ public class ImportUtil {
             r.setBaseCode("yb"+ String.format("%04d",i));
 
             row.getCell(0).setCellType(Cell.CELL_TYPE_STRING);
+            if (row.getCell(0).getStringCellValue().length() == 0){
+                break;
+            }
             r.setInvestCode(row.getCell(0).getStringCellValue());
 
             r.setIPA(syd.toString());
@@ -450,14 +460,6 @@ public class ImportUtil {
         }
 
 
-
-
-        ProgressViewController pvc = ViewUtil.getInstance().showProgressView("导入数据中，请稍等");
-        DbHelper.getInstance().insertRecordReal(impDatas, new ImportExcelBindViewController.InsertSuccessCallBack() {
-            @Override
-            public void insertSuccess() {
-                pvc.mStage.close();
-            }
-        });
+        DbHelper.getInstance().insertRecordReal(impDatas,null);
     }
 }

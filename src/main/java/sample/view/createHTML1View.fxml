@@ -1,56 +1,74 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<VBox   xmlns="http://javafx.com/javafx"
-        xmlns:fx="http://javafx.com/fxml"
-        fx:controller="sample.controller.CreateHTML1Controller"
-        stylesheets="@css/sf.css">
-    <Label text="1.填写语档元数据"  styleClass="yellowTitle" alignment="CENTER" prefWidth="9999"></Label>
+<VBox stylesheets="@css/sf.css" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.controller.CreateHTML1Controller">
+    <Label alignment="CENTER" prefWidth="9999" styleClass="yellowTitle" text="1.填写语档元数据">
+      <font>
+         <Font size="20.0" />
+      </font></Label>
 
-    <GridPane
-          vgap="8"
-          hgap="8"
-          alignment="CENTER"
->
+    <GridPane alignment="CENTER" hgap="8" vgap="8">
 
-    <Label text="语档编号" GridPane.rowIndex="1" GridPane.columnIndex="0"></Label>
-    <TextField GridPane.rowIndex="1" GridPane.columnIndex="1" fx:id="ydbh"></TextField>
-    <Label text="语档名称" GridPane.rowIndex="1" GridPane.columnIndex="2"></Label>
-    <TextField GridPane.rowIndex="1" GridPane.columnIndex="3" fx:id="ydmc"></TextField>
+    <Label text="语档编号" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+    <TextField fx:id="ydbh" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+    <Label text="语档名称" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+    <TextField fx:id="ydmc" GridPane.columnIndex="3" GridPane.rowIndex="1" />
 
-    <Label text="创建人" GridPane.rowIndex="2" GridPane.columnIndex="0"></Label>
-    <TextField GridPane.rowIndex="2" GridPane.columnIndex="1" fx:id="cjr"></TextField>
-    <Label text="贡献人" GridPane.rowIndex="2" GridPane.columnIndex="2"></Label>
-    <TextField GridPane.rowIndex="2" GridPane.columnIndex="3" fx:id="gxr"></TextField>
+    <Label text="创建人" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+    <TextField fx:id="cjr" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+    <Label text="贡献人" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+    <TextField fx:id="gxr" GridPane.columnIndex="3" GridPane.rowIndex="2" />
 
-    <Label text="创建日期" GridPane.rowIndex="3" GridPane.columnIndex="0"></Label>
-    <TextField GridPane.rowIndex="3" GridPane.columnIndex="1" fx:id="cjrq"></TextField>
-    <Label text="创建地点" GridPane.rowIndex="3" GridPane.columnIndex="2"></Label>
-    <TextField GridPane.rowIndex="3" GridPane.columnIndex="3" fx:id="cjdd"></TextField>
+    <Label text="创建日期" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+    <TextField fx:id="cjrq" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+    <Label text="创建地点" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+    <TextField fx:id="cjdd" GridPane.columnIndex="3" GridPane.rowIndex="3" />
 
-    <Label text="软件工具" GridPane.rowIndex="4" GridPane.columnIndex="0"></Label>
-    <TextField GridPane.rowIndex="4" GridPane.columnIndex="1" fx:id="rjgj"></TextField>
-    <Label text="馆藏机构" GridPane.rowIndex="4" GridPane.columnIndex="2"></Label>
-    <TextField GridPane.rowIndex="4" GridPane.columnIndex="3" fx:id="gcjg"></TextField>
+    <Label text="软件工具" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+    <TextField fx:id="rjgj" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+    <Label text="馆藏机构" GridPane.columnIndex="2" GridPane.rowIndex="4" />
+    <TextField fx:id="gcjg" GridPane.columnIndex="3" GridPane.rowIndex="4" />
 
-    <Label text="URL链接" GridPane.rowIndex="5" GridPane.columnIndex="0"></Label>
-    <TextField GridPane.rowIndex="5" GridPane.columnIndex="1" GridPane.columnSpan="3" fx:id="urlLink"></TextField>
+    <Label text="URL链接" GridPane.columnIndex="0" GridPane.rowIndex="5" />
+    <TextField fx:id="urlLink" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="5" />
 
-    <Label text="资源描述" GridPane.rowIndex="6" GridPane.columnIndex="0" GridPane.valignment="TOP">
+    <Label text="资源描述" GridPane.columnIndex="0" GridPane.rowIndex="6" GridPane.valignment="TOP">
     </Label>
-    <TextArea GridPane.rowIndex="6" GridPane.columnIndex="1" GridPane.columnSpan="3" fx:id="zyms"></TextArea>
+    <TextArea fx:id="zyms" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="6" />
 
-    <VBox  GridPane.rowIndex="7" GridPane.columnIndex="0" GridPane.columnSpan="4" GridPane.rowSpan="4" styleClass="hint">
-        <Label text="填表说明："></Label>
-        <Label text="资源描述是对整个语档对组成部分和内容进行简介"></Label>
-        <Label text="URL是语档资源在线浏览的网址"></Label>
-        <Label text="软件工具是指创建语档的软件工具"></Label>
+    <VBox styleClass="hint" GridPane.columnIndex="0" GridPane.columnSpan="4" GridPane.rowIndex="7" GridPane.rowSpan="4">
+        <Label text="填表说明：" />
+        <Label text="资源描述是对整个语档对组成部分和内容进行简介" />
+        <Label text="URL是语档资源在线浏览的网址" />
+        <Label text="软件工具是指创建语档的软件工具" />
     </VBox>
+      <columnConstraints>
+         <ColumnConstraints />
+         <ColumnConstraints />
+         <ColumnConstraints />
+         <ColumnConstraints />
+      </columnConstraints>
+      <rowConstraints>
+         <RowConstraints />
+         <RowConstraints />
+         <RowConstraints />
+         <RowConstraints />
+         <RowConstraints />
+         <RowConstraints />
+         <RowConstraints />
+         <RowConstraints />
+         <RowConstraints />
+         <RowConstraints />
+         <RowConstraints />
+      </rowConstraints>
 
 </GridPane>
 </VBox>

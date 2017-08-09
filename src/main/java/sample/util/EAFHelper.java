@@ -1,5 +1,6 @@
 package sample.util;
 
+import javafx.application.Platform;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -317,7 +318,12 @@ public class EAFHelper {
 
             ToastUtil.show("导入成功");
 
-            MainController.getMainC().openTable(table);
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    MainController.getMainC().openTable(table);
+                }
+            });
         } catch (DocumentException e) {
             ToastUtil.show("导入失败");
             e.printStackTrace();

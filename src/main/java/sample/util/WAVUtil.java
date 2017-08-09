@@ -48,12 +48,15 @@ public class WAVUtil {
                 grabber = new FFmpegFrameGrabber(new File(filesPath.get(i)));
                 if (in) {
 
-                    recorder.setVideoOption("tune", "zerolatency");
-                    recorder.setVideoOption("preset", "ultrafast");
-                    recorder.setVideoOption("crf","28");
-                    recorder.setInterleaved(true);
-                    recorder.setAudioCodec(avcodec.AV_CODEC_ID_AAC);
-                    recorder.setFormat("mp4");
+//                    recorder.setVideoOption("tune", "zerolatency");
+//                    recorder.setVideoOption("preset", "ultrafast");
+//                    recorder.setVideoOption("crf","28");
+//                    recorder.setInterleaved(true);
+//                    recorder.setAudioCodec(avcodec.AV_CODEC_ID_AAC);
+                    recorder.setAudioOption("crf", "0");
+                    recorder.setAudioQuality(0);
+                    recorder.setAudioBitrate(192000);
+                    recorder.setFormat("wav");
                     recorder.setSampleRate(44100);
                     recorder.setAudioChannels(2);
                     recorder.start();

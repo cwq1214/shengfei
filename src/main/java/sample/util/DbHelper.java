@@ -284,7 +284,10 @@ public class DbHelper {
                     for (int i = 0; i < list.size(); i++) {
                         recordDao.createOrUpdate(list.get(i));
                     }
-                    callBack.insertSuccess();
+                    if (callBack != null){
+                        callBack.insertSuccess();
+                    }
+
                     return null;
                 }
             });
